@@ -1,10 +1,11 @@
 {
-  "name": "my_fe_boilerplate",
+  "name": "webgl render engine",
   "version": "1.0.0",
-  "description": "kampfer's front-end boilerplate",
+  "description": "webgl render engine",
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --config scripts/webpack.dev.config.js --open",
+    "test": "webpack-dev-server --config scripts/webpack.test.config.js --open",
     "analyse": "webpack --profile --json > stats.json"
   },
   "author": "https://github.com/kampfer",
@@ -26,6 +27,7 @@
     "webpack-dev-server": "^3.8.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.5.5"
+    "@babel/runtime": "^7.5.5",
+    "events": "^3.0.0"
   }
 }
