@@ -1,10 +1,11 @@
 {
-  "name": "webgl render engine",
+  "name": "webgl_render_engine",
   "version": "1.0.0",
   "description": "webgl render engine",
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --config scripts/webpack.dev.config.js --open",
+    "example": "webpack-dev-server --config scripts/webpack.example.config.js --open",
     "test": "webpack-dev-server --config scripts/webpack.test.config.js --open",
     "analyse": "webpack --profile --json > stats.json"
   },
