@@ -4,4 +4,6 @@ export default class Material {
         this.color = settings.color;
     }
 
+    update() {}
+
 }

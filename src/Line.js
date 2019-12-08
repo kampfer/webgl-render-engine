@@ -9,4 +9,9 @@ export default class Line extends GraphObject {
         this.type = 'Line';
     }
 
+    update() {
+        this.geometry.update();
+        this.material.update();
+    }
+
 };
