@@ -59,7 +59,7 @@ scene.add(plane);
 let cameraController = new OrbitCameraController(camera, renderer.domElement);
 
 function animate() {
-    // requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
     cameraController.update();
     renderer.render(scene, camera);
 }
