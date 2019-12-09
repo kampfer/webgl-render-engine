@@ -36,26 +36,26 @@ let findEntries = function(dir) {
     return entries;
 }
 
-let devConfig = Object.assign(config, {
-    mode: 'development',
-    devServer: {
-        contentBase: './dist'
-    },
-    entry: {}
-});
+let dir = path.join(__dirname, '../examples'),
+    devConfig = Object.assign(config, {
+        mode: 'development',
+        devServer: {
+            contentBase: dir
+        },
+        entry: {}
+    });
 
-let entries = findEntries(path.join(__dirname, '../examples'));
+let entries = findEntries(dir);
 for (let name in entries) {
     let entry = entries[name];
     devConfig.entry[name] = entry.js;
     devConfig.plugins.push(
         new HtmlWebpackPlugin({
-            filename: name + '.html',
+            filename: path.relative(dir, entry.html),
             template: entry.html,
             chunks: [name]
         })
     );
 }
 
-console.log(devConfig);
 module.exports = devConfig;
