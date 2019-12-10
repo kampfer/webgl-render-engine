@@ -1,55 +1,35 @@
+import request from './request';
+import GLTFParser from './GLTFParser';
+
 export default class GLTFLoader {
 
-    request() {
-        
-    }
-
-    load() {}
-
-    loadGLTF(url) {
-        let xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', () => {
-            let data = JSON.parse(xhr.response);
-            this.parse(data);
+    load(url) {
+        return request({url}).then((xhr) => {
+            return this.parse(xhr.response);
         });
-        xhr.open('GET', url, true);
-        xhr.send();
     }
 
-    loadBin(url) {
-        let xhr = new XMLHttpRequest();
-        xhr.responseType = 'arraybuffer';
-        xhr.addEventListener('load', () => {
-            if (xhr.status === 200 || xhr.status === 0) {
-                let content = this.decodeText(new Uint8Array(xhr.response)),
-                data = JSON.parse(content);
-                console.log(data);
-            }
-        });
-        xhr.open('GET', url, true);
-        xhr.send();
-    }
-
+    // 将返回结果转成json
     parse(data) {
-        console.log(data);
+        if (typeof data === 'string') {
+            data = JSON.parse(data);
+        }
+
+        let parser = new GLTFParser();
+        return parser.parse(data);
     }
 
-    // https://github.com/mrdoob/three.js/blob/master/src/loaders/LoaderUtils.js#L7
-    decodeText(array) {
-        if (typeof TextDecoder !== 'undefined') {
-            return new TextDecoder().decode(array);
-        }
-
-        let str = '';
-        for (let i = 0, l = array.length; i < l; i++) {
-            str += String.fromCharCode(array[i]);
-        }
-
-        try {
-            return decodeURIComponent(escape(str));
-        } catch (e) {
-            return str;
-        }
-    }
-
+    // loadBin(url) {
+    //     let xhr = new XMLHttpRequest();
+    //     xhr.responseType = 'arraybuffer';
+    //     xhr.addEventListener('load', () => {
+    //         if (xhr.status === 200 || xhr.status === 0) {
+    //             let content = this.decodeText(new Uint8Array(xhr.response)),
+    //             data = JSON.parse(content);
+    //             console.log(data);
+    //         }
+    //     });
+    //     xhr.open('GET', url, true);
+    //     xhr.send();
+    // }
 }

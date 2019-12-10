@@ -1,7 +1,7 @@
 {
   "name": "webgl_render_engine",
   "version": "1.0.0",
-  "description": "webgl render engine",
+  "description": "kampfer's webgl render engine",
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --config scripts/webpack.dev.config.js --open",

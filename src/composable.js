@@ -7,7 +7,7 @@ export default (superClass) => class extends superClass {
     }
 
     add(object) {
-        if (object.parent !== null) {
+        if (object.parent != null) {
             object.parent.remove(object);
         }
 
