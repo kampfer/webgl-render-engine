@@ -9,4 +9,4 @@ export default class Mesh extends GraphObject {
         this.type = 'Mesh';
     }
 
-};
+}
