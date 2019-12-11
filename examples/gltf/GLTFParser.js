@@ -4,6 +4,7 @@ import Geometry from '../../src/geometries/Geometry';
 import Material from '../../src/materials/Material';
 import path from 'path';
 import { BufferAttribute } from '../../src/renderers/WebGLAttribute';
+import GraphObject from '../../src/GraphObject';
 
 /*
  * 文档：https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#properties-reference
@@ -11,13 +12,13 @@ import { BufferAttribute } from '../../src/renderers/WebGLAttribute';
 
 const attributeNameMap = {
     'POSITION': 'position',
-    'NORAML': 'normal',
-    'TANGENT': '',
-    'TEXCOORD_0': '',
-    'TEXCOORD_1': '',
+    'NORMAL': 'normal',
+    'TANGENT': 'tangent',
+    'TEXCOORD_0': 'uv',
+    'TEXCOORD_1': 'uv2',
     'COLOR_0': 'color',
-    'JOINTS_0': '',
-    'WEIGHTS_0': ''
+    'JOINTS_0': 'skinIndex',
+    'WEIGHTS_0': 'skinWeight'
 };
 
 const componentTypeToTypedArray = {
@@ -50,91 +51,129 @@ export default class GLTFParser {
         return fetch(url, opts);
     }
 
-    // buildNodeHierarchy(data, index, parent) {
-    //     let nodeDefs = data.nodes,
-    //         nodeDef = nodeDefs[index],
-    //         pArr = [];
-
-    //     if (nodeDef.mesh !== undefined) {
-    //         let meshIndex = nodeDef.mesh,
-    //             meshDef = data.meshes[meshIndex];
-
-    //         pArr.push(Promise.all([
-    //             this.parseGeometry(meshDef),
-    //             this.parseMaterial(meshDef),
-    //         ]).then(([geometry, material]) => {
-    //             let mesh = new Mesh(geometry, material);
-    //             parent.add(mesh);
-    //             if (nodeDef.children !== undefined) {
-    //                 return Promise.all(nodeDef.children.map((childIndex) => {
-    //                     return this.buildNodeHierarchy(data, childIndex, mesh);
-    //                 }));
-    //             } else {
-    //                 return mesh;
-    //             }
-    //         }));
-    //     }
-        
-    //     if (nodeDef.camera !== undefined) {
-    //     }
-
-    //     return parent;
-    // }
-
     parse(data) {
         console.log('data:', data);
-        let sceneDefs = data.scenes,
-            gltf = {
-                asset: data.asset,
-                scenes: sceneDefs.map((scenedef) => {
-                    let nodeDefs = scenedef.nodes,
-                        scene = new Scene();
-                    nodeDefs.forEach((nodeIndex) => {
-                        // this.buildNodeHierarchy(data, index, scene);
-                        this.parseNode(data, nodeIndex);
-                    });
-                    return scene;
-                }),
-                scene: data.scene,
-                cameras: []
-            };
-
-        return Promise.resolve(gltf);
+        let sceneDefs = data.scenes;
+        return Promise.all(
+                sceneDefs.map((scenedef, index) => {
+                    return this.parseScene(data, index);
+                })
+            ).then(function (scenes) {
+                return {
+                    asset: data.asset,
+                    scenes,
+                    scene: data.scene,
+                    cameras: []
+                }
+            })
     }
 
     parseScene(data, sceneIndex) {
         let sceneDef = data.scenes[sceneIndex],
-            nodeDefs = sceneDef.nodes,
-            scene = new Scene();
-        nodeDefs.forEach((nodeIndex) => {
-            this.parseNode(data, nodeIndex)
+            nodeDefs = sceneDef.nodes;
+        return Promise.all(
+            nodeDefs.map((nodeIndex) => {
+                return this.parseNode(data, nodeIndex);
+            })
+        ).then((nodes) => {
+            let scene = new Scene();
+            nodes.forEach((node) => {
+                scene.add(node);
+            });
+            return scene;
         });
-        return scene;
     }
 
-    parseNode(data, nodeIndex) {
-        let nodeDef = data.nodes[nodeIndex];
+    // _buildNodeHierarchy(data, nodeIndex, parent) {
+    //     let nodeDef = data.nodes[nodeIndex],
+    //         parsePromises = [];
 
-        if (nodeDef.camera !== undefined) {
-            this.parseCamera(data, nodeDef.camera);
-        }
+    //     if (nodeDef.mesh !== undefined) {
+    //         parsePromises.push(this.parseMesh(data, nodeDef.mesh));
+    //     }
+
+    //     if (nodeDef.camera !== undefined) {
+    //         parsePromises.push(this.parseCamera(data, nodeDef.camera));
+    //     }
+
+    //     return Promise.all(parsePromises).then((objects) => {
+    //         let object;
+    //         if (objects.length === 0) {
+    //             object = new GraphObject();
+    //         } else if (objects.length === 1) {
+    //             object = objects[0];
+    //         } else {
+    //             // object = new Group();
+    //         }
+
+    //         if (nodeDef.children !== undefined) {
+    //             return Promise.all(
+    //                 nodeDef.children.map((childIndex) => {
+    //                     return this._buildNodeHierarchy(data, childIndex, object);
+    //                 })
+    //             ).then((childNode) => {
+    //                 object.add(childNode);
+    //                 return objects;
+    //             });
+    //         } else {
+    //             return object;
+    //         }
+    //     });
+    // }
+
+    parseNode(data, nodeIndex) {
+        let nodeDef = data.nodes[nodeIndex],
+            parsePromises = [];
 
         if (nodeDef.mesh !== undefined) {
-            this.parseMesh(data, nodeDef.mesh);
+            parsePromises.push(this.parseMesh(data, nodeDef.mesh));
         }
 
-        if (nodeDef.children !== undefined) {
-            nodeDef.children.forEach((childIndex) => {
-                this.parseNode(data, childIndex);
-            });
+        if (nodeDef.camera !== undefined) {
+            parsePromises.push(this.parseCamera(data, nodeDef.camera));
         }
+
+        return Promise.all(parsePromises).then((objects) => {
+            let object = objects[0];
+            if (nodeDef.children !== undefined) {
+                return Promise.all(
+                    nodeDef.children.map((childIndex) => {
+                        // return this._buildNodeHierarchy(data, childIndex, object);
+                        return this.parseNode(data, childIndex);
+                    })
+                ).then((childNodes) => {
+                    childNodes.forEach((childNode) => {
+                        object.add(childNode);
+                    });
+                    return object;
+                });
+            } else {
+                return object;
+            }
+        });
     }
 
     parseMesh(data, meshIndex) {
         let meshDef = data.meshes[meshIndex],
             primitives = meshDef.primitives;
-        primitives.forEach((primitive) => {
-            this.parsePrimitive(data, primitive);
+        return Promise.all(
+            primitives.map((primitive) => {
+                return this.parsePrimitive(data, primitive);
+            })
+        ).then((objects) => {
+            let object;
+            if (objects.length === 0) {
+                object = new GraphObject();
+            } else if (objects.length === 1) {
+                object = objects[0];
+            } else {
+                // object = new Group();
+                object = new GraphObject();
+                objects.forEach((childObject) => {
+                    object.add(childObject);
+                });
+            }
+            return object;
         });
     }
 
@@ -144,24 +183,39 @@ export default class GLTFParser {
     }
 
     parsePrimitive(data, primitive) {
-        let geometry = new Geometry(),
-            attributes = primitive.attributes;
+        let attributes = primitive.attributes,
+            parsePromises = [],
+            geometry = new Geometry();
+
         for(let gltfAttributeName in attributes) {
             let attributeName = attributeNameMap[gltfAttributeName],
                 accessIndex = attributes[gltfAttributeName];
-            geometry.setAttribute(attributeName, this.parseAccessor(data, accessIndex));
+            parsePromises.push(
+                this.parseAccessor(data, accessIndex)
+                    .then(function (bufferAttribute) {
+                        geometry.setAttribute(attributeName, bufferAttribute);
+                    })
+            );
         }
 
         if (primitive.indices !== undefined) {
-            geometry.setIndex(this.parseAccessor(data, primitive.indices));
+            parsePromises.push(
+                this.parseAccessor(data, primitive.indices)
+                    .then(function (bufferAttribute) {
+                        geometry.setIndex(bufferAttribute);
+                    })
+            );
         }
 
-        let material = new Material({color: [0, 1, 1]});
+        return Promise.all(parsePromises)
+            .then(function () {
+                let material = new Material({color: [0, 1, 1]});
 
-        let mesh = new Mesh(geometry, material);
-        mesh.drawMode = primitive.mode;
+                let mesh = new Mesh(geometry, material);
+                mesh.drawMode = primitive.mode;
 
-        return mesh;
+                return mesh;
+            });
     }
 
     parseAccessor(data, accessorIndex) {
@@ -179,11 +233,12 @@ export default class GLTFParser {
                     byteStride = bufferViewDef.byteStride,
                     itemSize = accessorTypeToNumComponentsMap[accessorDef.type],
                     itemBytes = itemSize * TypedArray.BYTES_PER_ELEMENT,
+                    normalized = accessorDef.normalized === true,
                     array = new TypedArray(arrayBuffer, byteOffset, accessorDef.count * itemSize);
                 if (byteStride !== undefined && byteStride !== itemBytes ) {
                     // The buffer is not interleaved if the stride is the item size in bytes.
                 } else {
-                    return new BufferAttribute(array, itemSize, accessorDef.normalized);
+                    return new BufferAttribute(array, itemSize, normalized);
                 }
             });
     }
