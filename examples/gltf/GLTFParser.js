@@ -84,43 +84,6 @@ export default class GLTFParser {
         });
     }
 
-    // _buildNodeHierarchy(data, nodeIndex, parent) {
-    //     let nodeDef = data.nodes[nodeIndex],
-    //         parsePromises = [];
-
-    //     if (nodeDef.mesh !== undefined) {
-    //         parsePromises.push(this.parseMesh(data, nodeDef.mesh));
-    //     }
-
-    //     if (nodeDef.camera !== undefined) {
-    //         parsePromises.push(this.parseCamera(data, nodeDef.camera));
-    //     }
-
-    //     return Promise.all(parsePromises).then((objects) => {
-    //         let object;
-    //         if (objects.length === 0) {
-    //             object = new GraphObject();
-    //         } else if (objects.length === 1) {
-    //             object = objects[0];
-    //         } else {
-    //             // object = new Group();
-    //         }
-
-    //         if (nodeDef.children !== undefined) {
-    //             return Promise.all(
-    //                 nodeDef.children.map((childIndex) => {
-    //                     return this._buildNodeHierarchy(data, childIndex, object);
-    //                 })
-    //             ).then((childNode) => {
-    //                 object.add(childNode);
-    //                 return objects;
-    //             });
-    //         } else {
-    //             return object;
-    //         }
-    //     });
-    // }
-
     parseNode(data, nodeIndex) {
         let nodeDef = data.nodes[nodeIndex],
             parsePromises = [];

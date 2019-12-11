@@ -14,6 +14,6 @@ camera.lookAt(0, 0, 0);
 let glTFLoader = new GLTFLoader();
 glTFLoader.load('./gltf2/cube/Cube.gltf').then(function (gltf) {
     console.log('gltf:', gltf);
-    // let scene = gltf.scenes[gltf.scene];
-    // renderer.render(scene, camera);
+    let scene = gltf.scenes[gltf.scene];
+    renderer.render(scene, camera);
 });
