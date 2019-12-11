@@ -1,35 +1,24 @@
-import request from './request';
 import GLTFParser from './GLTFParser';
+import path from 'path';
 
 export default class GLTFLoader {
 
+    constructor() {
+        this._parser = new GLTFParser();
+    }
+
     load(url) {
-        return request({url}).then((xhr) => {
-            return this.parse(xhr.response);
+        return fetch(url).then(function (res) {
+            if (res.ok) {
+                return res.json();
+            } else {
+                throw('Network response was not ok.');
+            }
+        }).then((json) => {
+            let baseUrl = path.dirname(url);
+            this._parser.setBaseUrl(baseUrl);
+            return this._parser.parse(json);
         });
     }
 
-    // 将返回结果转成json
-    parse(data) {
-        if (typeof data === 'string') {
-            data = JSON.parse(data);
-        }
-
-        let parser = new GLTFParser();
-        return parser.parse(data);
-    }
-
-    // loadBin(url) {
-    //     let xhr = new XMLHttpRequest();
-    //     xhr.responseType = 'arraybuffer';
-    //     xhr.addEventListener('load', () => {
-    //         if (xhr.status === 200 || xhr.status === 0) {
-    //             let content = this.decodeText(new Uint8Array(xhr.response)),
-    //             data = JSON.parse(content);
-    //             console.log(data);
-    //         }
-    //     });
-    //     xhr.open('GET', url, true);
-    //     xhr.send();
-    // }
 }
