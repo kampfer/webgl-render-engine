@@ -223,14 +223,8 @@ export default class GLTFParser {
     }
 
     parseBufferView(data, bufferViewIndex) {
-        let bufferViewDef = data.bufferViews[bufferViewIndex],
-            bufferDef = data.buffers[bufferViewDef.buffer];
-        return this.request(bufferDef.uri)
-            .then(function (res) {
-                if (res.ok) {
-                    return res.arrayBuffer();
-                }
-            })
+        let bufferViewDef = data.bufferViews[bufferViewIndex];
+        return this.parseBuffer(data, bufferViewDef.buffer)
             .then(function (buffer) {
                 let byteLength = bufferViewDef.byteLength || 0,
                     byteOffset = bufferViewDef.byteOffset || 0,
@@ -238,6 +232,35 @@ export default class GLTFParser {
                     end = byteOffset + byteLength;
                 return buffer.slice(start, end);
             });
+    }
+
+    parseBuffer(data, bufferIndex) {
+        let bufferDef = data.buffers[bufferIndex],
+            dataURLReg = /^data:(.*?)(;base64)?,(.*)/,
+            execRet = dataURLReg.exec(bufferDef.uri);
+        if (execRet) {
+            let content = execRet[3],
+                isBase64 = !!execRet[2],
+                type = execRet[1];
+
+            content = decodeURIComponent(content);
+            if (isBase64) {
+                content = atob(content);
+            }
+            
+            let bufferView = new Uint8Array(content.length);
+            for(let i = 0, l = content.length; i < l; i++) {
+                bufferView[i] = content.charCodeAt(i);
+            }
+            return Promise.resolve(bufferView.buffer);
+        } else {
+            return this.request(bufferDef.uri)
+                .then(function (res) {
+                    if (res.ok) {
+                        return res.arrayBuffer();
+                    }
+                });
+        }
     }
 
 }
