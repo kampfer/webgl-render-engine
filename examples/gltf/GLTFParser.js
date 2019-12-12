@@ -96,26 +96,42 @@ export default class GLTFParser {
             parsePromises.push(this.parseCamera(data, nodeDef.camera));
         }
 
-        return Promise.all(parsePromises).then((objects) => {
-            let object = objects[0];
-            if (nodeDef.children !== undefined) {
-                return Promise.all(
-                    nodeDef.children.map((childIndex) => {
-                        // return this._buildNodeHierarchy(data, childIndex, object);
-                        return this.parseNode(data, childIndex);
-                    })
-                ).then((childNodes) => {
-                    childNodes.forEach((childNode) => {
-                        object.add(childNode);
+        return Promise.all(parsePromises)
+            .then((objects) => {
+                if (objects.length === 0) {
+                    return new GraphObject();
+                } else if(objects.length === 1) {
+                    return objects[0];
+                } else {
+                    // let object = new Group();
+                    let object = new GraphObject();
+                    objects.forEach((childObject) => {
+                        object.add(childObject);
                     });
                     return object;
-                });
-            } else {
+                }
+            })
+            .then((object) => {
+                if(nodeDef.children !== undefined) {
+                    return Promise.all(
+                        nodeDef.children.map((childNodeIndex) => {
+                            return this.parseNode(data, childNodeIndex);
+                        })
+                    )
+                    .then((childObjects) => {
+                        childObjects.forEach((childObject) => {
+                            object.add(childObject);
+                        });
+                        return object;
+                    });
+                }
                 return object;
-            }
-        });
+            });
     }
 
+    // 如果primitives是空数组，返回一个GraphObject实例
+    // 如果primitives仅有1个元素，返回该元素
+    // 如果primitives包含1个以上的元素，返回一个GraphObject实例，所有元素都是GraphObject实例的子元素
     parseMesh(data, meshIndex) {
         let meshDef = data.meshes[meshIndex],
             primitives = meshDef.primitives;
