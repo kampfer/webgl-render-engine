@@ -7,9 +7,9 @@ export default class Geometry {
         this.colors = [];
         this.indices = [];
         this._attributes = {};
-        this.verticesNeedUpdate = true;
-        this.colorsNeedUpdate = true;
-        this.indicesNeedUpdate = true;
+        this.verticesNeedUpdate = false;
+        this.colorsNeedUpdate = false;
+        this.indicesNeedUpdate = false;
     }
 
     setIndex(v) {

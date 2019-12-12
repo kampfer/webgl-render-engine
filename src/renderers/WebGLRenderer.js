@@ -104,17 +104,11 @@ export default class WebGLRenderer {
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
             }
 
-            let count = object.geometry.getAttribute('position').count;
             if (index) {
                 gl.drawElements(gl.TRIANGLES, index.count, index.type, 0);
             } else {
-                if (object.type === 'Points') {
-                    gl.drawArrays(gl.POINTS, 0, count);
-                } else if (object.type === 'Line') {
-                    gl.drawArrays(gl.LINE_LOOP, 0, count);
-                } else if (object.type === 'Plane') {
-                    gl.drawArrays(gl.TRIANGLE_STRIP, 0, count);
-                }
+                let count = object.geometry.getAttribute('position').count;
+                gl.drawArrays(object.drawMode, 0, count);
             }
         }
     }

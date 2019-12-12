@@ -191,7 +191,7 @@ export default class GLTFParser {
                 let material = new Material({color: [0, 1, 1]});
 
                 let mesh = new Mesh(geometry, material);
-                mesh.drawMode = primitive.mode;
+                mesh.drawMode = primitive.mode === undefined ? 4 : primitive.mode;
 
                 return mesh;
             });

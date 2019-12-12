@@ -16,6 +16,7 @@ export default class {
                 break;
             case 'Line':
             case 'Plane':
+            case 'Mesh':
                 type = 'base';
                 break;
             case 'wireframe':
