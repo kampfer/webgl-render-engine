@@ -1,3 +1,5 @@
+import './main.less';
+
 import WebGLRenderer from '../../src/renderers/WebGLRenderer';
 import PerspectiveCamera from '../../src/cameras/PerspectiveCamera';
 import GLTFLoader from './GLTFLoader';
@@ -13,7 +15,7 @@ camera.lookAt(0, 0, 0);
 
 let glTFLoader = new GLTFLoader();
 // https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/2.0
-glTFLoader.load('./gltf2/Triangle/Triangle.gltf')
+glTFLoader.load('./gltf2/TriangleWithoutIndices/glTF-Embedded/TriangleWithoutIndices.gltf')
     .then(function (gltf) {
         console.log('gltf:', gltf);
         let scene = gltf.scenes[gltf.scene];
