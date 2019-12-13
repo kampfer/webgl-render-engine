@@ -1,14 +1,23 @@
-import EventEmitter from 'events';
+// import EventEmitter from 'events';
 import composable from './composable';
-import Mat4 from './math/mat4';
+import Mat4 from './math/Mat4';
+import Vec3 from './math/Vec3';
 
-export default composable(class GraphObject extends EventEmitter {
+export default composable(class GraphObject {
 
     constructor() {
-        super();
-        this.matrix = new Mat4();
+        this.matrix = new Mat4();   // local
+        this.worldMatrix = new Mat4();  // global
+        this.position = new Vec3();
+        this.scale = new Vec3(1, 1, 1);
+        this.rotation = null;
+        this.quaternion = null;
     }
 
     update() {}
+
+    updateMatrix() {
+        this.matrix.compose(this.position, this.quaternion, this.scale);
+    }
 
 });

@@ -14,8 +14,9 @@ camera.setPosition(0, 0, 10);
 camera.lookAt(0, 0, 0);
 
 let glTFLoader = new GLTFLoader();
+// https://gltf-viewer.donmccurdy.com/
 // https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/2.0
-glTFLoader.load('./gltf2/TriangleWithoutIndices/glTF-Embedded/TriangleWithoutIndices.gltf')
+glTFLoader.load('./gltf2/SimpleMeshes/SimpleMeshes.gltf')
     .then(function (gltf) {
         console.log('gltf:', gltf);
         let scene = gltf.scenes[gltf.scene];
