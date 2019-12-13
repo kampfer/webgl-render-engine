@@ -117,4 +117,4 @@ export default class WebGLRenderer {
         this._clearColor = color;
     }
 
-};
+}
