@@ -1,5 +1,9 @@
 import cross from './cross';
 import dot from './dot';
+import Vec3 from './Vec3';
+
+let _v = new Vec3(),
+    _m = new Mat4();
 
 export default class Mat4 {
 
@@ -20,7 +24,7 @@ export default class Mat4 {
         }
     }
 
-    set(src) {
+    copy(src) {
         let se = src.elements,
             te = this.elements;
 
@@ -35,33 +39,68 @@ export default class Mat4 {
         return this;
     }
 
-    multiply(other) {
-        if (other instanceof Mat4) {
-            let e = this.elements,
-                a = this.elements,
-                b = other.elements;
-            for(let i = 0; i < 4; i++) {
-                let a0 = a[i + 0],
-                    a1 = a[i + 4],
-                    a2 = a[i + 8],
-                    a3 = a[i + 12];
-                e[i + 0] = a0 * b[0] + a1 * b[1] + a2 * b[2] + a3 * b[3];
-                e[i + 4] = a0 * b[4] + a1 * b[5] + a2 * b[6] + a3 * b[7];
-                e[i + 8] = a0 * b[8] + a1 * b[9] + a2 * b[10] + a3 * b[11];
-                e[i + 12] = a0 * b[12] + a1 * b[13] + a2 * b[14] + a3 * b[15];
-            }
-        } else {
-            throw 'error!';
+    setFromArray(array) {
+        let te = this.elements;
+
+        for (let i = 0; i < 16; ++i) {
+          te[i] = array[i];
         }
+
         return this;
     }
 
-    det() {
+    multiply(m) {
+        return this.multiplyMatrices(this, m);
+    }
+
+    premultiply(m) {
+        return this.multiplyMatrices(m, this);
+    }
+
+    multiplyMatrices(a, b) {
+        let ae = a.elements;
+        let be = b.elements;
+        let te = this.elements;
+
+        let a11 = ae[ 0 ], a12 = ae[ 4 ], a13 = ae[ 8 ], a14 = ae[ 12 ];
+        let a21 = ae[ 1 ], a22 = ae[ 5 ], a23 = ae[ 9 ], a24 = ae[ 13 ];
+        let a31 = ae[ 2 ], a32 = ae[ 6 ], a33 = ae[ 10 ], a34 = ae[ 14 ];
+        let a41 = ae[ 3 ], a42 = ae[ 7 ], a43 = ae[ 11 ], a44 = ae[ 15 ];
+
+        let b11 = be[ 0 ], b12 = be[ 4 ], b13 = be[ 8 ], b14 = be[ 12 ];
+        let b21 = be[ 1 ], b22 = be[ 5 ], b23 = be[ 9 ], b24 = be[ 13 ];
+        let b31 = be[ 2 ], b32 = be[ 6 ], b33 = be[ 10 ], b34 = be[ 14 ];
+        let b41 = be[ 3 ], b42 = be[ 7 ], b43 = be[ 11 ], b44 = be[ 15 ];
+
+        te[ 0 ] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
+        te[ 4 ] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
+        te[ 8 ] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
+        te[ 12 ] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
+
+        te[ 1 ] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
+        te[ 5 ] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
+        te[ 9 ] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
+        te[ 13 ] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
+
+        te[ 2 ] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
+        te[ 6 ] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
+        te[ 10 ] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
+        te[ 14 ] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
+
+        te[ 3 ] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
+        te[ 7 ] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
+        te[ 11 ] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
+        te[ 15 ] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+
+        return this;
+    }
+
+    determinant() {
         
     }
 
     // 逆矩阵
-    setInverseOf(other) {}
+    setInverseOf() {}
 
     // 转置矩阵
     transpose() {
@@ -137,8 +176,6 @@ export default class Mat4 {
         return this;
     }
 
-    lookAt(eye, target, up) {}
-
     setPerspective(left, right, top, bottom, near, far) {
         let te = this.elements;
 
@@ -165,10 +202,63 @@ export default class Mat4 {
         return this;
     }
 
-    perspective(left, right, top, bottom, near, far) {}
+    // http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
+    // https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#transformationss
+    compose(position, quaternion, scale) {
+        let te = this.elements;
 
-    setOrtho(left, right, top, bottom, near, far) {}
+        let qx = quaternion.x, qy = quaternion.y, qz = quaternion.z, qw = quaternion.w;
+        let sx = scale.x, sy = scale.y, sz = scale.z;
 
-    ortho() {}
+        te[0] = (1 - 2 * qy * qy - 2 * qz * qz) * sx;
+        te[1] = (2 * qx * qy + 2 * qz * qw) * sx;
+        te[2] = (2 * qx * qz - 2 * qy * qw) * sx;
+        te[3] = 0;
+
+        te[4] = (2 * qx * qy - 2 * qz * qw) * sy;
+        te[5] = (1 - 2 * qx * qx - 2 * qz * qz) * sy;
+        te[6] = (2 * qy * qz + 2 * qx * qw) * sy;
+        te[7] = 0;
+
+        te[8] = (2 * qx * qz + 2 * qy * qw) * sz;
+        te[9] = (2 * qy * qz - 2 * qx * qw) * sz;
+        te[10] = (1 - 2 * qx * qx - 2 * qy * qy) * sz;
+        te[11] = 0;
+
+        te[12] = position.x;
+        te[13] = position.y;
+        te[14] = position.z;
+        te[15] = 1;
+
+        return this;
+    }
+
+    // https://math.stackexchange.com/questions/237369/given-this-transformation-matrix-how-do-i-decompose-it-into-translation-rotati
+    decompose(position, quaternion, scale) {
+        let te = this.elements;
+
+        let sx = _v.set(te[0], te[1], te[2]).length(),
+            sy = _v.set(te[4], te[5], te[6]).length(),
+            sz = _v.set(te[8], te[9], te[10]).length();
+
+        scale.x = sx;
+        scale.y = sy;
+        scale.z = sz;
+
+        position.x = te[12];
+        position.y = te[13];
+        position.z = te[14];
+
+        _m.copy(this);
+
+        let me = _m.elements;
+        me[0] /= sx; me[1] /= sx; me[2] /= sx;
+        me[4] /= sy; me[5] /= sy; me[6] /= sy;
+        me[8] /= sz; me[9] /= sz; me[10] /= sz;
+
+        quaternion.setFromRotationMatrix(_m);
+
+        return this;
+    }
 
 }

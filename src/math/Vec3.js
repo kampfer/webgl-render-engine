@@ -6,44 +6,34 @@ export default class Vec3 {
         this._z = z;
     }
 
-    set(x, y, z) {
-        this._x = x;
-        this._y = y;
-        this._z = z;
-        return this;
+    get x() {
+        return this._x;
     }
 
-    setX(x) {
-        this._x = x;
-        return this;
+    set x(v) {
+        this._x = v;
     }
 
-    setY(y) {
-        this._y = y;
-        return this;
+    get y() {
+        return this._y;
     }
 
-    setZ(z) {
-        this._z = z;
-        return this;
+    set y(v) {
+        this._y = v;
+    }
+
+    get z() {
+        return this._z;
+    }
+
+    set z(v) {
+        this._z = v;
     }
 
     setFromArray(array, offset = 0) {
         this._x = array[offset];
         this._y = array[offset + 1];
         this._z = array[offset + 2]
-    }
-
-    getX() {
-        return this._x;
-    }
-
-    getY() {
-        return this._y;
-    }
-
-    getZ() {
-        return this._z;
     }
 
     getComponent(index) {
@@ -60,9 +50,9 @@ export default class Vec3 {
     }
 
     add(v) {
-        this._x += v.getX();
-        this._y += v.getY();
-        this._z += v.getZ();
+        this._x += v.x;
+        this._y += v.y;
+        this._z += v.z;
         return this;
     }
 
@@ -74,9 +64,9 @@ export default class Vec3 {
     }
 
     sub(v) {
-        this._x -= v.getX();
-        this._y -= v.getY();
-        this._z -= v.getZ();
+        this._x -= v.x;
+        this._y -= v.y;
+        this._z -= v.z;
         return this;
     }
 
@@ -85,9 +75,9 @@ export default class Vec3 {
     }
 
     multiply(v) {
-        this._x *= v.getX();
-        this._y *= v.getY();
-        this._z *= v.getZ();
+        this._x *= v.x;
+        this._y *= v.y;
+        this._z *= v.z;
         return this;
     }
 
@@ -99,14 +89,18 @@ export default class Vec3 {
     }
 
     divide(v) {
-        this._x /= v.getX();
-        this._y /= v.getY();
-        this._z /= v.getZ();
+        this._x /= v.x;
+        this._y /= v.y;
+        this._z /= v.z;
         return this;
     }
 
     divideScalar(s) {
         return this.multiplyScalar(1 / s);
+    }
+
+    length() {
+        return Math.sqrt(this._x * this._x + this._y * this._y + this._z * this._z);
     }
 
 }
