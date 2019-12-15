@@ -10,6 +10,10 @@ export default composable(class GraphObject {
         this.matrix = new Mat4();   // local
         this.worldMatrix = new Mat4();  // global
 
+        // threejs 将viewMatrix分解到position、quaternion储存
+        // 这里我暂时简单处理：lookat方法改变viewMatrix
+        this.viewMatrix = new Mat4();
+
         this.position = new Vec3();
         this.scale = new Vec3(1, 1, 1);
         this.rotation = null;
@@ -27,6 +31,10 @@ export default composable(class GraphObject {
 
     updateWorldMatrix() {
         this._worldMatrixNeedsUpdate = false;
+    }
+
+    lookAt(x, y, z) {
+        this.viewMatrix.setLookAt(this.position.x, this.position.y, this.position.z, x, y, z, 0, 1, 0);
     }
 
 });

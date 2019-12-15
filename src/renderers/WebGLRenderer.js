@@ -85,6 +85,10 @@ export default class WebGLRenderer {
         for(let i = 0; i < scene.children.length; i++) {
             let object = scene.children[i];
 
+            if (object.isCamera) {
+                continue;
+            }
+
             let programInfo = this._programManager.getProgram(object),
                 program = programInfo.getProgram();
             if (this._currentProgram !== program) {

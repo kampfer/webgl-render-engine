@@ -5,6 +5,8 @@ import Material from '../../src/materials/Material';
 import path from 'path';
 import { BufferAttribute } from '../../src/renderers/WebGLAttribute';
 import GraphObject from '../../src/GraphObject';
+import PerspectiveCamera from '../../src/cameras/PerspectiveCamera';
+import OrthographicCamera from '../../src/cameras/OrthographicCamera';
 
 /*
  * 文档：https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#properties-reference
@@ -122,7 +124,7 @@ export default class GLTFParser {
                     }
 
                     if (nodeDef.rotation) {
-                        object.quaternion.setFromArray(...nodeDef.rotation);
+                        object.quaternion.setFromArray(nodeDef.rotation);
                     }
 
                     if (nodeDef.scale) {
@@ -181,7 +183,15 @@ export default class GLTFParser {
 
     parseCamera(data, cameraIndex) {
         let cameraDef = data.cameras[cameraIndex];
-        return cameraDef;
+        if (cameraDef.type === 'perspective') {
+            let {yfov, aspectRatio, zfar, znear} = cameraDef.perspective;
+            return new PerspectiveCamera(yfov, aspectRatio, znear, zfar);
+        } else if (cameraDef.type === 'orthographic') {
+            let {xmag, ymag, zfar, znear} = cameraDef.orthographic;
+            return new OrthographicCamera(-xmag, xmag, ymag, -ymag, zfar, znear);
+        } else {
+            throw '不支持的camera类型';
+        }
     }
 
     parsePrimitive(data, primitive) {

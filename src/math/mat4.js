@@ -96,9 +96,6 @@ export default class Mat4 {
         
     }
 
-    // 逆矩阵
-    setInverseOf() {}
-
     // 转置矩阵
     transpose() {
         let e = this.elements,
@@ -173,6 +170,8 @@ export default class Mat4 {
         return this;
     }
 
+    // 《3D游戏与计算机图形学中的数学方法》 - 第5章 - 3D引擎中的几何学 - P70
+    // 暂时未考虑远锥平面无穷远的情况
     setPerspective(left, right, top, bottom, near, far) {
         let te = this.elements;
 
@@ -195,6 +194,34 @@ export default class Mat4 {
         te[13] = 0;
         te[14] = -2 * near * far / (far - near);
         te[15] = 0;
+
+        return this;
+    }
+
+    // 《3D游戏与计算机图形学中的数学方法》 - 第5章 - 3D引擎中的几何学 - P73
+    // 暂时未考虑远锥平面无穷远的情况
+    setOrthographic(left, right, top, bottom, near, far) {
+        let te = this.elements;
+
+        te[0] = 2 / (right - left);
+        te[1] = 0;
+        te[2] = 0;
+        te[3] = 0;
+
+        te[4] = 0;
+        te[5] = 2 / (top - bottom);
+        te[6] = 0;
+        te[7] = 0;
+
+        te[8] = 0;
+        te[9] = 0;
+        te[10] = -2 / (far - near);
+        te[11] = 0;
+
+        te[12] = - (right + left) / (right - left);
+        te[13] = - (top + bottom) / (top - bottom);
+        te[14] = - (far + near) / (far - near);
+        te[15] = 1;
 
         return this;
     }
