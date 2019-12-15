@@ -1,6 +1,6 @@
 export default class Quaternion {
 
-    constuctor(x = 0, y = 0, z = 0, w = 1) {
+    constructor(x = 0, y = 0, z = 0, w = 1) {
         this._x = x;
         this._y = y;
         this._z = z;
@@ -45,6 +45,13 @@ export default class Quaternion {
         this._z = z;
         this._w = w;
         return this;
+    }
+
+    setFromArray(array) {
+        this._x = array[0];
+        this._y = array[1];
+        this._z = array[2];
+        this._w = array[3];
     }
 
     setFromEuler() {}

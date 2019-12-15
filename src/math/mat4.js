@@ -2,9 +2,6 @@ import cross from './cross';
 import dot from './dot';
 import Vec3 from './Vec3';
 
-let _v = new Vec3(),
-    _m = new Mat4();
-
 export default class Mat4 {
 
     constructor(src) {
@@ -262,3 +259,6 @@ export default class Mat4 {
     }
 
 }
+
+let _v = new Vec3(),
+    _m = new Mat4();    // 在头部声明_m会报错，所以挪到这里

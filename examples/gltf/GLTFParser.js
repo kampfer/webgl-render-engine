@@ -98,18 +98,41 @@ export default class GLTFParser {
 
         return Promise.all(parsePromises)
             .then((objects) => {
+                let object;
+
                 if (objects.length === 0) {
-                    return new GraphObject();
+                    object = new GraphObject();
                 } else if(objects.length === 1) {
-                    return objects[0];
+                    object = objects[0];
                 } else {
-                    // let object = new Group();
-                    let object = new GraphObject();
+                    // object = new Group();
+                    object = new GraphObject();
                     objects.forEach((childObject) => {
                         object.add(childObject);
                     });
-                    return object;
                 }
+
+                if (nodeDef.matrix) {
+                    object.matrix.set(nodeDef.matrix);
+                }
+
+                if (nodeDef.translation || nodeDef.rotation || nodeDef.scale) {
+                    if (nodeDef.translation) {
+                        object.position.setFromArray(nodeDef.translation);
+                    }
+
+                    if (nodeDef.rotation) {
+                        object.quaternion.setFromArray(...nodeDef.rotation);
+                    }
+
+                    if (nodeDef.scale) {
+                        object.scale.setFromArray(nodeDef.translation);
+                    }
+
+                    object.updateMatrix();
+                }
+
+                return object;
             })
             .then((object) => {
                 if(nodeDef.children !== undefined) {

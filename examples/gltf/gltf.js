@@ -13,10 +13,16 @@ let camera = new PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1
 camera.setPosition(0, 0, 10);
 camera.lookAt(0, 0, 0);
 
-let glTFLoader = new GLTFLoader();
+let glTFLoader = new GLTFLoader(),
+    gltfPath = location.search.match(/\?gltf=(.*)/)[1];
+
+if (gltfPath === undefined) {
+    gltfPath = './gltf2/Triangle/Triangle.gltf';
+}
+
 // https://gltf-viewer.donmccurdy.com/
 // https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/2.0
-glTFLoader.load('./gltf2/SimpleMeshes/SimpleMeshes.gltf')
+glTFLoader.load(gltfPath)
     .then(function (gltf) {
         console.log('gltf:', gltf);
         let scene = gltf.scenes[gltf.scene];
