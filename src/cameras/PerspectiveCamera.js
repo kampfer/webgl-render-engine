@@ -17,7 +17,7 @@ export default class PerspectiveCamera extends Camera {
 
     updateProjectionMatrix() {
         let near = this.near,
-            top = near * Math.tan(0.5 * this.fovy * (Math.PI / 180)),
+            top = near * Math.tan(0.5 * this.fovy),
             height = 2 * top,
             width = this.aspect * height,
             left = -0.5 * width;

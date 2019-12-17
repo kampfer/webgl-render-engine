@@ -5,9 +5,11 @@ import PerspectiveCamera from '../../src/cameras/PerspectiveCamera';
 import GLTFLoader from './GLTFLoader';
 
 let glTFLoader = new GLTFLoader(),
-    gltfPath = location.search.match(/\?gltf=(.*)/)[1];
+    gltfPath = location.search.match(/\?gltf=(.*)/);
 
-if (gltfPath === undefined) {
+if (gltfPath) {
+    gltfPath = gltfPath[1];
+} else {
     gltfPath = './gltf2/Triangle/Triangle.gltf';
 }
 
@@ -31,8 +33,8 @@ glTFLoader.load(gltfPath)
         if (cameras.length > 0 && cameras[index]) {
             camera = cameras[index];
         } else {
-            camera = new PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 100);
-            camera.positon.set(0, 0, 5);
+            camera = new PerspectiveCamera(30 * (Math.PI / 180), window.innerWidth / window.innerHeight, 1, 100);
+            camera.position.set(0, 0, 5);
         }
         camera.lookAt(0, 0, 0);
 

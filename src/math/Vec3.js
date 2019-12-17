@@ -30,6 +30,12 @@ export default class Vec3 {
         this._z = v;
     }
 
+    set(x, y, z) {
+        this._x = x;
+        this._y = y;
+        this._z = z;
+    }
+
     setFromArray(array, offset = 0) {
         this._x = array[offset];
         this._y = array[offset + 1];

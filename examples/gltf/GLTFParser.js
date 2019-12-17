@@ -231,27 +231,70 @@ export default class GLTFParser {
     }
 
     parseAccessor(data, accessorIndex) {
-        let accessorDef = data.accessors[accessorIndex];
+        let accessorDef = data.accessors[accessorIndex],
+            parsePromises = [];
 
-        if (accessorDef.bufferView === undefined) {
+        if (accessorDef.bufferView === undefined && accessorDef.sparse === undefined) {
             return Promise.resolve(null);
         }
 
-        return this.parseBufferView(data, accessorDef.bufferView)
-            .then(function (arrayBuffer) {
-                let bufferViewDef = data.bufferViews[accessorDef.bufferView],
+        if (accessorDef.bufferView !== undefined) {
+            parsePromises.push(this.parseBufferView(data, accessorDef.bufferView));
+        } else {
+            parsePromises.push(null);
+        }
+
+        if (accessorDef.sparse !== undefined) {
+            parsePromises.push(this.parseBufferView(data, accessorDef.sparse.indices.bufferView));
+            parsePromises.push(this.parseBufferView(data, accessorDef.sparse.values.bufferView));
+        }
+
+        return Promise.all(parsePromises)
+            .then(function (arrayBuffers) {
+                let arrayBuffer = arrayBuffers[0],
                     TypedArray = componentTypeToTypedArray[accessorDef.componentType],
-                    byteOffset = accessorDef.byteOffset,
-                    byteStride = bufferViewDef.byteStride,
                     itemSize = accessorTypeToNumComponentsMap[accessorDef.type],
                     itemBytes = itemSize * TypedArray.BYTES_PER_ELEMENT,
+                    byteOffset = accessorDef.byteOffset,
+                    bufferView = data.bufferViews[accessorDef.bufferView],
+                    byteStride = bufferView.byteStride,
                     normalized = accessorDef.normalized === true,
-                    array = new TypedArray(arrayBuffer, byteOffset, accessorDef.count * itemSize);
-                if (byteStride !== undefined && byteStride !== itemBytes ) {
-                    // The buffer is not interleaved if the stride is the item size in bytes.
+                    bufferAttribute,
+                    array;
+
+                if (byteStride !== undefined && byteStride !== itemBytes ) {    // The buffer is not interleaved if the stride is the item size in bytes.
+                    // 
                 } else {
-                    return new BufferAttribute(array, itemSize, normalized);
+                    if (arrayBuffer === null) {
+                        array = new TypedArray(accessorDef.count * itemSize);
+                    } else {
+                        array = new TypedArray(arrayBuffer, byteOffset, accessorDef.count * itemSize);
+                    }
+                    bufferAttribute = new BufferAttribute(array, itemSize, normalized);
                 }
+
+                if (accessorDef.sparse !== undefined) {
+                    let indicesItemSize = accessorTypeToNumComponentsMap.SCALAR,
+                        IndicesTypedArray = componentTypeToTypedArray[accessorDef.sparse.indices.componentType],
+                        valuesItemSize = itemSize,
+                        ValuesTypedArray = TypedArray,
+                        indicesOffetByte = accessorDef.sparse.indices.byteOffset,
+                        valuesOffsetByte = accessorDef.sparse.values.byteOffset,
+                        sparseIndices = new IndicesTypedArray(arrayBuffers[1], indicesOffetByte, accessorDef.sparse.count * indicesItemSize),
+                        sparseValues = new ValuesTypedArray(arrayBuffers[2], valuesOffsetByte, accessorDef.sparse.count * valuesItemSize);
+
+                    for(let i = 0, l = sparseIndices.length; i < l; i++) {
+                        let index = sparseIndices[i];
+
+                        bufferAttribute.array[index * valuesItemSize] = sparseValues[i * valuesItemSize];
+                        if (valuesItemSize >= 2) bufferAttribute.array[index * valuesItemSize + 1] = sparseValues[i * valuesItemSize + 1];
+                        if (valuesItemSize >= 3) bufferAttribute.array[index * valuesItemSize + 2] = sparseValues[i * valuesItemSize + 2];
+                        if (valuesItemSize >= 4) bufferAttribute.array[index * valuesItemSize + 3] = sparseValues[i * valuesItemSize + 3];
+                    }
+                    
+                }
+
+                return bufferAttribute;
             });
     }
 
