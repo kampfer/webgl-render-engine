@@ -8,12 +8,12 @@ export default class WebGLRenderer {
         this._canvas = document.createElement('canvas');
         this._pixelRatio = window.devicePixelRatio;
         this._gl = webglUtils.getWebGLContext(this._canvas);
+        this.domElement = this._canvas;
+
         this._clearColor = [0, 0, 0, 1];
 
         this._programManager = new WebGLProgramManager(this._gl);
         this._bufferManager = new WebGLBufferManager(this._gl);
-
-        this.domElement = this._canvas;
     }
 
     getContext() {
@@ -82,12 +82,10 @@ export default class WebGLRenderer {
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        for(let i = 0; i < scene.children.length; i++) {
-            let object = scene.children[i];
+        let renderList = this.getRenderList(scene);
 
-            if (object.isCamera) {
-                continue;
-            }
+        for(let i = 0; i < renderList.length; i++) {
+            let object = renderList[i];
 
             let programInfo = this._programManager.getProgram(object),
                 program = programInfo.getProgram();
@@ -119,6 +117,21 @@ export default class WebGLRenderer {
 
     setClearColor(color) {
         this._clearColor = color;
+    }
+
+    getRenderList(object) {
+        let list = [];
+
+        if (object.type === 'Mesh') {
+            list.push(object);
+        }
+
+        let children = object.children;
+        for(let i = 0, l = children.length; i < l; i++) {
+            list.push(...this.getRenderList(children[i]));
+        }
+
+        return list;
     }
 
 }

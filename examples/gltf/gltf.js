@@ -34,7 +34,7 @@ glTFLoader.load(gltfPath)
             camera = cameras[index];
         } else {
             camera = new PerspectiveCamera(30 * (Math.PI / 180), window.innerWidth / window.innerHeight, 1, 100);
-            camera.position.set(0, 0, 5);
+            camera.position.set(1, 1, 5);
         }
         camera.lookAt(0, 0, 0);
 

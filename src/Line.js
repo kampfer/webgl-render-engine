@@ -14,4 +14,4 @@ export default class Line extends GraphObject {
         this.material.update();
     }
 
-};
+}

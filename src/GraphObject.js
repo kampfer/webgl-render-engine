@@ -1,12 +1,14 @@
 // import EventEmitter from 'events';
-import composable from './composable';
 import Mat4 from './math/Mat4';
 import Vec3 from './math/Vec3';
 import Quaternion from './math/Quaternion';
 
-export default composable(class GraphObject {
+export default class GraphObject {
 
     constructor() {
+        this.children = [];
+        this.parent = null;
+
         this.matrix = new Mat4();   // local
         this.worldMatrix = new Mat4();  // global
 
@@ -20,6 +22,23 @@ export default composable(class GraphObject {
         this.quaternion = new Quaternion();
 
         this._worldMatrixNeedsUpdate = false;
+    }
+
+    add(object) {
+        if (object.parent != null) {
+            object.parent.remove(object);
+        }
+
+        object.parent = this;
+        this.children.push(object);
+    }
+
+    remove(object) {
+        let index = this.children.indexOf(object);
+        if (index >= 0) {
+            object.parent = null;
+            this.children.splice(index, 1);
+        }
     }
 
     update() {}
@@ -37,4 +56,4 @@ export default composable(class GraphObject {
         this.viewMatrix.setLookAt(this.position.x, this.position.y, this.position.z, x, y, z, 0, 1, 0);
     }
 
-});
+}

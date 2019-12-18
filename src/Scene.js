@@ -1,5 +1,5 @@
-import composable from './composable';
+import GraphObject from './GraphObject';
 
-export default composable(class Scene {
+export default class Scene extends GraphObject {
 
-});
+}

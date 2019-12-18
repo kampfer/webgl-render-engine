@@ -115,7 +115,7 @@ export default class GLTFParser {
                 }
 
                 if (nodeDef.matrix) {
-                    object.matrix.set(nodeDef.matrix);
+                    object.matrix.setFromArray(nodeDef.matrix);
                 }
 
                 if (nodeDef.translation || nodeDef.rotation || nodeDef.scale) {

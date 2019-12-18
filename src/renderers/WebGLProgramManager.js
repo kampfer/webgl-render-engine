@@ -1,6 +1,6 @@
 import WebGLProgram from './WebGLProgram';
 
-export default class {
+export default class WebGLProgramManager {
 
     constructor(gl) {
         this._gl = gl;
@@ -23,7 +23,7 @@ export default class {
                 type = 'wireframe';
                 break;
             default:
-                throw '不支持的类型';
+                type = 'base';
         }
         return type;
     }
