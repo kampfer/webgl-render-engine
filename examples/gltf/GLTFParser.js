@@ -220,14 +220,25 @@ export default class GLTFParser {
         }
 
         return Promise.all(parsePromises)
-            .then(function () {
-                let material = new Material({color: [0, 1, 1]});
-
+            .then(() => {
+                return this.parseMaterial(data, primitive.material);
+            })
+            .then(function (material) {
                 let mesh = new Mesh(geometry, material);
                 mesh.drawMode = primitive.mode === undefined ? 4 : primitive.mode;
-
                 return mesh;
             });
+    }
+
+    parseMaterial(data, MaterialIndex) {
+        let materialDef = data.materials[MaterialIndex],
+            material = new Material();
+
+        material.color = materialDef.pbrMetallicRoughness.baseColorFactor || [1, 1, 1, 1];
+        material.metallicFactor = materialDef.pbrMetallicRoughness.metallicFactor || 1;
+        material.roughnessFactor = materialDef.pbrMetallicRoughness.roughnessFactor || 1;
+        
+        return material;
     }
 
     parseAccessor(data, accessorIndex) {
