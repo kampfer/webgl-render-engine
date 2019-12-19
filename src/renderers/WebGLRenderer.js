@@ -70,6 +70,7 @@ export default class WebGLRenderer {
         let gl = this._gl,
             material = object.material,
             programUniforms = program.getUniforms();
+
         gl.uniformMatrix4fv(programUniforms.modelMatrix, false, object.matrix.elements);
         gl.uniformMatrix4fv(programUniforms.viewMatrix, false, camera.viewMatrix.elements);
         gl.uniformMatrix4fv(programUniforms.projectionMatrix, false, camera.projectionMatrix.elements);

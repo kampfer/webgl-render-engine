@@ -13,3 +13,8 @@ glsl命名规范：限定符_驼峰命名
 
 类、接口的划分原则：
 
+
+# PBR文档
+[Physically Based Rendering: From Theory To Implementation](http://www.pbr-book.org/3ed-2018/Introduction.html)
+[PBR（中文版本）](https://learnopengl-cn.github.io/07%20PBR/01%20Theory/)
+[PBR](https://learnopengl.com/PBR/Theory)
