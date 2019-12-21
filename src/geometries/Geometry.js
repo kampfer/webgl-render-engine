@@ -1,4 +1,4 @@
-import { Float32BufferAttribute, Uint8BufferAttribute } from '../renderers/WebGLAttribute';
+import BufferAttribute from '../renderers/WebGLAttribute';
 
 export default class Geometry {
 
@@ -36,17 +36,17 @@ export default class Geometry {
 
     update() {
         if (this.verticesNeedUpdate === true) {
-            this.setAttribute('position', new Float32BufferAttribute(this.vertices, 3, false));
+            this.setAttribute('position', new BufferAttribute(new Float32Array(this.vertices), 3, false));
             this.verticesNeedUpdate = false;
         }
 
         if (this.colorsNeedUpdate === true) {
-            this.setAttribute('color', new Float32BufferAttribute(this.colors, 3, false));
+            this.setAttribute('color', new BufferAttribute(new Float32Array(this.colors), 3, false));
             this.colorsNeedUpdate = false;
         }
 
         if (this.indicesNeedUpdate === true && this.indices.length > 0) {
-            this.setIndex(new Uint8BufferAttribute(this.indices, 1, false));
+            this.setIndex(new BufferAttribute(new Int8Array(this.indices), 1, false));
             this.indicesNeedUpdate = false;
         }
     }

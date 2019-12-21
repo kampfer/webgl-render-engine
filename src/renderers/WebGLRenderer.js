@@ -39,6 +39,7 @@ export default class WebGLRenderer {
         this._gl.viewport(x, y, width, height);
     }
 
+    // TODO 每次初始化完成后需要禁用不再使用的attribute
     setAttributes(program, object) {
         let gl = this._gl,
             programAttributes = program.getAttributes(),    // name - addr
@@ -55,11 +56,15 @@ export default class WebGLRenderer {
                 if (geometryAttribute) {
                     let buffer = this._bufferManager.get(geometryAttribute),
                         itemSize = geometryAttribute.itemSize,
-                        type = geometryAttribute.type,
-                        normalized = geometryAttribute.normalized;
+                        type = geometryAttribute.glType,
+                        target = geometryAttribute.target,
+                        normalized = geometryAttribute.normalized,
+                        stride = geometryAttribute.stride,
+                        offset = geometryAttribute.offset;
+
                     gl.enableVertexAttribArray(programAttribute);
-                    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-                    gl.vertexAttribPointer(programAttribute, itemSize, type, normalized, 0, 0);
+                    gl.bindBuffer(target, buffer);
+                    gl.vertexAttribPointer(programAttribute, itemSize, type, normalized, stride, offset);
                 }
 
             }
@@ -113,7 +118,7 @@ export default class WebGLRenderer {
             }
 
             if (index) {
-                gl.drawElements(gl.TRIANGLES, index.count, index.type, 0);
+                gl.drawElements(gl.TRIANGLES, index.count, index.glType, 0);
             } else {
                 let count = object.geometry.getAttribute('position').count;
                 gl.drawArrays(object.drawMode, 0, count);

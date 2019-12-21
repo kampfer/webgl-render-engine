@@ -15,6 +15,7 @@ if (gltfPath) {
 
 // https://gltf-viewer.donmccurdy.com/
 // https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/2.0
+// https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#properties-reference
 glTFLoader.load(gltfPath)
     .then(function (gltf) {
         console.log('gltf:', gltf);

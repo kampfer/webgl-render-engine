@@ -3,14 +3,10 @@ import Mesh from '../../src/Mesh';
 import Geometry from '../../src/geometries/Geometry';
 import Material from '../../src/materials/Material';
 import path from 'path';
-import { BufferAttribute } from '../../src/renderers/WebGLAttribute';
+import BufferAttribute from '../../src/renderers/WebGLAttribute';
 import GraphObject from '../../src/GraphObject';
 import PerspectiveCamera from '../../src/cameras/PerspectiveCamera';
 import OrthographicCamera from '../../src/cameras/OrthographicCamera';
-
-/*
- * 文档：https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#properties-reference
- */
 
 const attributeNameMap = {
     'POSITION': 'position',
@@ -200,10 +196,10 @@ export default class GLTFParser {
             geometry = new Geometry();
 
         for(let gltfAttributeName in attributes) {
-            let attributeName = attributeNameMap[gltfAttributeName],
-                accessIndex = attributes[gltfAttributeName];
+            let attributeName = attributeNameMap[gltfAttributeName],    // 将gltf定义的attribute name映射到render engine定义的name
+                accessorIndex = attributes[gltfAttributeName];
             parsePromises.push(
-                this.parseAccessor(data, accessIndex)
+                this.parseAccessor(data, accessorIndex)
                     .then(function (bufferAttribute) {
                         geometry.setAttribute(attributeName, bufferAttribute);
                     })
@@ -231,13 +227,17 @@ export default class GLTFParser {
     }
 
     parseMaterial(data, MaterialIndex) {
-        let materialDef = data.materials[MaterialIndex],
-            material = new Material();
+        let material = new Material();
 
-        material.color = materialDef.pbrMetallicRoughness.baseColorFactor || [1, 1, 1, 1];
-        material.metallicFactor = materialDef.pbrMetallicRoughness.metallicFactor || 1;
-        material.roughnessFactor = materialDef.pbrMetallicRoughness.roughnessFactor || 1;
-        
+        if (data.materials && data.materials[MaterialIndex]) {
+            let materialDef = data.materials[MaterialIndex];
+            material.color = materialDef.pbrMetallicRoughness.baseColorFactor || [1, 1, 1, 1];
+            material.metallicFactor = materialDef.pbrMetallicRoughness.metallicFactor || 1;
+            material.roughnessFactor = materialDef.pbrMetallicRoughness.roughnessFactor || 1;
+        } else {
+            material.color = [1, 1, 1, 1];
+        }
+
         return material;
     }
 
@@ -274,15 +274,15 @@ export default class GLTFParser {
                     array;
 
                 if (byteStride !== undefined && byteStride !== itemBytes ) {    // The buffer is not interleaved if the stride is the item size in bytes.
-                    // 
+                    array = new TypedArray(arrayBuffer, 0, accessorDef.count * byteStride / TypedArray.BYTES_PER_ELEMENT);
                 } else {
                     if (arrayBuffer === null) {
                         array = new TypedArray(accessorDef.count * itemSize);
                     } else {
-                        array = new TypedArray(arrayBuffer, byteOffset, accessorDef.count * itemSize);
+                        array = new TypedArray(arrayBuffer, 0);
                     }
-                    bufferAttribute = new BufferAttribute(array, itemSize, normalized);
                 }
+                bufferAttribute = new BufferAttribute(array, bufferView.target, itemSize, normalized, byteStride, byteOffset);
 
                 if (accessorDef.sparse !== undefined) {
                     let indicesItemSize = accessorTypeToNumComponentsMap.SCALAR,
