@@ -3,6 +3,7 @@ import './main.less';
 import WebGLRenderer from '../../src/renderers/WebGLRenderer';
 import PerspectiveCamera from '../../src/cameras/PerspectiveCamera';
 import GLTFLoader from './GLTFLoader';
+import OrbitCameraController from '../../src/cameras/OrbitCameraController';
 
 let glTFLoader = new GLTFLoader(),
     gltfPath = location.search.match(/\?gltf=(.*)/);
@@ -44,7 +45,17 @@ glTFLoader.load(gltfPath)
         renderer.setClearColor([1, 1, 1, 1]);
         document.body.appendChild(renderer.domElement);
 
-        renderer.render(scene, camera);
+        // renderer.render(scene, camera);
+
+        let cameraController = new OrbitCameraController(camera, renderer.domElement);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            cameraController.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
     })
     .catch(function (error) {
         console.log(error);

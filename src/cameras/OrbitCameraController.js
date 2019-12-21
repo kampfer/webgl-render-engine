@@ -13,7 +13,11 @@ export default class {
     constructor(camera, domElement) {
         this.camera = camera;
         this.domElement = domElement;
-        this.spheCoord = this.orthCoordToSpheCoord(this.camera.position);
+        this.spheCoord = this.orthCoordToSpheCoord([
+            this.camera.position.x,
+            this.camera.position.y,
+            this.camera.position.z
+        ]);
 
         this._domElementRect = domElement.getBoundingClientRect();
 
@@ -125,7 +129,7 @@ export default class {
 
         this.spheCoord[1] -= arcballSpheCoord[1] - oldArcballSpheCoord[1];
         this.spheCoord[2] -= arcballSpheCoord[2] - oldArcballSpheCoord[2];
-        this.camera.setPosition(this.spheCoordToOrthCoord(this.spheCoord));
+        this.camera.position.setFromArray(this.spheCoordToOrthCoord(this.spheCoord));
 
         this._LastX = mousePosition[0];
         this._LastY = mousePosition[1];
