@@ -57,5 +57,4 @@ for (let name in entries) {
     );
 }
 
-console.log(devConfig);
 module.exports = devConfig;

@@ -40,13 +40,28 @@ const accessorTypeToNumComponentsMap = {
 
 export default class GLTFParser {
 
+    constructor() {
+        this._bufferCache = new WeakMap();
+        this._requesting = {};
+    }
+
     setBaseUrl(baseUrl) {
         this._baseUrl = baseUrl;
     }
 
     request(url, opts) {
         url = path.join(this._baseUrl, url);
-        return fetch(url, opts);
+        if (!this._requesting[url]) {
+            this._requesting[url] = fetch(url, opts)
+                .then((res) => {
+                    delete this._requesting[url];
+                    if (res.ok) {
+                        let buffer = res.arrayBuffer();
+                        return buffer;
+                    }
+                });
+        }
+        return this._requesting[url];
     }
 
     parse(data) {
@@ -325,6 +340,12 @@ export default class GLTFParser {
         let bufferDef = data.buffers[bufferIndex],
             dataURLReg = /^data:(.*?)(;base64)?,(.*)/,
             execRet = dataURLReg.exec(bufferDef.uri);
+
+        let buffer = this._bufferCache.get(bufferDef);
+        if (buffer) {
+            return Promise.resolve(buffer);
+        }
+
         if (execRet) {
             let content = execRet[3],
                 isBase64 = !!execRet[2],
@@ -339,13 +360,18 @@ export default class GLTFParser {
             for(let i = 0, l = content.length; i < l; i++) {
                 bufferView[i] = content.charCodeAt(i);
             }
+
+            this._bufferCache.set(bufferDef, bufferView.buffer);
+
             return Promise.resolve(bufferView.buffer);
         } else {
             return this.request(bufferDef.uri)
-                .then(function (res) {
-                    if (res.ok) {
-                        return res.arrayBuffer();
+                .then((res) => {
+                    let buffer = this._bufferCache.get(bufferDef);
+                    if (!buffer) {
+                         this._bufferCache.set(bufferDef, res);
                     }
+                    return res;
                 });
         }
     }
