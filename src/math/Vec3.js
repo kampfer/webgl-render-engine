@@ -10,25 +10,25 @@ export default class Vec3 {
         return this._x;
     }
 
-    set x(v) {
-        this._x = v;
-    }
+    // set x(v) {
+    //     this._x = v;
+    // }
 
     get y() {
         return this._y;
     }
 
-    set y(v) {
-        this._y = v;
-    }
+    // set y(v) {
+    //     this._y = v;
+    // }
 
     get z() {
         return this._z;
     }
 
-    set z(v) {
-        this._z = v;
-    }
+    // set z(v) {
+    //     this._z = v;
+    // }
 
     set(x, y, z) {
         this._x = x;
@@ -107,6 +107,40 @@ export default class Vec3 {
 
     length() {
         return Math.sqrt(this._x * this._x + this._y * this._y + this._z * this._z);
+    }
+
+    /*
+     * 0 4 8  12  x
+     * 1 5 9  13  y
+     * 2 6 10 14  z
+     * 3 7 11 15  1
+     */
+    applyMatrix4(m) {
+        let x = this._x,
+            y = this._y,
+            z = this._z,
+            e = m.elements,
+            w = 1 / (e[3] * x + e[7] * y + e[11] * z + e[15]);
+
+        this._x = (e[0] * x + e[4] * y + e[8] * z + e[12]) * w;
+        this._y = (e[1] * x + e[5] * y + e[9] * z + e[13]) * w;
+        this._z = (e[2] * x + e[6] * y + e[10] * z + e[14]) * w;
+
+        return this;
+    }
+
+    max(v) {
+        this._x = Math.max(this._x, v.x);
+        this._y = Math.max(this._y, v.y);
+        this._z = Math.max(this._z, v.z);
+        return this;
+    }
+
+    min(v) {
+        this._x = Math.min(this._x, v.x);
+        this._y = Math.min(this._y, v.y);
+        this._z = Math.min(this._z, v.z);
+        return this;
     }
 
 }
