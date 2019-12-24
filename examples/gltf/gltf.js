@@ -36,7 +36,7 @@ glTFLoader.load(gltfPath)
             camera = cameras[index];
         } else {
             camera = new PerspectiveCamera(30 * (Math.PI / 180), window.innerWidth / window.innerHeight, 1, 100);
-            camera.position.set(1, 1, 5);
+            camera.position.set(1, 1, 10);
         }
         camera.lookAt(0, 0, 0);
 
@@ -50,7 +50,7 @@ glTFLoader.load(gltfPath)
         let cameraController = new OrbitCameraController(camera, renderer.domElement);
 
         function animate() {
-            // requestAnimationFrame(animate);
+            requestAnimationFrame(animate);
             cameraController.update();
             renderer.render(scene, camera);
         }

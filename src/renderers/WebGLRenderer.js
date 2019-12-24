@@ -107,6 +107,7 @@ export default class WebGLRenderer {
 
             object.geometry.update();
 
+            // TODO：不需要每个循环内都设置一次uniform
             this.setUniforms(programInfo, object, camera);
 
             this.setAttributes(programInfo, object);

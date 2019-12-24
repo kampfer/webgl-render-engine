@@ -250,7 +250,7 @@ export default class GLTFParser {
             material.metallicFactor = materialDef.pbrMetallicRoughness.metallicFactor || 1;
             material.roughnessFactor = materialDef.pbrMetallicRoughness.roughnessFactor || 1;
         } else {
-            material.color = [1, 1, 1, 1];
+            material.color = [0, 0, 0, 1];
         }
 
         return material;
@@ -290,14 +290,15 @@ export default class GLTFParser {
 
                 if (byteStride !== undefined && byteStride !== itemBytes ) {    // The buffer is not interleaved if the stride is the item size in bytes.
                     array = new TypedArray(arrayBuffer, 0, accessorDef.count * byteStride / TypedArray.BYTES_PER_ELEMENT);
+                    bufferAttribute = new BufferAttribute(array, bufferView.target, itemSize, normalized, byteStride, byteOffset);
                 } else {
                     if (arrayBuffer === null) {
                         array = new TypedArray(accessorDef.count * itemSize);
                     } else {
-                        array = new TypedArray(arrayBuffer, 0);
+                        array = new TypedArray(arrayBuffer, byteOffset, itemSize * accessorDef.count);
                     }
+                    bufferAttribute = new BufferAttribute(array, bufferView.target, itemSize, normalized, 0, 0);
                 }
-                bufferAttribute = new BufferAttribute(array, bufferView.target, itemSize, normalized, byteStride, byteOffset);
 
                 if (accessorDef.sparse !== undefined) {
                     let indicesItemSize = accessorTypeToNumComponentsMap.SCALAR,
