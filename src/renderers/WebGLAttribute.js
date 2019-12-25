@@ -45,4 +45,20 @@ export default class BufferAttribute {
         return type;
     }
 
+    getX(i) {
+        return this.array[this.itemSize * i];
+    }
+
+    getY(i) {
+        return this.array[this.itemSize * i + 1];
+    }
+
+    getZ(i) {
+        return this.array[this.itemSize * i + 2];
+    }
+
+    getW(i) {
+        return this.array[this.itemSize * i + 3];
+    }
+
 }

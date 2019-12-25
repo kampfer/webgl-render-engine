@@ -10,25 +10,13 @@ export default class Vec3 {
         return this._x;
     }
 
-    // set x(v) {
-    //     this._x = v;
-    // }
-
     get y() {
         return this._y;
     }
 
-    // set y(v) {
-    //     this._y = v;
-    // }
-
     get z() {
         return this._z;
     }
-
-    // set z(v) {
-    //     this._z = v;
-    // }
 
     set(x, y, z) {
         this._x = x;
@@ -40,6 +28,20 @@ export default class Vec3 {
         this._x = array[offset];
         this._y = array[offset + 1];
         this._z = array[offset + 2]
+    }
+
+    setFromVectorsSum(a, b) {
+        this._x = a.x + b.x;
+        this._y = a.y + b.y;
+        this._z = a.z + b.z;
+        return this;
+    }
+
+    setFromVectorsDiff(a, b) {
+        this._x = a.x - b.z;
+        this._y = a.y - b.y;
+        this._z = a.z - b.z;
+        return this;
     }
 
     getComponent(index) {

@@ -1,3 +1,4 @@
+import Box3 from '../math/Box3';
 import BufferAttribute from '../renderers/WebGLAttribute';
 
 export default class Geometry {
@@ -49,6 +50,28 @@ export default class Geometry {
             this.setIndex(new BufferAttribute(new Int8Array(this.indices), 1, false));
             this.indicesNeedUpdate = false;
         }
+    }
+
+    getBoundingBox() {
+        if (!this._boundingBox) {
+            this._boundingBox = this.computeBoundingBox();
+        }
+        return this._boundingBox;
+    }
+
+    computeBoundingBox() {
+        let box = new Box3(),
+            position = this.getAttribute('position');
+        
+        if (position) {
+            box.setFromBufferAttribute(position);
+
+            // TODO：还需要处理morph attributes
+        } else {
+            box.setEmpty();
+        }
+
+        return box;
     }
 
 }

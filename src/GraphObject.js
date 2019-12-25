@@ -48,8 +48,48 @@ export default class GraphObject {
         this._worldMatrixNeedsUpdate = true;
     }
 
-    updateWorldMatrix() {
-        this._worldMatrixNeedsUpdate = false;
+    updateWorldMatrix(force) {
+        this.updateMatrix();
+
+        if (this._worldMatrixNeedsUpdate || force) {
+
+            if (this.parent === null) {
+                this.worldMatrix.copy(this.maxtrix);
+            } else {
+                this.worldMatrix.multiplyMatrices(this.parent.worldMatrix, this.matrix);
+            }
+
+            this._worldMatrixNeedsUpdate = false;
+
+            force = true;
+
+        }
+
+        let children = this.children;
+        for(let i = 0, l = children.length; i < l; i++) {
+            children[i].updateWorldMatrix(force);
+        }
+    }
+
+    updateRelativeWorldMatrix(updateAncestor, updateDescendant) {
+        if (updateAncestor === true && this.parent !== null) {
+            this.parent.updateRelativeWorldMatrix(true, false);
+        }
+
+        this.updateMatrix();
+
+        if (this.parent === null) {
+            this.worldMatrix.copy(this.maxtrix);
+        } else {
+            this.worldMatrix.multiplyMatrices(this.parent.worldMatrix, this.matrix);
+        }
+
+        if (updateDescendant === true) {
+            let children = this.children;
+            for(let i = 0, l = children.length; i < l; i++) {
+                children[i].updateRelativeWorldMatrix(false, true);
+            }
+        }
     }
 
     lookAt(x, y, z) {
