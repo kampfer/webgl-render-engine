@@ -34,7 +34,7 @@ export default class WebGLProgramManager {
             program = this._programs[type];
 
         if (!program) {
-            this._programs[name] = program = new WebGLProgram(gl, graphObject);
+            this._programs[type] = program = new WebGLProgram(gl, graphObject);
         }
 
         return program;
