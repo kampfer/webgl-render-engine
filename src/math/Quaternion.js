@@ -113,4 +113,8 @@ export default class Quaternion {
 
     multiply() {}
 
+    premultiply() {}
+
+    inverse() {}
+
 }

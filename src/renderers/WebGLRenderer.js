@@ -77,7 +77,7 @@ export default class WebGLRenderer {
             programUniforms = program.getUniforms();
 
         gl.uniformMatrix4fv(programUniforms.modelMatrix, false, object.worldMatrix.elements);
-        gl.uniformMatrix4fv(programUniforms.viewMatrix, false, camera.viewMatrix.elements);
+        gl.uniformMatrix4fv(programUniforms.viewMatrix, false, camera.inverseWorldMatrix.elements);
         gl.uniformMatrix4fv(programUniforms.projectionMatrix, false, camera.projectionMatrix.elements);
 
         if (material.color) {

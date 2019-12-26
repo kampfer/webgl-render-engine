@@ -3,6 +3,11 @@ import Mat4 from './math/Mat4';
 import Vec3 from './math/Vec3';
 import Quaternion from './math/Quaternion';
 
+let _target = new Vec3(),
+    _position = new Vec3(),
+    _q1 = new Quaternion(),
+    _m1 = new Mat4();
+
 export default class GraphObject {
 
     constructor() {
@@ -12,14 +17,12 @@ export default class GraphObject {
         this.matrix = new Mat4();   // local
         this.worldMatrix = new Mat4();  // global
 
-        // threejs 将viewMatrix分解到position、quaternion储存
-        // 这里我暂时简单处理：lookat方法改变viewMatrix
-        this.viewMatrix = new Mat4();
-
         this.position = new Vec3();
         this.scale = new Vec3(1, 1, 1);
         this.rotation = null;
         this.quaternion = new Quaternion();
+
+        this.up = new Vec3(0, 1, 0);
 
         this._worldMatrixNeedsUpdate = false;
     }
@@ -79,7 +82,7 @@ export default class GraphObject {
         this.updateMatrix();
 
         if (this.parent === null) {
-            this.worldMatrix.copy(this.maxtrix);
+            this.worldMatrix.copy(this.matrix);
         } else {
             this.worldMatrix.multiplyMatrices(this.parent.worldMatrix, this.matrix);
         }
@@ -93,7 +96,30 @@ export default class GraphObject {
     }
 
     lookAt(x, y, z) {
-        this.viewMatrix.setLookAt(this.position.x, this.position.y, this.position.z, x, y, z, 0, 1, 0);
+        if (arguments.length === 1) {
+            _target.copy(x);
+        } else {
+            _target.set(x, y, z);
+        }
+
+        this.updateRelativeWorldMatrix(true, false);
+        _position.setFromMatrixPosition(this.worldMatrix);
+
+        // threejs对除camera和light之外的对象做了相反得到操作，为什么？
+        // https://github.com/mrdoob/three.js/blob/master/src/core/Object3D.js#L286
+        if (this.isCamera || this.isLight) {
+            _m1.lookAt(_position, _target, this.up);
+        } else {
+            _m1.lookAt(_target, _position, this.up);
+        }
+        this.quaternion.setFromRotationMatrix(_m1);
+
+        // let parent = this.parent;
+        // if (parent) {
+        //     _m1.extractRotation(parent.matrixWorld);
+        //     _q1.setFromRotationMatrix(_m1);
+        //     this.quaternion.premultiply(_q1.inverse());
+        // }
     }
 
     applyMatrix(m) {

@@ -218,6 +218,53 @@ export default class Mat4 {
         return this;
     }
 
+    lookAt( eye, target, up ) {
+
+        var te = this.elements;
+
+        _z.setFromVectorsDiff( eye, target );
+
+        if ( _z.lengthSquared() === 0 ) {
+
+            // eye and target are in the same position
+
+            _z.z = 1;
+
+        }
+
+        _z.normalize();
+        _x.setFromVectorsCross(up, _z);
+
+        // if ( _x.lengthSquared() === 0 ) {
+
+        //     // up and z are parallel
+
+        //     if ( Math.abs( up.z ) === 1 ) {
+
+        //         _z.x += 0.0001;
+
+        //     } else {
+
+        //         _z.z += 0.0001;
+
+        //     }
+
+        //     _z.normalize();
+        //     _x.setFromVectorsCross( up, _z );
+
+        // }
+
+        _x.normalize();
+        _y.setFromVectorsCross( _z, _x );
+
+        te[ 0 ] = _x.x; te[ 4 ] = _y.x; te[ 8 ] = _z.x;
+        te[ 1 ] = _x.y; te[ 5 ] = _y.y; te[ 9 ] = _z.y;
+        te[ 2 ] = _x.z; te[ 6 ] = _y.z; te[ 10 ] = _z.z;
+
+        return this;
+
+    }
+
     // 《3D游戏与计算机图形学中的数学方法》 - 第5章 - 3D引擎中的几何学 - P70
     // 暂时未考虑远锥平面无穷远的情况
     setPerspective(left, right, top, bottom, near, far) {
@@ -335,7 +382,12 @@ export default class Mat4 {
         return this;
     }
 
+    extractRotation() {}
+
 }
 
 let _v = new Vec3(),
+    _x = new Vec3(),
+    _y = new Vec3(),
+    _z = new Vec3(),
     _m = new Mat4();    // 在头部声明_m会报错，所以挪到这里

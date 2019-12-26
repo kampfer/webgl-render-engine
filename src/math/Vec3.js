@@ -25,6 +25,13 @@ export default class Vec3 {
         return this;
     }
 
+    copy(v) {
+        this._x = v.x;
+        this._y = v.y;
+        this._z = v.z;
+        return this;
+    }
+
     setFromArray(array, offset = 0) {
         this._x = array[offset];
         this._y = array[offset + 1];
@@ -43,6 +50,14 @@ export default class Vec3 {
         this._x = a.x - b.z;
         this._y = a.y - b.y;
         this._z = a.z - b.z;
+        return this;
+    }
+
+    setFromMatrixPosition(m) {
+        let e = m.elements;
+        this._x = e[12];
+        this._y = e[13];
+        this._z = e[14];
         return this;
     }
 
@@ -113,6 +128,10 @@ export default class Vec3 {
         return Math.sqrt(this._x * this._x + this._y * this._y + this._z * this._z);
     }
 
+    lengthSquared() {
+        return this._x * this._x + this._y * this._y + this._z * this._z;
+    }
+
     /*
      * 0 4 8  12  x
      * 1 5 9  13  y
@@ -145,6 +164,25 @@ export default class Vec3 {
         this._y = Math.min(this._y, v.y);
         this._z = Math.min(this._z, v.z);
         return this;
+    }
+
+    normalize() {
+        return this.divideScalar(this.length() || 1);
+    }
+
+    cross(v) {
+        return this.setFromVectorsCross(this, v);
+    }
+
+    setFromVectorsCross(a, b) {
+        let ax = a.x, ay = a.y, az = a.z,
+            bx = b.x, by = b.y, bz = b.z;
+        
+        this._x = ay * bz - az * by;
+		this._y = az * bx - ax * bz;
+		this._z = ax * by - ay * bx;
+
+		return this;
     }
 
 }
