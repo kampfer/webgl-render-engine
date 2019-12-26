@@ -54,7 +54,7 @@ export default class GraphObject {
         if (this._worldMatrixNeedsUpdate || force) {
 
             if (this.parent === null) {
-                this.worldMatrix.copy(this.maxtrix);
+                this.worldMatrix.copy(this.matrix);
             } else {
                 this.worldMatrix.multiplyMatrices(this.parent.worldMatrix, this.matrix);
             }
@@ -94,6 +94,12 @@ export default class GraphObject {
 
     lookAt(x, y, z) {
         this.viewMatrix.setLookAt(this.position.x, this.position.y, this.position.z, x, y, z, 0, 1, 0);
+    }
+
+    applyMatrix(m) {
+        this.updateMatrix();
+        this.matrix.premultiply(m);
+        this.matrix.decompose(this.position, this.quaternion, this.scale);
     }
 
 }

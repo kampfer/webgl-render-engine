@@ -26,11 +26,11 @@ export default class Mat4 {
             te = this.elements;
 
         if (se === te) {
-          return;
+            return;
         }
 
         for (let i = 0; i < 16; ++i) {
-          te[i] = se[i];
+            te[i] = se[i];
         }
 
         return this;
@@ -40,7 +40,7 @@ export default class Mat4 {
         let te = this.elements;
 
         for (let i = 0; i < 16; ++i) {
-          te[i] = array[i];
+            te[i] = array[i];
         }
 
         return this;
@@ -92,8 +92,56 @@ export default class Mat4 {
         return this;
     }
 
+    // 行列式
+    // http://www.euclideanspace.com/maths/algebra/matrix/functions/determinant/fourD/index.htm
     determinant() {
-        
+        let te = this.elements,
+            m00 = te[0], m01 = te[4], m02 = te[8],  m03 = te[12],
+            m10 = te[1], m11 = te[5], m12 = te[9],  m13 = te[13],
+            m20 = te[2], m21 = te[6], m22 = te[10], m23 = te[14],
+            m30 = te[3], m31 = te[7], m32 = te[11], m33 = te[15];
+
+        return (
+            m03 * m12 * m21 * m30-m02 * m13 * m21 * m30-m03 * m11 * m22 * m30+m01 * m13 * m22 * m30+
+            m02 * m11 * m23 * m30-m01 * m12 * m23 * m30-m03 * m12 * m20 * m31+m02 * m13 * m20 * m31+
+            m03 * m10 * m22 * m31-m00 * m13 * m22 * m31-m02 * m10 * m23 * m31+m00 * m12 * m23 * m31+
+            m03 * m11 * m20 * m32-m01 * m13 * m20 * m32-m03 * m10 * m21 * m32+m00 * m13 * m21 * m32+
+            m01 * m10 * m23 * m32-m00 * m11 * m23 * m32-m02 * m11 * m20 * m33+m01 * m12 * m20 * m33+
+            m02 * m10 * m21 * m33-m00 * m12 * m21 * m33-m01 * m10 * m22 * m33+m00 * m11 * m22 * m33
+        );
+    }
+
+    // 逆矩阵
+    // http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm
+    // https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js#L525
+    // TODO: threejs复用了一部分计算结果，可以参考改进
+    setInverseOf(m) {
+        let te = this.elements,
+            me = m.elements,
+            m00 = me[0], m01 = me[4], m02 = me[8],  m03 = me[12],
+            m10 = me[1], m11 = me[5], m12 = me[9],  m13 = me[13],
+            m20 = me[2], m21 = me[6], m22 = me[10], m23 = me[14],
+            m30 = me[3], m31 = me[7], m32 = me[11], m33 = me[15];
+
+            te[0] = m12*m23*m31 - m13*m22*m31 + m13*m21*m32 - m11*m23*m32 - m12*m21*m33 + m11*m22*m33;
+            te[4] = m03*m22*m31 - m02*m23*m31 - m03*m21*m32 + m01*m23*m32 + m02*m21*m33 - m01*m22*m33;
+            te[8] = m02*m13*m31 - m03*m12*m31 + m03*m11*m32 - m01*m13*m32 - m02*m11*m33 + m01*m12*m33;
+            te[12] = m03*m12*m21 - m02*m13*m21 - m03*m11*m22 + m01*m13*m22 + m02*m11*m23 - m01*m12*m23;
+            te[1] = m13*m22*m30 - m12*m23*m30 - m13*m20*m32 + m10*m23*m32 + m12*m20*m33 - m10*m22*m33;
+            te[5] = m02*m23*m30 - m03*m22*m30 + m03*m20*m32 - m00*m23*m32 - m02*m20*m33 + m00*m22*m33;
+            te[9] = m03*m12*m30 - m02*m13*m30 - m03*m10*m32 + m00*m13*m32 + m02*m10*m33 - m00*m12*m33;
+            te[13] = m02*m13*m20 - m03*m12*m20 + m03*m10*m22 - m00*m13*m22 - m02*m10*m23 + m00*m12*m23;
+            te[2] = m11*m23*m30 - m13*m21*m30 + m13*m20*m31 - m10*m23*m31 - m11*m20*m33 + m10*m21*m33;
+            te[6] = m03*m21*m30 - m01*m23*m30 - m03*m20*m31 + m00*m23*m31 + m01*m20*m33 - m00*m21*m33;
+            te[10] = m01*m13*m30 - m03*m11*m30 + m03*m10*m31 - m00*m13*m31 - m01*m10*m33 + m00*m11*m33;
+            te[14] = m03*m11*m20 - m01*m13*m20 - m03*m10*m21 + m00*m13*m21 + m01*m10*m23 - m00*m11*m23;
+            te[3] = m12*m21*m30 - m11*m22*m30 - m12*m20*m31 + m10*m22*m31 + m11*m20*m32 - m10*m21*m32;
+            te[7] = m01*m22*m30 - m02*m21*m30 + m02*m20*m31 - m00*m22*m31 - m01*m20*m32 + m00*m21*m32;
+            te[11] = m02*m11*m30 - m01*m12*m30 - m02*m10*m31 + m00*m12*m31 + m01*m10*m32 - m00*m11*m32;
+            te[15] = m01*m12*m20 - m02*m11*m20 + m02*m10*m21 - m00*m12*m21 - m01*m10*m22 + m00*m11*m22;
+
+            return this;
+
     }
 
     // 转置矩阵
@@ -265,13 +313,15 @@ export default class Mat4 {
             sy = _v.set(te[4], te[5], te[6]).length(),
             sz = _v.set(te[8], te[9], te[10]).length();
 
-        scale.x = sx;
-        scale.y = sy;
-        scale.z = sz;
+        // scale.x = sx;
+        // scale.y = sy;
+        // scale.z = sz;
+        scale.set(sx, sy, sz);
 
-        position.x = te[12];
-        position.y = te[13];
-        position.z = te[14];
+        // position.x = te[12];
+        // position.y = te[13];
+        // position.z = te[14];
+        position.set(te[12], te[13], te[14]);
 
         _m.copy(this);
 

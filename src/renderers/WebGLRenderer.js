@@ -76,7 +76,7 @@ export default class WebGLRenderer {
             material = object.material,
             programUniforms = program.getUniforms();
 
-        gl.uniformMatrix4fv(programUniforms.modelMatrix, false, object.matrix.elements);
+        gl.uniformMatrix4fv(programUniforms.modelMatrix, false, object.worldMatrix.elements);
         gl.uniformMatrix4fv(programUniforms.viewMatrix, false, camera.viewMatrix.elements);
         gl.uniformMatrix4fv(programUniforms.projectionMatrix, false, camera.projectionMatrix.elements);
 
@@ -87,6 +87,8 @@ export default class WebGLRenderer {
 
     render(scene, camera) {
         let gl = this._gl;
+
+        scene.updateWorldMatrix();
 
         gl.clearColor(...this._clearColor);
         gl.enable(gl.DEPTH_TEST);

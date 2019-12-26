@@ -7,6 +7,7 @@ import BufferAttribute from '../../src/renderers/WebGLAttribute';
 import GraphObject from '../../src/GraphObject';
 import PerspectiveCamera from '../../src/cameras/PerspectiveCamera';
 import OrthographicCamera from '../../src/cameras/OrthographicCamera';
+import Mat4 from '../../src/math/Mat4';
 
 const attributeNameMap = {
     'POSITION': 'position',
@@ -126,10 +127,9 @@ export default class GLTFParser {
                 }
 
                 if (nodeDef.matrix) {
-                    object.matrix.setFromArray(nodeDef.matrix);
-                }
-
-                if (nodeDef.translation || nodeDef.rotation || nodeDef.scale) {
+                    let matrix = new Mat4(nodeDef.matrix);
+                    object.applyMatrix(matrix);
+                } else {
                     if (nodeDef.translation) {
                         object.position.setFromArray(nodeDef.translation);
                     }
@@ -141,8 +141,6 @@ export default class GLTFParser {
                     if (nodeDef.scale) {
                         object.scale.setFromArray(nodeDef.translation);
                     }
-
-                    object.updateMatrix();
                 }
 
                 return object;
@@ -199,7 +197,7 @@ export default class GLTFParser {
             return new PerspectiveCamera(yfov, aspectRatio, znear, zfar);
         } else if (cameraDef.type === 'orthographic') {
             let {xmag, ymag, zfar, znear} = cameraDef.orthographic;
-            return new OrthographicCamera(-xmag, xmag, ymag, -ymag, zfar, znear);
+            return new OrthographicCamera(-xmag / 2, xmag / 2, ymag / 2, -ymag / 2, zfar, znear);
         } else {
             throw '不支持的camera类型';
         }

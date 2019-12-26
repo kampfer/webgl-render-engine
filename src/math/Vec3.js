@@ -22,12 +22,14 @@ export default class Vec3 {
         this._x = x;
         this._y = y;
         this._z = z;
+        return this;
     }
 
     setFromArray(array, offset = 0) {
         this._x = array[offset];
         this._y = array[offset + 1];
-        this._z = array[offset + 2]
+        this._z = array[offset + 2];
+        return this;
     }
 
     setFromVectorsSum(a, b) {
