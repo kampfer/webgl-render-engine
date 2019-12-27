@@ -218,32 +218,32 @@ export default class Mat4 {
         return this;
     }
 
-    lookAt( eye, target, up ) {
+    lookAt(eye, target, up) {
 
         let te = this.elements;
 
-        _z.setFromVectorsDiff( eye, target );
+        _z.setFromVectorsDiff(eye, target);
 
-        if ( _z.lengthSquared() === 0 ) {   // eye和target位置相同
+        if (_z.lengthSquared() === 0) {   // eye和target位置相同
             _z.z = 1;
         }
 
         _z.normalize();
         _x.setFromVectorsCross(up, _z);
 
-        if ( _x.lengthSquared() === 0 ) {   // up和z平行
-            if ( Math.abs( up.z ) === 1 ) {
+        if (_x.lengthSquared() === 0) {   // up和z平行
+            if (Math.abs(up.z) === 1) {
                 _z.x += 0.0001;
             } else {
                 _z.z += 0.0001;
             }
 
             _z.normalize();
-            _x.setFromVectorsCross( up, _z );
+            _x.setFromVectorsCross(up, _z);
         }
 
         _x.normalize();
-        _y.setFromVectorsCross( _z, _x );
+        _y.setFromVectorsCross(_z, _x);
 
         te[0] = _x.x; te[4] = _y.x; te[8]  = _z.x;
         te[1] = _x.y; te[5] = _y.y; te[9]  = _z.y;
