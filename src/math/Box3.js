@@ -21,12 +21,18 @@ export default class Box3 {
         return this;
     }
 
+    copy(box) {
+        this._max.copy(box.max);
+        this._min.copy(box.min);
+        return this;
+    }
+
     isEmpty() {
         return (this.max.x < this.min.x) || (this.max.y < this.min.y) || (this.max.z < this.min.z);
     }
 
     setFromObject(object) {
-        this.empty();
+        this.setEmpty();
         this.expandByObject(object);
         return this;
     }
@@ -44,7 +50,7 @@ export default class Box3 {
             this.expandByPoint(_box.min);
         }
 
-        let children = this.children;
+        let children = object.children;
         for(let i = 0, l = children.length; i < l; i++) {
             this.expandByObject(children[i]);
         }
@@ -103,7 +109,7 @@ export default class Box3 {
         if (this.isEmpty()) {
             size.set(0, 0, 0);
         } else {
-            size.setFromVectorsSum(this._min, this._max).mutiplyScalar(0.5);
+            size.setFromVectorsDiff(this._max, this._min);
         }
         return size;
     }
@@ -113,11 +119,39 @@ export default class Box3 {
         if (this.isEmpty()) {
             center.set(0, 0, 0);
         } else {
-            center.setFromVectorsDiff(this._max, this._min);
+            center.setFromVectorsSum(this._min, this._max).multiplyScalar(0.5);
         }
         return center;
     }
 
+    applyMatrix4(matrix) {
+        if (!this.isEmpty()) {
+            // 分别从max和min中取出component组合成新的点，求这些点中的最大值，是简单的组合问题：C^1_2 * C^1_2 * C^1_2 = 8
+            _points[ 0 ].set( this.min.x, this.min.y, this.min.z ).applyMatrix4( matrix ); // 000
+            _points[ 1 ].set( this.min.x, this.min.y, this.max.z ).applyMatrix4( matrix ); // 001
+            _points[ 2 ].set( this.min.x, this.max.y, this.min.z ).applyMatrix4( matrix ); // 010
+            _points[ 3 ].set( this.min.x, this.max.y, this.max.z ).applyMatrix4( matrix ); // 011
+            _points[ 4 ].set( this.max.x, this.min.y, this.min.z ).applyMatrix4( matrix ); // 100
+            _points[ 5 ].set( this.max.x, this.min.y, this.max.z ).applyMatrix4( matrix ); // 101
+            _points[ 6 ].set( this.max.x, this.max.y, this.min.z ).applyMatrix4( matrix ); // 110
+            _points[ 7 ].set( this.max.x, this.max.y, this.max.z ).applyMatrix4( matrix ); // 111
+
+            this.setFromPoints(_points);
+        }
+
+        return this;
+    }
+
 }
 
-let _box = new Box3();
+let _box = new Box3(),
+    _points = [
+        new Vec3(),
+        new Vec3(),
+        new Vec3(),
+        new Vec3(),
+        new Vec3(),
+        new Vec3(),
+        new Vec3(),
+        new Vec3()
+    ];

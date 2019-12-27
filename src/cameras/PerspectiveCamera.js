@@ -7,7 +7,7 @@ export default class PerspectiveCamera extends Camera {
 
         this.type = 'PerspectiveCamera';
 
-        this.fovy = fovy === undefined ? 45 : fovy;
+        this.fovy = fovy === undefined ? 45 * Math.PI / 180 : fovy;
         this.aspect = aspect === undefined ? 1 : aspect;
         this.near = near === undefined ? 0.1 : near;
         this.far = far === undefined ? 1000 : far;

@@ -4,6 +4,7 @@ import WebGLRenderer from '../../src/renderers/WebGLRenderer';
 import PerspectiveCamera from '../../src/cameras/PerspectiveCamera';
 import GLTFLoader from './GLTFLoader';
 import OrbitCameraController from '../../src/cameras/OrbitCameraController';
+import Box3 from '../../src/math/Box3';
 
 let glTFLoader = new GLTFLoader(),
     gltfPath = location.search.match(/\?gltf=(.*)/);
@@ -35,9 +36,14 @@ glTFLoader.load(gltfPath)
         if (cameras.length > 0 && cameras[index]) {
             camera = cameras[index];
         } else {
-            camera = new PerspectiveCamera(30 * (Math.PI / 180), window.innerWidth / window.innerHeight, 1, 100);
-            camera.position.set(1, 1, 10);
-            camera.lookAt(0, 0, 0);
+            let box = new Box3(),
+                size = box.setFromObject(scene).getSize(),
+                center = box.getCenter(),
+                length = size.length();
+            camera = new PerspectiveCamera(30 * (Math.PI / 180), window.innerWidth / window.innerHeight, 0, length * 100);
+            camera.position.set(center.x, center.y, length * 100);
+            camera.lookAt(center);
+            scene.add(camera);
         }
 
         let renderer = new WebGLRenderer();
@@ -50,8 +56,8 @@ glTFLoader.load(gltfPath)
         let cameraController = new OrbitCameraController(camera, renderer.domElement);
 
         function animate() {
-            // requestAnimationFrame(animate);
-            // cameraController.update();
+            requestAnimationFrame(animate);
+            cameraController.update();
             renderer.render(scene, camera);
         }
 

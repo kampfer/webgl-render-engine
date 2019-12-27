@@ -220,46 +220,34 @@ export default class Mat4 {
 
     lookAt( eye, target, up ) {
 
-        var te = this.elements;
+        let te = this.elements;
 
         _z.setFromVectorsDiff( eye, target );
 
-        if ( _z.lengthSquared() === 0 ) {
-
-            // eye and target are in the same position
-
+        if ( _z.lengthSquared() === 0 ) {   // eye和target位置相同
             _z.z = 1;
-
         }
 
         _z.normalize();
         _x.setFromVectorsCross(up, _z);
 
-        // if ( _x.lengthSquared() === 0 ) {
+        if ( _x.lengthSquared() === 0 ) {   // up和z平行
+            if ( Math.abs( up.z ) === 1 ) {
+                _z.x += 0.0001;
+            } else {
+                _z.z += 0.0001;
+            }
 
-        //     // up and z are parallel
-
-        //     if ( Math.abs( up.z ) === 1 ) {
-
-        //         _z.x += 0.0001;
-
-        //     } else {
-
-        //         _z.z += 0.0001;
-
-        //     }
-
-        //     _z.normalize();
-        //     _x.setFromVectorsCross( up, _z );
-
-        // }
+            _z.normalize();
+            _x.setFromVectorsCross( up, _z );
+        }
 
         _x.normalize();
         _y.setFromVectorsCross( _z, _x );
 
-        te[ 0 ] = _x.x; te[ 4 ] = _y.x; te[ 8 ] = _z.x;
-        te[ 1 ] = _x.y; te[ 5 ] = _y.y; te[ 9 ] = _z.y;
-        te[ 2 ] = _x.z; te[ 6 ] = _y.z; te[ 10 ] = _z.z;
+        te[0] = _x.x; te[4] = _y.x; te[8]  = _z.x;
+        te[1] = _x.y; te[5] = _y.y; te[9]  = _z.y;
+        te[2] = _x.z; te[6] = _y.z; te[10] = _z.z;
 
         return this;
 
@@ -360,14 +348,8 @@ export default class Mat4 {
             sy = _v.set(te[4], te[5], te[6]).length(),
             sz = _v.set(te[8], te[9], te[10]).length();
 
-        // scale.x = sx;
-        // scale.y = sy;
-        // scale.z = sz;
         scale.set(sx, sy, sz);
 
-        // position.x = te[12];
-        // position.y = te[13];
-        // position.z = te[14];
         position.set(te[12], te[13], te[14]);
 
         _m.copy(this);
