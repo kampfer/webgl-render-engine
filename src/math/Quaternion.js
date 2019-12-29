@@ -109,12 +109,35 @@ export default class Quaternion {
         return this;
     }
 
-    conjugate() {}
+    setFromQuaternionsProduct(a, b) {
+        let ax = a.x, ay = a.y, az = a.z, aw = a.w,
+            bx = b.x, by = b.y, bz = b.z, bw = b.w;
 
-    multiply() {}
+        this._x = ax * bw + aw * bx + ay * bz - az * by;
+        this._y = ay * bw + aw * by + az * bx - ax * bz;
+        this._z = az * bw + aw * bz + ax * by - ay * bx;
+        this._w = aw * bw - ax * bx - ay * by - az * bz;
 
-    premultiply() {}
+        return this;
+    }
 
-    inverse() {}
+    conjugate() {
+        this._x = -this._x;
+        this._y = -this._y;
+        this._z = -this._z;
+        return this;
+    }
+
+    multiply(q) {
+        return this.setFromQuaternionsProduct(this, q);
+    }
+
+    premultiply(q) {
+        return this.setFromQuaternionsProduct(q, this);
+    }
+
+    inverse() {
+        return this.conjugate();
+    }
 
 }

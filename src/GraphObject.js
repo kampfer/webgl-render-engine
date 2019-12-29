@@ -114,12 +114,12 @@ export default class GraphObject {
         }
         this.quaternion.setFromRotationMatrix(_m1);
 
-        // let parent = this.parent;
-        // if (parent) {
-        //     _m1.extractRotation(parent.matrixWorld);
-        //     _q1.setFromRotationMatrix(_m1);
-        //     this.quaternion.premultiply(_q1.inverse());
-        // }
+        let parent = this.parent;
+        if (parent) {
+            _m1.extractRotation(parent.matrixWorld);
+            _q1.setFromRotationMatrix(_m1);
+            this.quaternion.premultiply(_q1.inverse());
+        }
     }
 
     applyMatrix(m) {

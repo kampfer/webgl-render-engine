@@ -1,5 +1,3 @@
-import cross from './cross';
-import dot from './dot';
 import Vec3 from './Vec3';
 
 export default class Mat4 {
@@ -185,39 +183,6 @@ export default class Mat4 {
 
     setScale() {}
 
-    setLookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ) {
-        let nx = eyeX - centerX,
-            ny = eyeY - centerY,
-            nz = eyeZ - centerZ,
-            rln = 1 / Math.sqrt(nx * nx + ny * ny + nz * nz);
-        nx *= rln;
-        ny *= rln;
-        nz *= rln;
-
-        if (nx === upX && ny === upY && nz === upZ) {
-            throw('vector n === vector up !!');
-        }
-
-        // u = v x n
-        // TODO 上方向可能与相机朝向一致，叉积会出问题，怎么处理？？？
-        let [ux, uy, uz] = cross([upX, upY, upZ], [nx, ny, nz]),
-            rlu = 1 / Math.sqrt(ux * ux + uy * uy + uz * uz);
-        ux *= rlu;
-        uy *= rlu;
-        uz *= rlu;
-    
-        // v = n x u
-        let [vx, vy, vz] = cross([nx, ny, nz], [ux, uy, uz]),
-            e = this.elements;
-
-        e[0] = ux;  e[4] = uy;  e[8]  = uz; e[12] = -dot([ux, uy, uz], [eyeX, eyeY, eyeZ]);
-        e[1] = vx;  e[5] = vy;  e[9]  = vz; e[13] = -dot([vx, vy, vz], [eyeX, eyeY, eyeZ]);
-        e[2] = nx;  e[6] = ny;  e[10] = nz; e[14] = -dot([nx, ny, nz], [eyeX, eyeY, eyeZ]);
-        e[3] = 0;   e[7] = 0;   e[11] = 0;  e[15] = 1
-
-        return this;
-    }
-
     lookAt(eye, target, up) {
 
         let te = this.elements;
@@ -364,7 +329,20 @@ export default class Mat4 {
         return this;
     }
 
-    extractRotation() {}
+    extractRotation(m) {
+        let te = this.elements,
+            me = m.elements,
+            sx = _v.set(me[0], me[1], me[2]).length(),
+            sy = _v.set(me[4], me[5], me[6]).length(),
+            sz = _v.set(me[8], me[9], me[10]).length();
+        
+        te[0] = me[0] / sx; te[4] = me[4] / sy; te[8]  = me[8] / sz;  te[12] = 0;
+        te[1] = me[1] / sx; te[5] = me[5] / sy; te[9]  = me[9] / sz;  te[13] = 0;
+        te[2] = me[2] / sx; te[6] = me[6] / sy; te[10] = me[10] / sz; te[14] = 0;
+        te[3] = 0;          te[7] = 0;          te[11] = 0;           te[15] = 1;
+
+        return this;
+    }
 
 }
 
