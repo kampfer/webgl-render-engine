@@ -40,8 +40,8 @@ glTFLoader.load(gltfPath)
                 size = box.setFromObject(scene).getSize(),
                 center = box.getCenter(),
                 length = size.length();
-            camera = new PerspectiveCamera(30 * (Math.PI / 180), window.innerWidth / window.innerHeight, 0, length * 100);
-            camera.position.set(center.x, center.y, length * 100);
+            camera = new PerspectiveCamera(90 * (Math.PI / 180), window.innerWidth / window.innerHeight, 0.1, length * 100);
+            camera.position.set(center.x, center.y, length * 5);
             camera.lookAt(center);
             scene.add(camera);
         }
@@ -57,7 +57,7 @@ glTFLoader.load(gltfPath)
 
         function animate() {
             requestAnimationFrame(animate);
-            cameraController.update();
+            // cameraController.update();
             renderer.render(scene, camera);
         }
 

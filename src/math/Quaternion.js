@@ -56,7 +56,18 @@ export default class Quaternion {
 
     setFromEuler() {}
 
-    setFromAxisAngle() {}
+    setFromAxisAngle(angle, axis) {
+        let halfAngle = angle / 2,
+            s = Math.sin(halfAngle),
+            c = Math.cos(halfAngle);
+
+        this._x = axis.x * s;
+        this._y = axis.y * s;
+        this._z = axis.z * s;
+        this._w = c;
+
+        return this;
+    }
 
     // http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
     // https://github.com/mrdoob/three.js/blob/master/src/math/Quaternion.js#L293

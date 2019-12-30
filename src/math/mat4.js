@@ -219,6 +219,7 @@ export default class Mat4 {
     }
 
     // 《3D游戏与计算机图形学中的数学方法》 - 第5章 - 3D引擎中的几何学 - P70
+    // 推导过程：http://www.songho.ca/opengl/gl_projectionmatrix.html
     // 暂时未考虑远锥平面无穷远的情况
     setPerspective(left, right, top, bottom, near, far) {
         let te = this.elements;
@@ -247,6 +248,7 @@ export default class Mat4 {
     }
 
     // 《3D游戏与计算机图形学中的数学方法》 - 第5章 - 3D引擎中的几何学 - P73
+    // 推导过程：http://www.songho.ca/opengl/gl_projectionmatrix.html
     // 暂时未考虑远锥平面无穷远的情况
     setOrthographic(left, right, top, bottom, near, far) {
         let te = this.elements;

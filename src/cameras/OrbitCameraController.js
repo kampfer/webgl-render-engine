@@ -1,4 +1,6 @@
-import normalize from '../math/normalize';
+// https://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_Arcball
+
+import Vec3 from '../math/Vec3';
 
 function degreeToRadian(degree) {
     return degree / 180 * Math.PI;
@@ -50,19 +52,19 @@ export default class {
         ];
     }
 
-    getOrthCoord(x, y) {
-        let vx = x / this.domElement.width * 2 - 1,
-            vy = y / this.domElement.height * 2 - 1,
-            vz = 0,
-            s = vx * vx + vy * vy;
+    getArchBallVector([x, y]) {
+        let w = this.domElement.width,
+            h = this.domElement.height,
+            v = new Vec3(2 * x / w - 1, 1 - 2 * y / h), // x、y归一化，并且y的值要取反
+            sq = v.x * v.x + v.y * v.y;
 
-        vy = -vy;
-
-        if (s <= 1) {
-            vz = Math.sqrt(1 - s);
+        if (sq <= 1) {
+            v.z = Math.sqrt(1 - sq);
+        } else {
+            v.normalize();
         }
 
-        return normalize([vx, vy, vz]);
+        return v;
     }
 
     // https://en.wikipedia.org/wiki/Spherical_coordinate_system
@@ -112,8 +114,7 @@ export default class {
     _handleMouseDown(event) {
         this._dragging = true;
         let mousePosition = this.getMousePosition(event);
-        this._LastX = mousePosition[0];
-        this._LastY = mousePosition[1];
+        this._lastMousePosition = mousePosition;
     }
 
     _handleMouseMove(event) {
@@ -122,25 +123,18 @@ export default class {
         }
 
         let mousePosition = this.getMousePosition(event),
-            oldArcballOrthCoord = this.getOrthCoord(this._LastX, this._LastY),
-            oldArcballSpheCoord = this.orthCoordToSpheCoord(oldArcballOrthCoord),
-            arcballOrthCoord = this.getOrthCoord(mousePosition[0], mousePosition[1]),
-            arcballSpheCoord = this.orthCoordToSpheCoord(arcballOrthCoord);
+            va = this.getArchBallVector(this._lastMousePosition),
+            vb = this.getArchBallVector(mousePosition),
+            angle = Math.acos(va.dot(vb)),
+            axis = va.cross(vb);
 
-        this.spheCoord[1] -= arcballSpheCoord[1] - oldArcballSpheCoord[1];
-        this.spheCoord[2] -= arcballSpheCoord[2] - oldArcballSpheCoord[2];
-        this.camera.position.setFromArray(this.spheCoordToOrthCoord(this.spheCoord));
+        this.camera.rotateOnAxis(angle, axis);
 
-        this._LastX = mousePosition[0];
-        this._LastY = mousePosition[1];
+        this._lastMousePosition = mousePosition;
     }
 
-    _handleMouseUp(event) {
+    _handleMouseUp() {
         this._dragging = false;
-    }
-
-    update() {
-        this.camera.lookAt(0, 0, 0);
     }
 
     destroy() {

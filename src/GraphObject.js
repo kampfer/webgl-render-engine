@@ -128,4 +128,20 @@ export default class GraphObject {
         this.matrix.decompose(this.position, this.quaternion, this.scale);
     }
 
+    // 在local space旋转
+    // axis必须已经归一化
+    rotateOnAxis(angle, axis) {
+        _q1.setFromAxisAngle(angle, axis);
+        this.quaternion.multiply(_q1);
+        return this;
+    }
+
+    // 在world space旋转
+    // axis必须归一化
+    rotateOnWorldAxis(angle, axis) {
+        _q1.setFromAxisAngle(angle, axis);
+        this.quaternion.premultiply(_q1);
+        return this;
+    }
+
 }
