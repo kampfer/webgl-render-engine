@@ -116,7 +116,7 @@ export default class GraphObject {
 
         let parent = this.parent;
         if (parent) {
-            _m1.extractRotation(parent.matrixWorld);
+            _m1.extractRotation(parent.worldMatrix);
             _q1.setFromRotationMatrix(_m1);
             this.quaternion.premultiply(_q1.inverse());
         }

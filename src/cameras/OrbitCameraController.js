@@ -1,27 +1,21 @@
-// https://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_Arcball
-
 import Vec3 from '../math/Vec3';
-
-function degreeToRadian(degree) {
-    return degree / 180 * Math.PI;
-}
-
-function radianToDegree(radian) {
-    return radian * 180 / Math.PI;
-}
+import Spherical from '../math/Spherical';
 
 export default class {
 
     constructor(camera, domElement) {
         this.camera = camera;
+
         this.domElement = domElement;
-        this.spheCoord = this.orthCoordToSpheCoord([
+
+        this.spherical = new Spherical();
+        this.spherical.setFromCartesianCoords(
             this.camera.position.x,
             this.camera.position.y,
             this.camera.position.z
-        ]);
+        )
 
-        this._domElementRect = domElement.getBoundingClientRect();
+        this.target = new Vec3();
 
         domElement.addEventListener('mousedown', this, false);
         domElement.addEventListener('mousemove', this, false);
@@ -46,75 +40,12 @@ export default class {
 
     // 计算光标在画布上的位置
     getMousePosition(event) {
-        return [
-            event.clientX - this._domElementRect.left,
-            event.clientY - this._domElementRect.top
-        ];
-    }
-
-    getArchBallVector([x, y]) {
-        let w = this.domElement.width,
-            h = this.domElement.height,
-            v = new Vec3(2 * x / w - 1, 1 - 2 * y / h), // x、y归一化，并且y的值要取反
-            sq = v.x * v.x + v.y * v.y;
-
-        if (sq <= 1) {
-            v.z = Math.sqrt(1 - sq);
-        } else {
-            v.normalize();
-        }
-
-        return v;
-    }
-
-    // https://en.wikipedia.org/wiki/Spherical_coordinate_system
-    // wiki上的坐标系与webgl坐标系不同，需要注意；另外角度的取值范围也必须对应；
-    // t 与y轴正方向的夹角  [0, PI]
-    // p xoz平面的投影与z轴正方向的夹角 [0, 2 * PI)
-    orthCoordToSpheCoord([x, y, z]) {
-        let r = Math.sqrt(x * x + y * y + z * z),
-            t = Math.acos(y / r),
-            p = Math.atan(x / z);
-        if (z === 0) {
-            if (x > 0) {
-                p = Math.PI / 2;
-            } else if (x < 0) {
-                p = -Math.PI / 2;
-            } else {
-                p = 0;
-            }
-        } else {
-            if (x >= 0 && z > 0) {
-                // do nothing
-            } else if (x < 0 && z > 0) {
-                p += Math.PI * 2;
-            } else if (x >= 0 && z < 0) {
-                p += Math.PI;
-            } else if (x < 0 && z < 0) {
-                p += Math.PI;
-            }
-        }
-        return [r, radianToDegree(t), radianToDegree(p)];
-    }
-
-    // https://zh.wikipedia.org/wiki/球座標系
-    // wiki上的坐标系与webgl坐标系不同，需要注意
-    // t 与y轴正方向的夹角
-    // p xoz平面的投影与z轴正方向的夹角
-    spheCoordToOrthCoord([r, t, p]) {
-        t = degreeToRadian(t);
-        p = degreeToRadian(p);
-        return [
-            r * Math.sin(t) * Math.sin(p),
-            r * Math.cos(t),
-            r * Math.sin(t) * Math.cos(p),
-        ];
+        return [event.clientX, event.clientY];
     }
 
     _handleMouseDown(event) {
         this._dragging = true;
-        let mousePosition = this.getMousePosition(event);
-        this._lastMousePosition = mousePosition;
+        this._lastMousePosition = this.getMousePosition(event);
     }
 
     _handleMouseMove(event) {
@@ -123,12 +54,17 @@ export default class {
         }
 
         let mousePosition = this.getMousePosition(event),
-            va = this.getArchBallVector(this._lastMousePosition),
-            vb = this.getArchBallVector(mousePosition),
-            angle = Math.acos(va.dot(vb)),
-            axis = va.cross(vb);
+            deltaX = mousePosition[0] - this._lastMousePosition[0],
+            deltaY = mousePosition[1] - this._lastMousePosition[1],
+            deltaTheta = Math.PI * 2 * deltaY / this.domElement.clientHeight,
+            deltaPhi = Math.PI * 2 * deltaX / this.domElement.clientWidth;
 
-        this.camera.rotateOnAxis(angle, axis);
+        this.spherical.theta -= deltaTheta;
+        this.spherical.phi -= deltaPhi;
+
+        this.camera.position.setFromSpherical(this.spherical);
+
+        this.camera.lookAt(this.target);
 
         this._lastMousePosition = mousePosition;
     }

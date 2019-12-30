@@ -177,4 +177,18 @@ export default class Vec3 {
         return this.x * v.x + this.y * v.y + this.z * v.z;
     }
 
+    // https://zh.wikipedia.org/wiki/球座標系
+    // wiki上坐标系的xyz轴朝向与webgl不同，需要注意
+    setFromSphericalCoords(radius, theta, phi) {
+        let s = Math.sin(theta);
+        this.x = s * Math.sin(phi) * radius;
+        this.y = Math.cos(theta) * radius;
+        this.z = s * Math.cos(phi) * radius;
+        return this;
+    }
+
+    setFromSpherical(s) {
+        return this.setFromSphericalCoords(s.radius, s.theta, s.phi);
+    }
+
 }
