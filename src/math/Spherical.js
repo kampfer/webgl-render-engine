@@ -3,6 +3,8 @@
  * 定义：https://en.wikipedia.org/wiki/Spherical_coordinate_system
  * The polar angle (theta) is measured from the positive y-axis.
  * The azimuthal angle (phi) is measured from the positive z-axis.
+ * theta >= 0 && theta <= Math.PI
+ * phi >= - Math.PI && phi <= Math.PI
  */
 
 function clamp(v, min, max) {

@@ -31,15 +31,15 @@ glTFLoader.load(gltfPath)
             }
         });
 
-        let camera = null,
+        let box = new Box3(),
+            size = box.setFromObject(scene).getSize(),
+            center = box.getCenter(),
+            length = size.length(),
+            camera = null,
             index = 0;
         if (cameras.length > 0 && cameras[index]) {
             camera = cameras[index];
-        } else {
-            let box = new Box3(),
-                size = box.setFromObject(scene).getSize(),
-                center = box.getCenter(),
-                length = size.length();
+        } else {                
             camera = new PerspectiveCamera(90 * (Math.PI / 180), window.innerWidth / window.innerHeight, 0.1, length * 100);
             camera.position.set(center.x, center.y, length * 5);
             camera.lookAt(center);
@@ -51,13 +51,11 @@ glTFLoader.load(gltfPath)
         renderer.setClearColor([1, 1, 1, 1]);
         document.body.appendChild(renderer.domElement);
 
-        // renderer.render(scene, camera);
-
         let cameraController = new OrbitCameraController(camera, renderer.domElement);
+        cameraController.target = center;
 
         function animate() {
             requestAnimationFrame(animate);
-            // cameraController.update();
             renderer.render(scene, camera);
         }
 
