@@ -9,13 +9,15 @@ export default class {
         this.domElement = domElement;
 
         this.spherical = new Spherical();
-        this.spherical.setFromCartesianCoords(
-            this.camera.position.x,
-            this.camera.position.y,
-            this.camera.position.z
-        )
 
         this.target = new Vec3(0, 0, 0);
+
+        this._deltaTheta = 0;
+        this._deltaPhi = 0;
+
+        this._offset = new Vec3();
+
+        this._scale = 1;
 
         domElement.addEventListener('mousedown', this, false);
         domElement.addEventListener('mousemove', this, false);
@@ -49,6 +51,26 @@ export default class {
         return [event.clientX, event.clientY];
     }
 
+    update() {
+        let position = this.camera.position;
+
+        // 直接使用position，球坐标是以原点为中心的，而我们期望的是以target为中心计算球坐标
+        // 所以这里先计算出向量再转换成球坐标。
+        this._offset.copy(position).sub(this.target);
+
+        this.spherical.setFromVector3(this._offset);
+
+        this.spherical.theta += this._deltaTheta;
+        this.spherical.phi += this._deltaPhi;
+        this.spherical.radius *= this._scale;
+
+        this._offset.setFromSpherical(this.spherical);
+
+        position.copy(this.target).add(this._offset);
+
+        this.camera.lookAt(this.target);
+    }
+
     _handleMouseDown(event) {
         this._dragging = true;
         this._lastMousePosition = this.getMousePosition(event);
@@ -67,11 +89,13 @@ export default class {
 
         // 鼠标下滑，deltaY > 0，theta减小
         // 鼠标右滑，deltaX > 0，phi减小
-        this.spherical.theta -= deltaTheta;
-        this.spherical.phi -= deltaPhi;
+        this._deltaTheta -= deltaTheta;
+        this._deltaPhi -= deltaPhi;
 
-        this.camera.position.setFromSpherical(this.spherical);
-        this.camera.lookAt(this.target);
+        this.update();
+
+        this._deltaTheta = 0;
+        this._deltaPhi = 0;
 
         this._lastMousePosition = mousePosition;
     }
@@ -81,19 +105,18 @@ export default class {
     }
 
     _handleMouseWheel(event) {
-        let height = this.domElement.clientHeight,
-            scale = 1;
+        let height = this.domElement.clientHeight;
 
-        if (event.deltaY > 0) {
-            scale *= (1 + event.deltaY / height);
-        } else if (event.deltaY < 0) {
-            scale *= (1 + event.deltaY / height);
-        }
+        // if (event.deltaY > 0) {
+        //     scale *= (1 + event.deltaY / height);
+        // } else if (event.deltaY < 0) {
+        //     scale *= (1 + event.deltaY / height);
+        // }
+        this._scale *= (1 + event.deltaY / height);
 
-        this.spherical.radius *= scale;
+        this.update();
 
-        this.camera.position.setFromSpherical(this.spherical);
-        this.camera.lookAt(this.target);
+        this._scale = 1;
     }
 
     destroy() {

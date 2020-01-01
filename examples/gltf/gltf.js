@@ -44,9 +44,7 @@ glTFLoader.load(gltfPath)
             scene.add(camera);
         }
         camera.position.copy(center);
-        camera.position.x += length / 2;
-        camera.position.y += length / 5;
-        camera.position.z += length / 2;
+        camera.position.z += length;
         camera.lookAt(center);
 
         let renderer = new WebGLRenderer();

@@ -15,8 +15,34 @@ export default class Spherical {
 
     constructor(radius = 1, theta = 0, phi = 0) {
         this.radius = radius;
-        this.theta = theta;
-        this.phi = phi;
+        this._theta = theta;
+        this._phi = phi;
+    }
+
+    get theta() {
+        return this._theta;
+    }
+
+    set theta(v) {
+        if (v < 0) {
+            v = 0;
+        } else if (v > Math.PI) {
+            v = Math.PI;
+        }
+        this._theta = v;
+    }
+
+    get phi() {
+        return this._phi;
+    }
+
+    set phi(v) {
+        if (v < - Math.PI) {
+            v = - Math.PI;
+        } else if (v > Math.PI) {
+            v = Math.PI;
+        }
+        this._phi = v;
     }
 
     set(radius, theta, phi) {
