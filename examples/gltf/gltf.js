@@ -41,10 +41,13 @@ glTFLoader.load(gltfPath)
             camera = cameras[index];
         } else {                
             camera = new PerspectiveCamera(90 * (Math.PI / 180), window.innerWidth / window.innerHeight, 0.1, length * 100);
-            camera.position.set(center.x, center.y, length * 5);
-            camera.lookAt(center);
             scene.add(camera);
         }
+        camera.position.copy(center);
+        camera.position.x += length / 2;
+        camera.position.y += length / 5;
+        camera.position.z += length / 2;
+        camera.lookAt(center);
 
         let renderer = new WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);

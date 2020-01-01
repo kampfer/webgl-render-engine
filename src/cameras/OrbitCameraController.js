@@ -21,6 +21,7 @@ export default class {
         domElement.addEventListener('mousemove', this, false);
         domElement.addEventListener('mouseup', this, false);
         domElement.addEventListener('mouseout', this, false);
+        domElement.addEventListener('wheel', this, false);
     }
 
     handleEvent(event) {
@@ -34,6 +35,9 @@ export default class {
             case 'mouseup':
             case 'mouseout':
                 this._handleMouseUp(event);
+                break;
+            case 'wheel':
+                this._handleMouseWheel(event);
                 break;
             default:
                 // do nothing
@@ -76,11 +80,28 @@ export default class {
         this._dragging = false;
     }
 
+    _handleMouseWheel(event) {
+        let height = this.domElement.clientHeight,
+            scale = 1;
+
+        if (event.deltaY > 0) {
+            scale *= (1 + event.deltaY / height);
+        } else if (event.deltaY < 0) {
+            scale *= (1 + event.deltaY / height);
+        }
+
+        this.spherical.radius *= scale;
+
+        this.camera.position.setFromSpherical(this.spherical);
+        this.camera.lookAt(this.target);
+    }
+
     destroy() {
         this.domElement.removeEventListener('mousedown', this);
         this.domElement.removeEventListener('mousemove', this);
         this.domElement.removeEventListener('mouseup', this);
         this.domElement.removeEventListener('mouseout', this);
+        this.domElement.removeEventListener('wheel', this);
     }
 
 }

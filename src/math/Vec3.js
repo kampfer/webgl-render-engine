@@ -35,7 +35,7 @@ export default class Vec3 {
     }
 
     setFromVectorsDiff(a, b) {
-        this.x = a.x - b.z;
+        this.x = a.x - b.x;
         this.y = a.y - b.y;
         this.z = a.z - b.z;
         return this;
