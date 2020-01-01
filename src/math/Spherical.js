@@ -3,13 +3,21 @@
  * 定义：https://en.wikipedia.org/wiki/Spherical_coordinate_system
  * The polar angle (theta) is measured from the positive y-axis.
  * The azimuthal angle (phi) is measured from the positive z-axis.
+ *
+ * wiki中约定了theta和phi的取值范围，如下：
  * theta >= 0 && theta <= Math.PI
  * phi >= - Math.PI && phi <= Math.PI
+ *
+ * 但是在开发OrbitCameraController时发现phi取任意值都可行，而theta不能等于0或者Math.PI。
+ * threejs中也只对The azimuthal angle做了限制，本实现参考threejs。
+ * https://github.com/mrdoob/three.js/blob/45418089bd5633e856384a8c0beefced87143334/src/math/Spherical.js#L52
  */
 
 function clamp(v, min, max) {
     return Math.min(max, Math.max(min, v));
 }
+
+const EPS = 0.000001;
 
 export default class Spherical {
 
@@ -24,12 +32,7 @@ export default class Spherical {
     }
 
     set theta(v) {
-        if (v < 0) {
-            v = 0;
-        } else if (v > Math.PI) {
-            v = Math.PI;
-        }
-        this._theta = v;
+        this._theta = Math.max(EPS, Math.min(v, Math.PI - EPS));
     }
 
     get phi() {
@@ -37,11 +40,6 @@ export default class Spherical {
     }
 
     set phi(v) {
-        if (v < - Math.PI) {
-            v = - Math.PI;
-        } else if (v > Math.PI) {
-            v = Math.PI;
-        }
         this._phi = v;
     }
 
