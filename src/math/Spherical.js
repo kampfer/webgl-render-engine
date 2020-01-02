@@ -1,6 +1,6 @@
 /*
  * 球坐标系
- * 定义：https://en.wikipedia.org/wiki/Spherical_coordinate_system
+ * 定义：https://en.wikipedia.org/wiki/Spherical_coordinate_system（wiki上的坐标系朝向和webgl不同，需要注意）
  * The polar angle (theta) is measured from the positive y-axis.
  * The azimuthal angle (phi) is measured from the positive z-axis.
  *
@@ -8,7 +8,7 @@
  * theta >= 0 && theta <= Math.PI
  * phi >= - Math.PI && phi <= Math.PI
  *
- * 但是在开发OrbitCameraController时发现phi取任意值都可行，而theta不能等于0或者Math.PI。
+ * 但是在开发OrbitCameraController时发现phi取任意值都可行，而theta不能等于0或者Math.PI
  * threejs中也只对The azimuthal angle做了限制，本实现参考threejs。
  * https://github.com/mrdoob/three.js/blob/45418089bd5633e856384a8c0beefced87143334/src/math/Spherical.js#L52
  */
