@@ -34,6 +34,20 @@ export default class Mat4 {
         return this;
     }
 
+    set(
+        m11, m12, m13, m14,
+        m21, m22, m23, m24,
+        m31, m32, m33, m34,
+        m41, m42, m43, m44
+    ) {
+        let e = this.elements;
+        e[0] = m11;  e[4] = m12;  e[8]  = m13;  e[12] = m14;
+        e[1] = m21;  e[5] = m22;  e[9]  = m23;  e[13] = m24;
+        e[2] = m31;  e[6] = m32;  e[10] = m33;  e[14] = m34;
+        e[3] = m41;  e[7] = m42;  e[11] = m43;  e[15] = m44;
+        return this;
+    }
+
     setFromArray(array) {
         let te = this.elements;
 
@@ -157,9 +171,19 @@ export default class Mat4 {
         return this;
     }
 
-    rotate() {}
+    setBasis() {}
 
-    setRotate() {}
+    setRotationFromEuler() {}
+
+    setRotationFromQauternion() {}
+
+    setRotationAxis() {}
+
+    setRotationX() {}
+
+    setRotationY() {}
+
+    setRotationZ() {}
 
     translate(x, y, z) {
         let e = this.elements;
@@ -171,17 +195,31 @@ export default class Mat4 {
     }
 
     setTranslate(x, y, z) {
-        let e = this.elements;
-        e[0] = 1;  e[4] = 0;  e[8]  = 0;  e[12] = x;
-        e[1] = 0;  e[5] = 1;  e[9]  = 0;  e[13] = y;
-        e[2] = 0;  e[6] = 0;  e[10] = 1;  e[14] = z;
-        e[3] = 0;  e[7] = 0;  e[11] = 0;  e[15] = 1;
+        return this.set(
+            1, 0, 0, x,
+            0, 1, 0, y,
+            0, 0, 1, z,
+            0, 0, 0, 1
+        );
+    }
+
+    scale(x, y, z) {
+        let te = this.elements;
+        te[0] *= x; te[4] *= y; te[8] *= z;
+        te[1] *= x; te[5] *= y; te[9] *= z;
+        te[2] *= x; te[6] *= y; te[10] *= z;
+        te[3] *= x; te[7] *= y; te[11] *= z;
         return this;
     }
 
-    scale() {}
-
-    setScale() {}
+    setScale(x, y, z) {
+        return this.set(
+            x, 0, 0, 0,
+            0, y, 0, 0,
+            0, 0, z, 0,
+            0, 0, 0, 1
+        );
+    }
 
     lookAt(eye, target, up) {
 
