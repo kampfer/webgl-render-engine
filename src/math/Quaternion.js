@@ -151,4 +151,40 @@ export default class Quaternion {
         return this.conjugate();
     }
 
+    dot(q) {
+        return this._x * q.x + this._y * q.y + this._z * q.z + this._w * q.w;
+    }
+
+    lengthSquared() {
+        return this._x * this._x + this._y * this._y + this._z * this._z + this._w * this._w;
+    }
+
+    length() {
+        return Math.sqrt(this.lengthSquared());
+    }
+
+    normalize() {
+        let l = this.length();
+
+        if (l === 0) {
+            this._x = 0;
+            this._y = 0;
+            this._z = 0;
+            this._w = 1;
+        } else {
+            this._x /= l;
+            this._y /= l;
+            this._z /= l;
+            this._w /= l;
+        }
+
+        return this;
+    }
+
+    slerp() {}
+
+    static slerpFlat() {}
+
+    static slerp() {}
+
 }
