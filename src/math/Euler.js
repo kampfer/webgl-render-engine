@@ -46,6 +46,14 @@ export default class Euler {
         return this._z;
     }
 
+    set order(v) {
+        this._order = v;
+    }
+
+    get order() {
+        return this._order;
+    }
+
     set(x, y, z, order) {
         this._x = x;
         this._y = y;
@@ -66,13 +74,67 @@ export default class Euler {
     setFromRotationMatrix(m, order) {
         let me = m.elements,
             m11 = me[0], m12 = me[4], m13 = me[8],
-            m21 = me[1], m22 = me[5], m23 = me[9]
+            m21 = me[1], m22 = me[5], m23 = me[9],
             m31 = me[2], m32 = me[6], m33 = me[10];
 
         order = order || this._order;
 
         if (order === 'XYZ') {
             this._y = Math.asin(clamp(m13, -1, 1));
+            if (Math.abs(m13) < 1 - Number.EPSILON) {
+                this._x = Math.atan2(-m23, m33);
+                this._z = Math.atan2(-m12, m11);
+            } else {
+                this._x = Math.atan2(m32, m22);
+                this._z = 0;
+            }
+        } else if (order === 'YXZ') {
+            this._x = Math.asin(-clamp(m23, -1, 1));
+            if (Math.abs(m23) < 1 - Number.EPSILON) {
+                this._y = Math.atan2(m13, m33);
+                this._z = Math.atan2(m21, m22);
+            } else {
+                this._y = Math.atan2(- m31, m11);
+                this._z = 0;
+            }
+        } else if (order === 'ZXY') {
+            this._x = Math.asin(clamp(m32, - 1, 1));
+            if (Math.abs(m32) < 1 - Number.EPSILON) {
+                this._y = Math.atan2(- m31, m33);
+                this._z = Math.atan2(- m12, m22);
+            } else {
+                this._y = 0;
+                this._z = Math.atan2(m21, m11);
+            }
+        } else if (order === 'ZYX') {
+            this._y = Math.asin( - clamp( m31, - 1, 1 ) );
+            if ( Math.abs( m31 ) < 1 - Number.EPSILON) {
+                this._x = Math.atan2( m32, m33 );
+                this._z = Math.atan2( m21, m11 );
+            } else {
+                this._x = 0;
+                this._z = Math.atan2( - m12, m22 );
+
+            }
+        } else if (order === 'YZX') {
+            this._z = Math.asin( clamp( m21, - 1, 1 ) );
+            if ( Math.abs( m21 ) < 1 - Number.EPSILON) {
+                this._x = Math.atan2( - m23, m22 );
+                this._y = Math.atan2( - m31, m11 );
+            } else {
+                this._x = 0;
+                this._y = Math.atan2( m13, m33 );
+            }
+        } else if (order === 'XZY') {
+            this._z = Math.asin( - clamp( m12, - 1, 1 ) );
+            if ( Math.abs( m12 ) < 1 - Number.EPSILON) {
+                this._x = Math.atan2( m32, m22 );
+                this._y = Math.atan2( m13, m11 );
+            } else {
+                this._x = Math.atan2( - m23, m33 );
+                this._y = 0;
+
+            }
         } else {
             console.warn(`Euler.setFromRotationMatrix：不支持的参数值order=${order}$`);
         }

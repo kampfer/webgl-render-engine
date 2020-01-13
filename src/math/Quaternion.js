@@ -54,9 +54,66 @@ export default class Quaternion {
         this._w = array[3];
     }
 
-    setFromEuler() {}
+    setFromEuler(euler) {
+        let x = euler.x,
+            y = euler.y,
+            z = euler.z,
+            order = euler.order,
+            c1 = Math.cos(x / 2),
+            c2 = Math.cos(y / 2),
+            c3 = Math.cos(z / 2),
+            s1 = Math.sin(x / 2),
+            s2 = Math.sin(y / 2),
+            s3 = Math.sin(z / 2);
 
-    setFromAxisAngle(angle, axis) {
+        if ( order === 'XYZ' ) {
+
+            this._x = s1 * c2 * c3 + c1 * s2 * s3;
+            this._y = c1 * s2 * c3 - s1 * c2 * s3;
+            this._z = c1 * c2 * s3 + s1 * s2 * c3;
+            this._w = c1 * c2 * c3 - s1 * s2 * s3;
+
+        } else if ( order === 'YXZ' ) {
+
+            this._x = s1 * c2 * c3 + c1 * s2 * s3;
+            this._y = c1 * s2 * c3 - s1 * c2 * s3;
+            this._z = c1 * c2 * s3 - s1 * s2 * c3;
+            this._w = c1 * c2 * c3 + s1 * s2 * s3;
+
+        } else if ( order === 'ZXY' ) {
+
+            this._x = s1 * c2 * c3 - c1 * s2 * s3;
+            this._y = c1 * s2 * c3 + s1 * c2 * s3;
+            this._z = c1 * c2 * s3 + s1 * s2 * c3;
+            this._w = c1 * c2 * c3 - s1 * s2 * s3;
+
+        } else if ( order === 'ZYX' ) {
+
+            this._x = s1 * c2 * c3 - c1 * s2 * s3;
+            this._y = c1 * s2 * c3 + s1 * c2 * s3;
+            this._z = c1 * c2 * s3 - s1 * s2 * c3;
+            this._w = c1 * c2 * c3 + s1 * s2 * s3;
+
+        } else if ( order === 'YZX' ) {
+
+            this._x = s1 * c2 * c3 + c1 * s2 * s3;
+            this._y = c1 * s2 * c3 + s1 * c2 * s3;
+            this._z = c1 * c2 * s3 - s1 * s2 * c3;
+            this._w = c1 * c2 * c3 - s1 * s2 * s3;
+
+        } else if ( order === 'XZY' ) {
+
+            this._x = s1 * c2 * c3 - c1 * s2 * s3;
+            this._y = c1 * s2 * c3 - s1 * c2 * s3;
+            this._z = c1 * c2 * s3 + s1 * s2 * c3;
+            this._w = c1 * c2 * c3 + s1 * s2 * s3;
+
+        }
+
+        return this;
+    }
+
+    setFromAxisAngle(axis, angle) {
         let halfAngle = angle / 2,
             s = Math.sin(halfAngle),
             c = Math.cos(halfAngle);
