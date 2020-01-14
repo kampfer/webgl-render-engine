@@ -9,8 +9,8 @@ void main() {
     vec3 lightDirection = normalize(vec3(0.5, 3, 4));
     vec4 ambientColor = vec4(0.2, 0.2, 0.2, 1);
     vec3 normal = normalize(vNormal);
-    float dot = max(dot(lightDirection, normal), 0.0);
+    float fDot = max(dot(lightDirection, normal), 0.0);
     vec4 ambient = ambientColor * color;
-    gl_FragColor = vec4((lightColor * color * dot).xyz + ambient.xyz, color.a);
+    gl_FragColor = vec4((lightColor * color * fDot).xyz + ambient.xyz, color.a);
 }
 `;

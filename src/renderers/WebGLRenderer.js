@@ -76,6 +76,7 @@ export default class WebGLRenderer {
             material = object.material,
             programUniforms = program.getUniforms();
 
+        gl.uniformMatrix3fv(programUniforms.normalMatrix, false, object.normalMatrix.elements);
         gl.uniformMatrix4fv(programUniforms.modelMatrix, false, object.worldMatrix.elements);
         gl.uniformMatrix4fv(programUniforms.viewMatrix, false, camera.inverseWorldMatrix.elements);
         gl.uniformMatrix4fv(programUniforms.projectionMatrix, false, camera.projectionMatrix.elements);
@@ -108,6 +109,9 @@ export default class WebGLRenderer {
             }
 
             object.geometry.update();
+
+            object.modelViewMatrix.multiplyMatrices(camera.inverseWorldMatrix, object.worldMatrix);
+            object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
 
             // TODO：不需要每个循环内都设置一次uniform
             this.setUniforms(programInfo, object, camera);
