@@ -43,6 +43,7 @@ export default class GLTFParser {
 
     constructor() {
         this._bufferCache = new WeakMap();
+        this._bufferViewCache = [];
         this._requesting = {};
     }
 
@@ -324,15 +325,20 @@ export default class GLTFParser {
     }
 
     parseBufferView(data, bufferViewIndex) {
-        let bufferViewDef = data.bufferViews[bufferViewIndex];
-        return this.parseBuffer(data, bufferViewDef.buffer)
-            .then(function (buffer) {
-                let byteLength = bufferViewDef.byteLength || 0,
-                    byteOffset = bufferViewDef.byteOffset || 0,
-                    start = byteOffset,
-                    end = byteOffset + byteLength;
-                return buffer.slice(start, end);
-            });
+        let parsePromise = this._bufferViewCache[bufferViewIndex];
+        if (!parsePromise) {
+            let bufferViewDef = data.bufferViews[bufferViewIndex];
+            this._bufferViewCache[bufferViewIndex] = parsePromise = 
+                this.parseBuffer(data, bufferViewDef.buffer)
+                    .then(function (buffer) {
+                        let byteLength = bufferViewDef.byteLength || 0,
+                            byteOffset = bufferViewDef.byteOffset || 0,
+                            start = byteOffset,
+                            end = byteOffset + byteLength;
+                        return buffer.slice(start, end);
+                    });
+        }
+        return parsePromise;
     }
 
     parseBuffer(data, bufferIndex) {
