@@ -4,16 +4,21 @@ import WebGLBufferManager from './WebGLBufferManager';
 
 export default class WebGLRenderer {
 
-    constructor() {
-        this._canvas = document.createElement('canvas');
+    constructor(opts = {
+        canvas: document.createElement('canvas')
+    }) {
+
+        this.domElement = opts.canvas;
+
         this._pixelRatio = window.devicePixelRatio;
-        this._gl = webglUtils.getWebGLContext(this._canvas);
-        this.domElement = this._canvas;
+
+        this._gl = webglUtils.getWebGLContext(this.domElement);
 
         this._clearColor = [0, 0, 0, 1];
 
         this._programManager = new WebGLProgramManager(this._gl);
         this._bufferManager = new WebGLBufferManager(this._gl);
+
     }
 
     getContext() {
@@ -24,12 +29,12 @@ export default class WebGLRenderer {
         this._width = width;
         this._height = height;
 
-        this._canvas.width = Math.floor(width * this._pixelRatio);
-        this._canvas.height = Math.floor(height * this._pixelRatio);
+        this.domElement.width = Math.floor(width * this._pixelRatio);
+        this.domElement.height = Math.floor(height * this._pixelRatio);
 
         if (upateStyle !== false) {
-            this._canvas.style.width = width + 'px';
-            this._canvas.style.height = height + 'px';
+            this.domElement.style.width = width + 'px';
+            this.domElement.style.height = height + 'px';
         }
 
         this.setViewport(0, 0, width, height);
