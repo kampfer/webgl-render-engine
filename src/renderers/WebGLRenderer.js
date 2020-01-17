@@ -157,6 +157,11 @@ export default class WebGLRenderer {
         return list;
     }
 
-    destory() {}
+    destroy() {
+        this.domElement = null;
+        this._gl = null;
+        this._programManager.destroy();
+        this._bufferManager.destroy();
+    }
 
 }
