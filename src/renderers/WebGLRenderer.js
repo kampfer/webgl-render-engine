@@ -2,6 +2,9 @@ import * as webglUtils from '../utils/webgl';
 import WebGLProgramManager from './WebGLProgramManager';
 import WebGLBufferManager from './WebGLBufferManager';
 
+let mat4Array = new Float32Array(16),
+    mat3Array = new Float32Array(9);
+
 export default class WebGLRenderer {
 
     constructor(opts = {
@@ -76,15 +79,28 @@ export default class WebGLRenderer {
         }
     }
 
+    setUniformM4(addr, transpose, v) {
+        mat4Array.set(v.elements);
+        this._gl.uniformMatrix4fv(addr, transpose, mat4Array);
+    }
+
+    setUniformM3(addr, transpose, v) {
+        mat3Array.set(v.elements);
+        this._gl.uniformMatrix3fv(addr, transpose, mat3Array);
+    }
+
     setUniforms(program, object, camera) {
         let gl = this._gl,
             material = object.material,
             programUniforms = program.getUniforms();
 
-        gl.uniformMatrix3fv(programUniforms.normalMatrix, false, object.normalMatrix.elements);
-        gl.uniformMatrix4fv(programUniforms.modelMatrix, false, object.worldMatrix.elements);
-        gl.uniformMatrix4fv(programUniforms.viewMatrix, false, camera.inverseWorldMatrix.elements);
-        gl.uniformMatrix4fv(programUniforms.projectionMatrix, false, camera.projectionMatrix.elements);
+        this.setUniformM3(programUniforms.normalMatrix, false, object.normalMatrix)
+
+        this.setUniformM4(programUniforms.modelMatrix, false, object.worldMatrix);
+
+        this.setUniformM4(programUniforms.viewMatrix, false, camera.inverseWorldMatrix);
+
+        this.setUniformM4(programUniforms.projectionMatrix, false, camera.projectionMatrix);
 
         if (material.color) {
             gl.uniform4fv(programUniforms.color, material.color);
