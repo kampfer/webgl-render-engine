@@ -157,4 +157,6 @@ export default class WebGLRenderer {
         return list;
     }
 
+    destory() {}
+
 }
