@@ -134,7 +134,7 @@ export default class Mat4 {
             m10 = me[1], m11 = me[5], m12 = me[9],  m13 = me[13],
             m20 = me[2], m21 = me[6], m22 = me[10], m23 = me[14],
             m30 = me[3], m31 = me[7], m32 = me[11], m33 = me[15],
-            det = this.determinant();
+            det = m.determinant();
 
             te[0] = (m12*m23*m31 - m13*m22*m31 + m13*m21*m32 - m11*m23*m32 - m12*m21*m33 + m11*m22*m33) / det;
             te[4] = (m03*m22*m31 - m02*m23*m31 - m03*m21*m32 + m01*m23*m32 + m02*m21*m33 - m01*m22*m33) / det;
