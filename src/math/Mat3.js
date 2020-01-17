@@ -1,6 +1,10 @@
 export default class Mat3 {
 
     constructor() {
+        // this.elements必须使用普通array！
+        // 否则在计算行列式和逆矩阵时，结果的精度会有问题，和参考网站以及threejs的结果不一致。
+        // 其他数学方法估计也有问题，所以干脆和threejs一样用普通array，传入webgl之前再转换成typearray。
+        // mat4也有类似问题
         this.elements = [
             1, 0, 0,
             0, 1, 0,
