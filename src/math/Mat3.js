@@ -1,11 +1,11 @@
 export default class Mat3 {
 
     constructor() {
-        this.elements = new Float32Array([
+        this.elements = [
             1, 0, 0,
             0, 1, 0,
             0, 0, 1,
-        ]);
+        ];
     }
 
     set(m11, m12, m13, m21, m22, m23, m31, m32, m33) {
@@ -36,7 +36,7 @@ export default class Mat3 {
 
         te[0] = (m22 * m33 - m23 * m32) / det;
         te[1] = (m23 * m31 - m21 * m33) / det;
-        te[2] = (m11 * m22 - m12 * m21) / det;
+        te[2] = (m21 * m32 - m22 * m31) / det;
 
         te[3] = (m13 * m32 - m12 * m33) / det;
         te[4] = (m11 * m33 - m13 * m31) / det;
