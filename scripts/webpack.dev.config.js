@@ -10,7 +10,7 @@ let findEntries = function(dir) {
     for(let i = 0, l = paths.length; i < l; i++) {
         let p = path.join(dir, paths[i]),
             extname = path.extname(p);
-        if (extname === '') {
+        if (extname === '' && fs.statSync(p).isDirectory()) {
             let subEntries = findEntries(p);
             for (let name in subEntries) {
                 entries[name] = subEntries[name];
