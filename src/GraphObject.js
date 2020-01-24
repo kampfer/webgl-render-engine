@@ -7,11 +7,14 @@ import Quaternion from './math/Quaternion';
 let _target = new Vec3(),
     _position = new Vec3(),
     _q1 = new Quaternion(),
-    _m1 = new Mat4();
+    _m1 = new Mat4(),
+    uid = 0;
 
 export default class GraphObject {
 
     constructor() {
+        this.uid = ++uid;
+
         this.children = [];
         this.parent = null;
 
@@ -146,6 +149,32 @@ export default class GraphObject {
         _q1.setFromAxisAngle(axis, angle);
         this.quaternion.premultiply(_q1);
         return this;
+    }
+
+    copy(src, recursive = true) {
+        this.up.copy(src.up);
+
+        this.position.copy(src.position);
+        this.quaternion.copy(src.quaternion);
+        this.scale.copy(src.scale);
+
+        this.matrix.copy(src.matrix);
+        this.worldMatrix.copy(src.worldMatrix);
+
+        this._worldMatrixNeedsUpdate = src._worldMatrixNeedsUpdate;
+
+        if (recursive === true) {
+            for(let i = 0, l = this.children.length; i < l; i++) {
+                let child = this.children[i];
+                this.add(child.clone(recursive));
+            }
+        }
+
+        return this;
+    }
+
+    clone(recursive) {
+        return new this.constructor().copy(this, recursive);
     }
 
 }
