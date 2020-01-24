@@ -9,4 +9,8 @@ export default class Mesh extends GraphObject {
         this.type = 'Mesh';
     }
 
+    clone(recursive) {
+        return this.constructor(this.geometry, this.material).copy(this, recursive);
+    }
+
 }

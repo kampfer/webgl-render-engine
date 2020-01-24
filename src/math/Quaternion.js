@@ -47,6 +47,14 @@ export default class Quaternion {
         return this;
     }
 
+    copy(q) {
+        this._x = q.x;
+        this._y = q.y;
+        this._z = q.z;
+        this._w = q.w;
+        return this;
+    }
+
     setFromArray(array) {
         this._x = array[0];
         this._y = array[1];
