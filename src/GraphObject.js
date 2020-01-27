@@ -51,6 +51,47 @@ export default class GraphObject {
         }
     }
 
+    traverse(callback) {
+        let children = this.children;
+
+        for(let i = 0, l = children.length; i < l; i++) {
+            let child = children[i],
+                result = callback(child);
+
+            if (result === false) {
+                return result;
+            }
+
+            result = child.traverse(callback);
+
+            if (result === false) {
+                return result;
+            }
+        }
+    }
+
+    getNodeByUid(uid) {
+        let node = null;
+        this.traverse(function (child) {
+            if (child.uid === uid) {
+                node = child;
+                return false;
+            }
+        });
+        return node;
+    }
+
+    getNodeByName(name) {
+        let node = null;
+        this.traverse(function (child) {
+            if (child.name === name) {
+                node = child;
+                return false;
+            }
+        });
+        return node;
+    }
+
     update() {}
 
     updateMatrix() {
