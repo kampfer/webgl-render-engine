@@ -27,7 +27,12 @@ export default class WebGLAttributeManager {
         }
 
         if (bufferType === undefined) {
-            attribute.target = bufferType = gl.ARRAY_BUFFER;
+            if (attribute.isIndex === true) {
+                bufferType = gl.ELEMENT_ARRAY_BUFFER;
+            } else {
+                bufferType = gl.ARRAY_BUFFER;
+            }
+            attribute.target = bufferType;
         }
 
         gl.bindBuffer(bufferType, buffer);
