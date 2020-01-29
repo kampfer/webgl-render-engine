@@ -3,9 +3,9 @@ let uid = 0;
 export default class AnimationClip {
     
     constructor(name, duration = -1, tracks) {
-        this._name = name;
-        this._duration = duration;
-        this._tracks = tracks;
+        this.name = name;
+        this.duration = duration;
+        this.tracks = tracks;
         this.uuid = ++uid;
 
         if (this._duration < 0) {
@@ -22,7 +22,7 @@ export default class AnimationClip {
             duration = Math.max(duration, track.times[track.times.length - 1]);
         }
 
-        this._duration = duration;
+        this.duration = duration;
 
         return this;
     }

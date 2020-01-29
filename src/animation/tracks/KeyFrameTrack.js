@@ -1,29 +1,35 @@
+import {
+    LinearInterpolation,
+    StepInterpolation,
+    CubicSplineInterpolation
+} from '../../constants';
+import LinearInterpolant from '../../math/interpolants/LinearInterpolant';
+import StepInterpolant from '../../math/interpolants/StepInterpolant';
+import CubicSplineInterpolant from '../../math/interpolants/CubicSplineInterpolant';
+
 export default class KeyFrameTrack {
 
-    constructor(name, times, values, interpolation) {
-        if (name === undefined) {
-            throw new Error('KeyFrameTrack: name为空');
-        }
-
-        if (times === undefined || times.length <= 0) {
-            throw new Error('KeyFrameTrack: times为空');
-        }
-
-        this.name = name;
-
+    constructor(node, property, times, values, interpolation) {
+        this.node = node;
+        this.property = property;
         this.times = times;
-
         this.values = values;
 
-        this.setInterpolation(interpolation);
+        this.setInterpolant(interpolation);
     }
 
     getValueSize() {
         return this.values.length / this.times.length;
     }
 
-    setInterpolation(interpolation) {
-        this.createInterpolant  = interpolation;
+    setInterpolant(interpolation) {
+        if (interpolation === LinearInterpolation) {
+            this.interpolant = new LinearInterpolant(this.times, this.values, this.getValueSize());
+        } else if (interpolation === StepInterpolation) {
+            this.interpolant = new StepInterpolant(this.times, this.values, this.getValueSize());
+        } else if (interpolation === CubicSplineInterpolation) {
+            this.interpolant = new CubicSplineInterpolant(this.times, this.values, this.getValueSize());
+        }
     }
     
 }
