@@ -21,11 +21,11 @@ export default class AnimationMixer {
                 let track = tracks[j],
                     node = track.node,
                     property = track.property,
-                    interpolation = track.interpolation;
+                    interpolant = track.interpolant;
 
                 time %= clip.duration;
 
-                let result = interpolation.evaluate(time);
+                let result = interpolant.evaluate(time);
                 node[property].setFromArray(result);
             }
         }
