@@ -12,9 +12,15 @@ export default class Interpolant {
 
         for(let i = 0, l = xArray.length; i < l; i++) {
             if (t === xArray[i]) {
-                i1 = i;
-                t0 = xArray[i];
-                t1 = t0;
+                if (i === 0) {
+                    i1 = i + 1;
+                    t0 = xArray[i];
+                    t1 = xArray[i1];
+                } else {
+                    i1 = i;
+                    t0 = xArray[i - 1];
+                    t1 = xArray[i1];
+                }
                 break;
             } else if (t > xArray[i] && t < xArray[i + 1]) {
                 i1 = i + 1;
