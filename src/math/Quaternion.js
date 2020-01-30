@@ -246,10 +246,114 @@ export default class Quaternion {
         return this;
     }
 
-    slerp() {}
+    slerp(q, t) {
+        if (t === 0) {
+            return this;
+        }
 
-    static slerpFlat() {}
+        if (t === 1) {
+            return this.copy(q);
+        }
 
-    static slerp() {}
+        let x = this._x,
+            y = this._y,
+            z = this._z,
+            w = this._w,
+            cosHalfTheta = w * q.w + x * q.x + y * q.y + z * q.z;
+        
+        // halfTheta时this和q的夹角，取值范围是：>= 0 && <= PI / 2
+        // halfTheta = 0, this和q的方向相同，直接返回this
+        // this和q的夹角是钝角，由于双倍覆盖的问题，这里将q取反保证插值路径是最短的
+        if (cosHalfTheta >= 1) {
+            return this;
+        } else if (cosHalfTheta < 0) {
+            this._x = -q.x;
+            this._y = -q.y;
+            this._z = -q.z;
+            this._w = -q.w;
+            cosHalfTheta = -cosHalfTheta;
+        } else {
+            this.copy(q);
+        }
+
+        let sinHalfTheta = Math.sqrt(1 - cosHalfTheta * cosHalfTheta);
+
+        // sin值太小时因为精度问题，会被近似为0，导致除以0的错误
+        // 出现这种情况使用lerp算法
+        if (sinHalfTheta <= Number.EPSILON) {
+            let s = 1 - t;
+            this._w = s * w + t * this._w;
+            this._x = s * x + t * this._x;
+            this._y = s * y + t * this._y;
+            this._z = s * z + t * this._z;
+
+            return this.normalize();
+        }
+
+        let halfTheta = Math.atan2(sinHalfTheta, cosHalfTheta),
+            alpha = Math.sin((1 - t) * halfTheta) / sinHalfTheta,
+            beta = Math.sin(t * halfTheta) / sinHalfTheta;
+
+        this._w = alpha * w + beta * this._w;
+        this._x = alpha * x + beta * this._x;
+        this._y = alpha * y + beta * this._y;
+        this._z = alpha * z + beta * this._z;
+
+        return this;
+    }
+
+    static slerp(qStart, qEnd, qTarget, t) {
+        return qTarget.copy(qStart).slerp(qEnd, t);
+    }
+
+    // 步骤与slerp一样
+    static slerpFlat(dst, dstOffset, src0, srcOffset0, src1, srcOffset1, t) {
+        let x0 = src0[srcOffset0 + 0],
+            y0 = src0[srcOffset0 + 1],
+            z0 = src0[srcOffset0 + 2],
+            w0 = src0[srcOffset0 + 3],
+            x1 = src1[srcOffset1 + 0],
+            y1 = src1[srcOffset1 + 1],
+            z1 = src1[srcOffset1 + 2],
+            w1 = src1[srcOffset1 + 3];
+
+        if (w0 !== w1 || x0 !== x1 || y0 !== y1 || z0 !== z1) {
+            let s = 1 - t,
+                cos = x0 * x1 + y0 * y1 + z0 * z1 + w0 * w1,
+                dir = ( cos >= 0 ? 1 : - 1 ),
+                sqrSin = 1 - cos * cos;
+
+            // 避免精度问题引起的除0错误
+            if (sqrSin > Number.EPSILON) {
+                let sin = Math.sqrt(sqrSin),
+                    len = Math.atan2(sin, cos * dir);
+
+                s = Math.sin(s * len) / sin;
+                t = Math.sin(t * len) / sin;
+            }
+
+            var tDir = t * dir;
+
+            x0 = x0 * s + x1 * tDir;
+            y0 = y0 * s + y1 * tDir;
+            z0 = z0 * s + z1 * tDir;
+            w0 = w0 * s + w1 * tDir;
+
+            // 使用lerp得到的结果需要归一化
+            if (s === 1 - t) {
+                let f = 1 / Math.sqrt(x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0);
+
+                x0 *= f;
+                y0 *= f;
+                z0 *= f;
+                w0 *= f;
+            }
+        }
+
+        dst[dstOffset + 0] = x0;
+        dst[dstOffset + 1] = y0;
+        dst[dstOffset + 2] = z0;
+        dst[dstOffset + 3] = w0;
+    }
 
 }

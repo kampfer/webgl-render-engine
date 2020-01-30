@@ -9,9 +9,10 @@ import CubicSplineInterpolant from '../../math/interpolants/CubicSplineInterpola
 
 export default class KeyFrameTrack {
 
-    constructor(node, property, times, values, interpolation) {
+    constructor(node, property, times, values, interpolation = LinearInterpolation) {
         this.node = node;
         this.property = property;
+        this.name = node.name + '.' + property;
         this.times = times;
         this.values = values;
 
@@ -22,14 +23,36 @@ export default class KeyFrameTrack {
         return this.values.length / this.times.length;
     }
 
+    createLinearInterpolant() {
+        return new LinearInterpolant(this.times, this.values, this.getValueSize());
+    }
+
+    createStepInterpolant() {
+        return new StepInterpolant(this.times, this.values, this.getValueSize());
+    }
+
+    createCubicSplineInterpolant() {
+        return new CubicSplineInterpolant(this.times, this.values, this.getValueSize());
+    }
+
+    // 子类可以通过覆盖此方法实现自定义的插值方法
+    // createInterpolant() {}
+
+    // 优先使用自定义的createInterpolant方法 
     setInterpolant(interpolation) {
-        if (interpolation === LinearInterpolation) {
-            this.interpolant = new LinearInterpolant(this.times, this.values, this.getValueSize());
-        } else if (interpolation === StepInterpolation) {
-            this.interpolant = new StepInterpolant(this.times, this.values, this.getValueSize());
-        } else if (interpolation === CubicSplineInterpolation) {
-            this.interpolant = new CubicSplineInterpolant(this.times, this.values, this.getValueSize());
+        if (this.createInterpolant === undefined) {
+            let factoryMethod;
+            if (interpolation === LinearInterpolation) {
+                factoryMethod = this.createLinearInterpolant;
+            } else if (interpolation === StepInterpolation) {
+                factoryMethod = this.createStepInterpolant;
+            } else if (interpolation === CubicSplineInterpolation) {
+                factoryMethod = this.createCubicSplineInterpolant;
+            }
+            this.createInterpolant = factoryMethod;
         }
+        
+        this.interpolant = this.createInterpolant();
     }
     
 }
