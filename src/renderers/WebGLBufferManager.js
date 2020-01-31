@@ -1,10 +1,10 @@
 /*
  * 负责管理buffer
- * three.js:
+ * three.js: WebGLAttributes
  * weakMap: [attribue instance] = buffer
  */
 
-export default class WebGLAttributeManager {
+export default class WebGLBufferManager {
 
     constructor(gl) {
         this._gl = gl;
@@ -51,9 +51,19 @@ export default class WebGLAttributeManager {
     }
 
     remove(attribute) {
-        this.buffer.delete(attribute);
+        let buffer = this.get(attribute);
+        if (buffer) {
+            this._gl.deleteBuffer(buffer);
+            this._buffers.delete(attribute);
+        }
     }
 
     update() { }
+
+    destroy() {
+        this._gl = null;
+        // weakmap没有clear方法，也无法遍历，这里先粗暴的赋值为null
+        this._buffers = null;
+    }
 
 }

@@ -62,6 +62,8 @@ export default class {
 
     destroy() {
         this._gl.deleteProgram(this._program);
+        this._program = null;
+        this._gl = null;
     }
 
 }

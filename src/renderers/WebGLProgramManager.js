@@ -40,6 +40,20 @@ export default class WebGLProgramManager {
         return program;
     }
 
-    releaseProgram() {}
+    releaseProgram(key) {
+        let program = this._programs[key];
+        if (program) {
+            program.destroy();
+            this._programs.delete(key);
+        }
+    }
+
+    destroy() {
+        this._gl = null;
+        for(let key in this._programs) {
+            this.releaseProgram(key);
+        }
+        this._programs = null;
+    }
 
 }
