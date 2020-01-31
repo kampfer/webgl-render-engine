@@ -8,13 +8,13 @@ export default class AnimationClip {
         this.tracks = tracks;
         this.uuid = ++uid;
 
-        if (this._duration < 0) {
+        if (this.duration < 0) {
             this.setDurationFromTracks();
         }
     }
 
     setDurationFromTracks() {
-        let tracks = this._tracks,
+        let tracks = this.tracks,
             duration = 0;
 
         for(let i = 0, l = tracks.length; i < l; i++) {
