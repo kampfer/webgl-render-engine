@@ -1,6 +1,7 @@
 import * as webglUtils from '../utils/webgl';
 import WebGLProgramManager from './WebGLProgramManager';
 import WebGLBufferManager from './WebGLBufferManager';
+import { ObjectType } from '../constants';
 
 let mat4Array = new Float32Array(16),
     mat3Array = new Float32Array(9);
@@ -161,7 +162,7 @@ export default class WebGLRenderer {
     getRenderList(object) {
         let list = [];
 
-        if (object.type === 'Mesh') {
+        if (object.type === ObjectType.Mesh) {
             list.push(object);
         }
 
