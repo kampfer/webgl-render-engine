@@ -84,7 +84,7 @@ export default class Euler {
             if (Math.abs(m13) < 1 - Number.EPSILON) {
                 this._x = Math.atan2(-m23, m33);
                 this._z = Math.atan2(-m12, m11);
-            } else {
+            } else {    // beta = + PI / 2 || beta = - PI / 2
                 this._x = Math.atan2(m32, m22);
                 this._z = 0;
             }
@@ -146,7 +146,7 @@ export default class Euler {
 
     setFromQuaternion(q, order) {
         _m.setRotationFromQauternion(q);
-        return this.setFromRotationMatrix(q, order);
+        return this.setFromRotationMatrix(_m, order);
     }
 
     reorder(newOrder) {
