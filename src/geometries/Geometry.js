@@ -5,6 +5,7 @@ export default class Geometry {
 
     constructor() {
         this.vertices = [];
+        this.normals = [];
         this.colors = [];
         this.indices = [];
         this._attributes = {};
