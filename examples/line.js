@@ -15,7 +15,7 @@ document.body.appendChild(renderer.domElement);
 
 // camera上方向默认为y轴正方向
 let camera = new PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 100);
-camera.setPosition(2, 2, 5);
+camera.position.set(2, 2, 5);
 camera.lookAt(0, 0, 0);
 
 let scene = new Scene();
