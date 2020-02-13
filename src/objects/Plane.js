@@ -1,4 +1,5 @@
-import GraphObject from './GraphObject';
+import GraphObject from '../GraphObject';
+import { ObjectType } from '../constants';
 
 export default class Plane extends GraphObject {
 
@@ -6,7 +7,7 @@ export default class Plane extends GraphObject {
         super();
         this.geometry = geometry;
         this.material = material;
-        this.type = 'Plane';
+        this.type = ObjectType.Plane;
     }
 
 };
