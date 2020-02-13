@@ -6,5 +6,9 @@ export const ObjectType = {
     GraphObject: 0,
     Mesh: 1,
     PerspectiveCamera: 2,
-    OrthographicCamera: 3
-}
+    OrthographicCamera: 3,
+    Line: 4,
+    LineSegments: 5,
+    Plane: 6,
+    Points: 7,
+};

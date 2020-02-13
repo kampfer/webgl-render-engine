@@ -3,9 +3,9 @@ import PerspectiveCamera from '../src/cameras/PerspectiveCamera';
 import WebGLRenderer from '../src/renderers/WebGLRenderer';
 import Geometry from '../src/geometries/Geometry';
 import Material from '../src/materials/Material';
-import Line from '../src/Line';
+import Line from '../src/objects/Line';
 import PlaneGeometry from '../src/geometries/PlaneGeometry';
-import Plane from '../src/Plane';
+import Plane from '../src/objects/Plane';
 import OrbitCameraController from '../src/cameras/OrbitCameraController';
 
 let renderer = new WebGLRenderer();
