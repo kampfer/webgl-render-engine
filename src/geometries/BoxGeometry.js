@@ -24,9 +24,9 @@ export default class BoxGeometry extends Geometry {
         this._buildPlane('z', 'y', 'x', 1, 1, depth, height, width, widthSegments, heightSegments);     // left
         this._buildPlane('z', 'y', 'x', 1, 1, depth, height, -width, widthSegments, heightSegments);    // right
 
-        this.setIndex(new BufferAttribute(new Int8Array(this.indices), undefined, 1, false));
+        this.setIndex(new BufferAttribute(new Uint8Array(this.indices), undefined, 1, false));
         this.setAttribute('position', new BufferAttribute(new Float32Array(this.vertices), undefined, 3, false));
-        this.setAttribute('normals', new BufferAttribute(new Float32Array(this.normals), undefined, 3, false));
+        this.setAttribute('normal', new BufferAttribute(new Float32Array(this.normals), undefined, 3, false));
     }
 
     // TODO: 还需要纹理坐标
@@ -79,8 +79,8 @@ export default class BoxGeometry extends Geometry {
                     c = numberOfVertices + (ix + 1) + hSegments1 * (iy + 1),
                     d = numberOfVertices + (ix + 1) + hSegments1 * iy;
 
-                this.indices.push(a, b, c);
-                this.indices.push(b, c, d);
+                this.indices.push(a, d, c);
+                this.indices.push(a, c, b);
 
             }
 

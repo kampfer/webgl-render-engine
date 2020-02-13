@@ -74,6 +74,8 @@ export default class WebGLRenderer {
                     gl.enableVertexAttribArray(programAttribute);
                     gl.bindBuffer(target, buffer);
                     gl.vertexAttribPointer(programAttribute, itemSize, type, normalized, stride, offset);
+                } else {
+                    console.warn(`webgl需要attribute:${name}，但geometry未提供！`);
                 }
 
             }
