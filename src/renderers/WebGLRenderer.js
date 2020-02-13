@@ -74,8 +74,6 @@ export default class WebGLRenderer {
                     gl.enableVertexAttribArray(programAttribute);
                     gl.bindBuffer(target, buffer);
                     gl.vertexAttribPointer(programAttribute, itemSize, type, normalized, stride, offset);
-                } else {
-                    console.warn(`webgl需要attribute:${name}，但geometry未提供！`);
                 }
 
             }
@@ -132,7 +130,7 @@ export default class WebGLRenderer {
                 gl.useProgram(program);
             }
 
-            object.geometry.update();
+            // object.geometry.update();
 
             object.modelViewMatrix.multiplyMatrices(camera.inverseWorldMatrix, object.worldMatrix);
             object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
