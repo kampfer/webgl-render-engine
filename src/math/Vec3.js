@@ -191,4 +191,11 @@ export default class Vec3 {
         return this.setFromSphericalCoords(s.radius, s.theta, s.phi);
     }
 
+    setFromBufferAttribute(attribute, index) {
+        this.x = attribute.getX(index);
+        this.y = attribute.getY(index);
+        this.z = attribute.getZ(index);
+        return this;
+    }
+
 }
