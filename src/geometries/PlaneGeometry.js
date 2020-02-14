@@ -1,5 +1,5 @@
 import Geometry from './Geometry';
-import BufferAttribute from '../renderers/WebGLAttribute';
+import BufferAttribute from '../render/BufferAttribute';
 
 export default class PlaneGeometry extends Geometry {
 
@@ -21,8 +21,8 @@ export default class PlaneGeometry extends Geometry {
 
         this.indices.push(0, 1, 3, 1, 2, 3);
 
-        this.setIndex(new BufferAttribute(new Uint8Array(this.indices), undefined, 1, false));
-        this.setAttribute('position', new BufferAttribute(new Float32Array(this.vertices), undefined, 3, false));
+        this.setIndex(new BufferAttribute(new Uint8Array(this.indices), 1));
+        this.setAttribute('position', new BufferAttribute(new Float32Array(this.vertices), 3));
     }
 
 }

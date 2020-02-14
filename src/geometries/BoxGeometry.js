@@ -8,7 +8,7 @@
 
 import Geometry from './Geometry';
 import Vec3 from '../math/Vec3';
-import BufferAttribute from '../renderers/WebGLAttribute';
+import BufferAttribute from '../render/BufferAttribute';
 
 export default class BoxGeometry extends Geometry {
 
@@ -24,9 +24,9 @@ export default class BoxGeometry extends Geometry {
         this._buildPlane('z', 'y', 'x', 1, 1, depth, height, width, widthSegments, heightSegments);     // left
         this._buildPlane('z', 'y', 'x', 1, 1, depth, height, -width, widthSegments, heightSegments);    // right
 
-        this.setIndex(new BufferAttribute(new Uint8Array(this.indices), undefined, 1, false));
-        this.setAttribute('position', new BufferAttribute(new Float32Array(this.vertices), undefined, 3, false));
-        this.setAttribute('normal', new BufferAttribute(new Float32Array(this.normals), undefined, 3, false));
+        this.setIndex(new BufferAttribute(new Uint8Array(this.indices), 1));
+        this.setAttribute('position', new BufferAttribute(new Float32Array(this.vertices), 3));
+        this.setAttribute('normal', new BufferAttribute(new Float32Array(this.normals), 3));
     }
 
     // TODO: 还需要纹理坐标

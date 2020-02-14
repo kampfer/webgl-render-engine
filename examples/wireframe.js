@@ -21,7 +21,7 @@ scene.add(box);
 let wireframeGeometry = new WireframeGeometry(boxGeometry),
     box2 = new Mesh(wireframeGeometry, material);
 box2.drawMode = 1;
-box2.position.set(3, 0, 0);
+box2.position.set(-3, 0, 0);
 scene.add(box2);
 
 let camera = new PerspectiveCamera(60 * Math.PI / 180, window.innerWidth / window.innerHeight, 0.1, 1000);

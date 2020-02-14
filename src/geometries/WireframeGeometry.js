@@ -1,6 +1,6 @@
 import Geometry from './Geometry';
 import Vec3 from '../math/Vec3';
-import BufferAttribute from '../renderers/WebGLAttribute';
+import BufferAttribute from '../render/BufferAttribute';
 
 let _v3 = new Vec3();
 
@@ -54,7 +54,7 @@ export default class WireframeGeometry extends Geometry {
             }
         }
 
-        this.setAttribute('position', new BufferAttribute(new Float32Array(this.vertices), undefined, 3));
+        this.setAttribute('position', new BufferAttribute(new Float32Array(this.vertices), 3));
 
     }
 
