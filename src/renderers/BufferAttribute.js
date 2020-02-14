@@ -4,19 +4,20 @@ export default class BufferAttribute {
 
     constructor(
         array,
-        target,
         itemSize,
-        normalized,
+        normalized = false,
         stride = 0,
-        offset = 0
+        offset = 0,
+        target,
+        usage = 'STATIC_DRAW'
     ) {
-        this.name = '';
+        this.name = undefined;
         this.array = array;
         this.target = target;
         this.itemSize = itemSize;
         this.count = array.length / itemSize;
         this.normalized = normalized;
-        this.usage = 'STATIC_DRAW';
+        this.usage = usage;
         this.glType = this.getGLType(array);
         this.bytesPerElement = array.BYTES_PER_ELEMENT;
         this.offset = offset;
