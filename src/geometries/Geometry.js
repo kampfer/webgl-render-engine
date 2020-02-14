@@ -1,5 +1,5 @@
 import Box3 from '../math/Box3';
-import BufferAttribute from '../render/BufferAttribute';
+import BufferAttribute from '../renderers/BufferAttribute';
 
 export default class Geometry {
 

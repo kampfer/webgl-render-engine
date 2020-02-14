@@ -1,5 +1,5 @@
 import Geometry from './Geometry';
-import BufferAttribute from '../render/BufferAttribute';
+import BufferAttribute from '../renderers/BufferAttribute';
 
 export default class PlaneGeometry extends Geometry {
 
