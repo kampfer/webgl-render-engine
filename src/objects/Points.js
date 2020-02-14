@@ -1,13 +1,13 @@
 import GraphObject from '../GraphObject';
-import { ObjectType } from '../constants';
+import { OBJECT_TYPE_POINTS } from '../constants';
 
-export default class Plane extends GraphObject {
+export default class Points extends GraphObject {
 
     constructor(geometry, material) {
         super();
         this.geometry = geometry;
         this.material = material;
-        this.type = ObjectType.Points;
+        this.type = OBJECT_TYPE_POINTS;
     }
 
 }

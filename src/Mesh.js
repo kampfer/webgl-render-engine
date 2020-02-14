@@ -1,5 +1,5 @@
 import GraphObject from './GraphObject';
-import { ObjectType } from './constants';
+import { OBJECT_TYPE_MESH } from './constants';
 
 export default class Mesh extends GraphObject {
 
@@ -7,7 +7,7 @@ export default class Mesh extends GraphObject {
         super();
         this.geometry = geometry;
         this.material = material;
-        this.type = ObjectType.Mesh;
+        this.type = OBJECT_TYPE_MESH;
     }
 
     clone(recursive) {

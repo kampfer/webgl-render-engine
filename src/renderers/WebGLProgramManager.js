@@ -1,5 +1,10 @@
 import WebGLProgram from './WebGLProgram';
-import { ObjectType } from '../constants';
+import {
+    OBJECT_TYPE_POINTS,
+    OBJECT_TYPE_LINE,
+    OBJECT_TYPE_PLANE,
+    OBJECT_TYPE_MESH
+} from '../constants';
 
 export default class WebGLProgramManager {
 
@@ -12,12 +17,12 @@ export default class WebGLProgramManager {
     getProgramType(graphObject) {
         let type;
         switch(graphObject.type) {
-            case ObjectType.Points:
+            case OBJECT_TYPE_POINTS:
                 type = 'points';
                 break;
-            case ObjectType.Line:
-            case ObjectType.Plane:
-            case ObjectType.Mesh:
+            case OBJECT_TYPE_LINE:
+            case OBJECT_TYPE_PLANE:
+            case OBJECT_TYPE_MESH:
                 type = 'base';
                 break;
             default:
