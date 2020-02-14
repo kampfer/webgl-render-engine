@@ -1,6 +1,6 @@
 import Geometry from './Geometry';
 import Vec3 from '../math/Vec3';
-import BufferAttribute from '../render/BufferAttribute';
+import BufferAttribute from '../renderers/BufferAttribute';
 
 let _v3 = new Vec3();
 

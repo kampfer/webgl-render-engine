@@ -8,7 +8,7 @@
 
 import Geometry from './Geometry';
 import Vec3 from '../math/Vec3';
-import BufferAttribute from '../render/BufferAttribute';
+import BufferAttribute from '../renderers/BufferAttribute';
 
 export default class BoxGeometry extends Geometry {
 
