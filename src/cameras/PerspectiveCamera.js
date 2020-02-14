@@ -1,12 +1,12 @@
 import Camera from './Camera';
-import { ObjectType } from '../constants';
+import { OBJECT_TYPE_PERSPECTIVE_CAMERA } from '../constants';
 
 export default class PerspectiveCamera extends Camera {
 
     constructor(fovy, aspect, near, far) {
         super();
 
-        this.type = ObjectType.PerspectiveCamera;
+        this.type = OBJECT_TYPE_PERSPECTIVE_CAMERA;
 
         this.fovy = fovy === undefined ? 45 * Math.PI / 180 : fovy;
         this.aspect = aspect === undefined ? 1 : aspect;

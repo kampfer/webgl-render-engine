@@ -1,7 +1,13 @@
 import * as webglUtils from '../utils/webgl';
 import WebGLProgramManager from './WebGLProgramManager';
 import WebGLBufferManager from './WebGLBufferManager';
-import { ObjectType } from '../constants';
+import {
+    OBJECT_TYPE_MESH,
+    OBJECT_TYPE_LINE,
+    OBJECT_TYPE_LINE_SEGMENTS,
+    OBJECT_TYPE_LINE_LOOP,
+    OBJECT_TYPE_POINTS
+} from '../constants';
 
 let mat4Array = new Float32Array(16),
     mat3Array = new Float32Array(9);
@@ -149,10 +155,28 @@ export default class WebGLRenderer {
             if (index) {
                 gl.drawElements(gl.TRIANGLES, index.count, index.glType, 0);
             } else {
-                let count = object.geometry.getAttribute('position').count;
-                gl.drawArrays(object.drawMode, 0, count);
+                let count = object.geometry.getAttribute('position').count,
+                    mode = object.drawMode || this.getDrawModeByObjectType(object.type);
+                gl.drawArrays(mode, 0, count);
             }
         }
+    }
+
+    getDrawModeByObjectType(type) {
+        let gl = this._gl,
+            mode;
+        if (type === OBJECT_TYPE_MESH) {
+            mode = gl.TRIANGLES;
+        } else if (type === OBJECT_TYPE_LINE) {
+            mode = gl.LINE_STRIP;
+        } else if (type === OBJECT_TYPE_LINE_SEGMENTS) {
+            mode = gl.LINES;
+        } else if (type === OBJECT_TYPE_LINE_LOOP) {
+            mode = gl.LINE_LOOP;
+        } else if (type === OBJECT_TYPE_POINTS) {
+            mode = gl.POINTS;
+        }
+        return mode;
     }
 
     setClearColor(color) {
@@ -162,7 +186,7 @@ export default class WebGLRenderer {
     getRenderList(object) {
         let list = [];
 
-        if (object.type === ObjectType.Mesh) {
+        if (object.type === OBJECT_TYPE_MESH) {
             list.push(object);
         }
 

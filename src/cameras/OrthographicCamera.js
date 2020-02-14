@@ -1,12 +1,12 @@
 import Camera from './Camera';
-import { ObjectType } from '../constants';
+import { OBJECT_TYPE_ORTHOGRAPHIC_CAMERA } from '../constants';
 
 export default class OrthographicCamera extends Camera {
 
     constructor(left = -1, right = 1, top = 1, bottom = -1, near = 0.1, far = 2000) {
         super();
 
-        this.type = ObjectType.OrthographicCamera;
+        this.type = OBJECT_TYPE_ORTHOGRAPHIC_CAMERA;
 
         this._left = left;
         this._right = right;
