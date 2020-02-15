@@ -8,19 +8,19 @@ let mat4Array = new Float32Array(16),
 
 export default class WebGLRenderer {
 
-    constructor(opts = {
-        canvas: document.createElement('canvas'),
-        autoClearColor: true,
-        autoClearDepth: true,
-        autoClearStencil: true
-    }) {
+    constructor({
+        canvas = document.createElement('canvas'),
+        autoClearColor = true,
+        autoClearDepth = true,
+        autoClearStencil = true
+    } = {}) {
 
-        this.domElement = opts.canvas;
+        this.domElement = canvas;
 
         // 清理缓冲的设置
-        this.autoClearColor = opts.autoClearColor;
-        this.autoClearDepth = opts.autoClearDepth;
-        this.autoClearStencil = opts.autoClearStencil;
+        this.autoClearColor = autoClearColor;
+        this.autoClearDepth = autoClearDepth;
+        this.autoClearStencil = autoClearStencil;
 
         this._pixelRatio = window.devicePixelRatio;
 
@@ -185,7 +185,7 @@ export default class WebGLRenderer {
         return list;
     }
 
-    clear(color, depth, stencil) {
+    clear(color = true, depth = true, stencil = true) {
         let bits = 0, gl = this._gl;
 
         if (color) bits |= gl.COLOR_BUFFER_BIT;
