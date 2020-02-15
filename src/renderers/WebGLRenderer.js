@@ -9,10 +9,18 @@ let mat4Array = new Float32Array(16),
 export default class WebGLRenderer {
 
     constructor(opts = {
-        canvas: document.createElement('canvas')
+        canvas: document.createElement('canvas'),
+        autoClearColor: true,
+        autoClearDepth: true,
+        autoClearStencil: true
     }) {
 
         this.domElement = opts.canvas;
+
+        // 清理缓冲的设置
+        this.autoClearColor = opts.autoClearColor;
+        this.autoClearDepth = opts.autoClearDepth;
+        this.autoClearStencil = opts.autoClearStencil;
 
         this._pixelRatio = window.devicePixelRatio;
 
@@ -113,10 +121,13 @@ export default class WebGLRenderer {
 
         scene.updateWorldMatrix();
 
-        gl.clearColor(...this._clearColor);
         gl.enable(gl.DEPTH_TEST);
 
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        // 设置清理颜色缓冲区时使用的颜色
+        gl.clearColor(...this._clearColor);
+
+        // 清理颜色缓冲区、深度缓冲区、模板缓冲区
+        this.clear(this.autoClearColor, this.autoClearDepth, this.autoClearStencil);
 
         let renderList = this.getRenderList(scene);
 
@@ -172,6 +183,16 @@ export default class WebGLRenderer {
         }
 
         return list;
+    }
+
+    clear(color, depth, stencil) {
+        let bits = 0, gl = this._gl;
+
+        if (color) bits |= gl.COLOR_BUFFER_BIT;
+        if (depth) bits |= gl.DEPTH_BUFFER_BIT;
+        if (stencil) bits |= gl.STENCIL_BUFFER_BIT;
+
+        gl.clear(bits);
     }
 
     destroy() {
