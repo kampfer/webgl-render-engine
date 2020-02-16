@@ -1,18 +1,3 @@
-// export const LinearInterpolation = 2020;
-// export const StepInterpolation = 2021;
-// export const CubicSplineInterpolation = 2022;
-
-// export const ObjectType = {
-//     GraphObject: 0,
-//     Mesh: 1,
-//     PerspectiveCamera: 2,
-//     OrthographicCamera: 3,
-//     Line: 4,
-//     LineSegments: 5,
-//     Plane: 6,
-//     Points: 7,
-// };
-
 export const GL_DRAW_MODE_POINTS = 0;
 export const GL_DRAW_MODE_LINES = 1;
 export const GL_DRAW_MODE_LINE_STRIP = 2;
