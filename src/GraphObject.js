@@ -90,7 +90,7 @@ export default class GraphObject {
         }
     }
 
-    getNodeByUid(uid) {
+    getChildByUid(uid) {
         let node = null;
         this.traverse(function (child) {
             if (child.uid === uid) {
@@ -101,7 +101,7 @@ export default class GraphObject {
         return node;
     }
 
-    getNodeByName(name) {
+    getChildByName(name) {
         let node = null;
         this.traverse(function (child) {
             if (child.name === name) {
