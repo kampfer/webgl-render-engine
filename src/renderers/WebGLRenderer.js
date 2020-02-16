@@ -163,11 +163,11 @@ export default class WebGLRenderer {
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
             }
 
+            let mode = object.drawMode || this.getDrawModeByObjectType(object.type);
             if (index) {
-                gl.drawElements(gl.TRIANGLES, index.count, index.glType, 0);
+                gl.drawElements(mode, index.count, index.glType, 0);
             } else {
-                let count = object.geometry.getAttribute('position').count,
-                    mode = object.drawMode || this.getDrawModeByObjectType(object.type);
+                let count = object.geometry.getAttribute('position').count;
                 gl.drawArrays(mode, 0, count);
             }
         }
@@ -197,7 +197,7 @@ export default class WebGLRenderer {
     getRenderList(object) {
         let list = [];
 
-        if (object.type === OBJECT_TYPE_MESH) {
+        if (object.type === OBJECT_TYPE_MESH || object.type === OBJECT_TYPE_LINE_SEGMENTS) {
             list.push(object);
         }
 
