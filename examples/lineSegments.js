@@ -7,6 +7,7 @@ import Material from '../src/materials/Material';
 import Geometry from '../src/geometries/Geometry';
 import BufferAttribute from '../src/renderers/BufferAttribute';
 import GraphObject from '../src/GraphObject';
+import OrbitController from '../src/controllers/OrbitController';
 
 let material = new Material();
 material.color = [0, 0, 0, 1];
@@ -64,12 +65,13 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor([1, 1, 1, 1]);
 document.body.appendChild(renderer.domElement);
 
+let orbitCameraController = new OrbitController(camera, renderer.domElement);
+
+// https://stackoverflow.com/questions/12886286/addeventlistener-for-keydown-on-canvas
+renderer.domElement.setAttribute('tabindex', 1);
+
 function animate() {
     requestAnimationFrame(animate);
-    scene.traverse(function (child) {
-        // child.rotation.x += 0.01;
-        child.rotation.y += 0.01;
-    });
     renderer.render(scene, camera);
 }
 
