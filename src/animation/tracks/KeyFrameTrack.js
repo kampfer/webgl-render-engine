@@ -1,7 +1,7 @@
 import {
-    LinearInterpolation,
-    StepInterpolation,
-    CubicSplineInterpolation
+    LINEAR_INTERPOLATION,
+    STEP_INTERPOLATION,
+    CUBIC_SPLINE_INTERPOLATION
 } from '../../constants';
 import LinearInterpolant from '../../math/interpolants/LinearInterpolant';
 import StepInterpolant from '../../math/interpolants/StepInterpolant';
@@ -9,7 +9,7 @@ import CubicSplineInterpolant from '../../math/interpolants/CubicSplineInterpola
 
 export default class KeyFrameTrack {
 
-    constructor(node, property, times, values, interpolation = LinearInterpolation) {
+    constructor(node, property, times, values, interpolation = LINEAR_INTERPOLATION) {
         this.node = node;
         this.property = property;
         this.name = node.name + '.' + property;
@@ -42,11 +42,11 @@ export default class KeyFrameTrack {
     setInterpolant(interpolation) {
         if (this.createInterpolant === undefined) {
             let factoryMethod;
-            if (interpolation === LinearInterpolation) {
+            if (interpolation === LINEAR_INTERPOLATION) {
                 factoryMethod = this.createLinearInterpolant;
-            } else if (interpolation === StepInterpolation) {
+            } else if (interpolation === STEP_INTERPOLATION) {
                 factoryMethod = this.createStepInterpolant;
-            } else if (interpolation === CubicSplineInterpolation) {
+            } else if (interpolation === CUBIC_SPLINE_INTERPOLATION) {
                 factoryMethod = this.createCubicSplineInterpolant;
             }
             this.createInterpolant = factoryMethod;
