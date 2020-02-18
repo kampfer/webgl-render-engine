@@ -51,6 +51,9 @@ export default class GraphObject {
 
         this.up = new Vec3(0, 1, 0);
 
+        // true: 每次render都重新compose matrix
+        this.matrixAutoUpdate = true;
+
         this._worldMatrixNeedsUpdate = false;
     }
 
@@ -120,7 +123,7 @@ export default class GraphObject {
     }
 
     updateWorldMatrix(force) {
-        this.updateMatrix();
+        if (this.matrixAutoUpdate) this.updateMatrix();
 
         if (this._worldMatrixNeedsUpdate || force) {
 
@@ -147,7 +150,7 @@ export default class GraphObject {
             this.parent.updateRelativeWorldMatrix(true, false);
         }
 
-        this.updateMatrix();
+        if (this.matrixAutoUpdate) this.updateMatrix();
 
         if (this.parent === null) {
             this.worldMatrix.copy(this.matrix);
