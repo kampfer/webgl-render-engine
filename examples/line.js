@@ -1,4 +1,4 @@
-import Scene from '../src/Scene';
+import Scene from '../src/objects/Scene';
 import PerspectiveCamera from '../src/cameras/PerspectiveCamera';
 import WebGLRenderer from '../src/renderers/WebGLRenderer';
 import Geometry from '../src/geometries/Geometry';

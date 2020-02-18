@@ -1,5 +1,5 @@
 import GraphObject from './GraphObject';
-import { OBJECT_TYPE_MESH } from './constants';
+import { OBJECT_TYPE_MESH } from '../constants';
 
 export default class Mesh extends GraphObject {
 
