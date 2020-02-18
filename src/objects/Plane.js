@@ -1,4 +1,4 @@
-import GraphObject from '../GraphObject';
+import GraphObject from './GraphObject';
 import { OBJECT_TYPE_PLANE } from '../constants';
 
 export default class Plane extends GraphObject {

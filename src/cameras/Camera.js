@@ -1,4 +1,4 @@
-import GraphObject from '../GraphObject';
+import GraphObject from '../objects/GraphObject';
 import Mat4 from "../math/Mat4";
 
 export default class Camera extends GraphObject {

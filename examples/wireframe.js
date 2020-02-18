@@ -2,8 +2,8 @@
 
 import WebGLRenderer from '../src/renderers/WebGLRenderer';
 import PerspectiveCamera from '../src/cameras/PerspectiveCamera';
-import Scene from '../src/Scene';
-import Mesh from '../src/Mesh';
+import Scene from '../src/objects/Scene';
+import Mesh from '../src/objects/Mesh';
 import BoxGeometry from '../src/geometries/BoxGeometry';
 import WireframeGeometry from '../src/geometries/WireframeGeometry';
 import Material from '../src/materials/Material';

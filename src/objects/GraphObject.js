@@ -1,9 +1,9 @@
 // import EventEmitter from 'events';
-import Mat4 from './math/Mat4';
-import Mat3 from './math/Mat3';
-import Vec3 from './math/Vec3';
-import Quaternion from './math/Quaternion';
-import Euler from './math/Euler';
+import Mat4 from '../math/Mat4';
+import Mat3 from '../math/Mat3';
+import Vec3 from '../math/Vec3';
+import Quaternion from '../math/Quaternion';
+import Euler from '../math/Euler';
 
 let _target = new Vec3(),
     _position = new Vec3(),

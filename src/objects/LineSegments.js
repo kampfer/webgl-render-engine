@@ -1,4 +1,4 @@
-import GraphObject from '../GraphObject';
+import GraphObject from './GraphObject';
 import {
     OBJECT_TYPE_LINE_SEGMENTS,
     GL_DRAW_MODE_LINES 

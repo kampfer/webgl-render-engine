@@ -1,12 +1,12 @@
 import WebGLRenderer from '../src/renderers/WebGLRenderer';
 import PerspectiveCamera from '../src/cameras/PerspectiveCamera';
-import Scene from '../src/Scene';
+import Scene from '../src/objects/Scene';
 import LineSegments from '../src/objects/LineSegments';
-import Mesh from '../src/Mesh';
+import Mesh from '../src/objects/Mesh';
 import Material from '../src/materials/Material';
 import Geometry from '../src/geometries/Geometry';
 import BufferAttribute from '../src/renderers/BufferAttribute';
-import GraphObject from '../src/GraphObject';
+import GraphObject from '../src/objects/GraphObject';
 import OrbitController from '../src/controllers/OrbitController';
 
 let material = new Material();
