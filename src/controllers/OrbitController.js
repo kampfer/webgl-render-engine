@@ -16,6 +16,7 @@ export default class {
         this._deltaPhi = 0;
 
         this._offset = new Vec3();
+        this.panSpeed = 1;
 
         this._scale = 1;
 
@@ -98,8 +99,8 @@ export default class {
             deltaY = mousePosition[1] - this._lastMousePosition[1];
 
         if (this._shiftKeyDown) {
-            this.target.x -= deltaX * 0.01;
-            this.target.y += deltaY * 0.01;
+            this.target.x -= deltaX * this.panSpeed;
+            this.target.y += deltaY * this.panSpeed;
         } else {
             let deltaTheta = Math.PI * 2 * deltaY / this.domElement.clientHeight,
                 deltaPhi = Math.PI * 2 * deltaX / this.domElement.clientWidth;
