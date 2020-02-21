@@ -133,7 +133,7 @@ export default class Color {
         if ( hex !== undefined ) {
             this.setHex( hex );
         } else {
-            console.warn('Unknown color ' + style);
+            console.warn('Unknown color ' + name);
         }
 
         return this;
