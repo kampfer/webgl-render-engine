@@ -13,7 +13,7 @@ export default class GridHelper extends LineSegments {
             step = size / divisions,
             vertices = [];
 
-        for(let i = 0, k = -halfSize; i < divisions; i++, k += step) {
+        for(let i = 0, k = -halfSize; i <= divisions; i++, k += step) {
             vertices.push(-halfSize, 0, k, halfSize, 0, k);
             vertices.push(k, 0, -halfSize, k, 0, halfSize);
         }
