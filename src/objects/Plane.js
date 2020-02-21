@@ -10,4 +10,4 @@ export default class Plane extends GraphObject {
         this.type = OBJECT_TYPE_PLANE;
     }
 
-};
+}
