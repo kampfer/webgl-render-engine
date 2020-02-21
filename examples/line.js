@@ -6,7 +6,7 @@ import Material from '../src/materials/Material';
 import Line from '../src/objects/Line';
 import PlaneGeometry from '../src/geometries/PlaneGeometry';
 import Plane from '../src/objects/Plane';
-import OrbitCameraController from '../src/cameras/OrbitCameraController';
+import OrbitCameraController from '../src/controllers/OrbitController';
 
 let renderer = new WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
