@@ -117,8 +117,14 @@ export default class WebGLRenderer {
 
         this.setUniformM4(programUniforms.projectionMatrix, false, camera.projectionMatrix);
 
-        if (material.color) {
-            gl.uniform4fv(programUniforms.color, material.color);
+        let color = material.color;
+        if (color) {
+            if (Array.isArray(color)) {
+                gl.uniform4fv(programUniforms.color, color);
+                console.warn('将数组color替换成Color类');
+            } else {
+                gl.uniform4fv(programUniforms.color, [color.r, color.g, color.b, 1]);
+            }
         }
     }
 
