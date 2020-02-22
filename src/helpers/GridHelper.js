@@ -7,7 +7,7 @@ import Color from '../math/Color';
 
 export default class GridHelper extends LineSegments {
 
-    constructor(size, divisions) {
+    constructor(size, divisions, color) {
 
         let halfSize = size / 2,
             step = size / divisions,
@@ -22,7 +22,7 @@ export default class GridHelper extends LineSegments {
         geometry.setAttribute('position', new BufferAttribute(new Float32Array(vertices), 3));
 
         let material = new Material();
-        material.color = new Color('#ccc');
+        material.color = new Color(color);
 
         super(geometry, material);
 

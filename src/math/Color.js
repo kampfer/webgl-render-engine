@@ -40,6 +40,8 @@ export default class Color {
             this.setHex(c);
         } else if (typeof c === 'string') {
             this.setStyle(c);
+        } else if (Array.isArray(c)) {
+            this.setFromArray(c);
         }
         return this;
     }
