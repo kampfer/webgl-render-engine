@@ -25,9 +25,13 @@ export default class Example {
         this.animate = this.animate.bind(this);
     }
 
+    render() {
+        this.renderer.render(this.scene, this.camera);
+    }
+
     animate() {
         this._animationTimer = requestAnimationFrame(this.animate);
-        this.renderer.render(this.scene, this.camera);
+        this.render();
     }
 
     run() {
