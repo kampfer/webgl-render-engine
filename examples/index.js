@@ -1,30 +1,44 @@
+const examples = {
+    gridHelper: () => import('./gridHelper'),
+    cameraHelper: () => import('./cameraHelper')
+};
+
+function appendExampleList() {
+    let ul = document.createElement('ol'),
+        contentHtml = '';
+    for(example in examples) {
+        contentHtml += `<li><a href="#${example}">${example}</a></li>`
+    }
+    ul.innerHTML = contentHtml;
+    document.body.appendChild(ul);
+}
+
+function clearBody() {
+    let children = document.body.children,
+    child = children[0];
+    while(child) {
+        document.body.removeChild(child);
+        child = children[0];
+    }
+}
+
 function handleHashChange() {
 
     let name = location.hash.slice(1);
 
-    if (!name) return false;
+    clearBody();
 
-    let children = document.body.children,
-        child = children[0];
-    while(child && child.tagName.toLowerCase() !== 'script') {
-        document.body.removeChild(child);
-        child = children[0];
-    }
+    let example = examples[name];
 
-    switch(name) {
-        case 'wireframe':
-            return import('./wireframe');
-        case 'line':
-            return import('./line');
-        case 'lineSegments':
-            return import('./lineSegments');
-        case 'gridHelper':
-            import('./gridHelper').then(({default: ExampleContructor}) => {
-                if (ExampleContructor) example = runExample(ExampleContructor);
-            });
-            break;
-        default:
-            console.warn(`未知的module: ${name}`);
+    if (example) {
+        example().then(({default: ExampleContructor}) => {
+            if (ExampleContructor) {
+                if (curExample) curExample.destroy();
+                curExample = runExample(ExampleContructor);
+            }
+        });
+    } else {
+        appendExampleList();
     }
 
 }
@@ -35,7 +49,7 @@ function runExample(Example) {
     return example;
 }
 
-let example = null;
+let curExample = null;
 
 window.addEventListener('hashchange', handleHashChange, false);
 
