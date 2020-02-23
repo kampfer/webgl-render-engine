@@ -198,4 +198,14 @@ export default class Vec3 {
         return this;
     }
 
+    // 从世界坐标系转换到NDC坐标系
+    project(camera) {
+        return this.applyMatrix4(camera.worldMatrixInverse).applyMatrix4(camera.projectionMatrix);
+    }
+
+    // 从NDC转换到世界坐标系
+    unproject(camera) {
+        return this.applyMatrix4(camera.projectionMatrixInverse).applyMatrix4(camera.worldMatrix);
+    }
+
 }
