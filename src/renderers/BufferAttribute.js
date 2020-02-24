@@ -62,4 +62,14 @@ export default class BufferAttribute {
         return this.array[this.itemSize * i + 3];
     }
 
+    setXYZ(i, x, y, z) {
+        let index = this.itemSize * i;
+
+        this.array[index + 0] = x;
+        this.array[index + 1] = y;
+        this.array[index + 2] = z;
+
+        return this;
+    }
+
 }

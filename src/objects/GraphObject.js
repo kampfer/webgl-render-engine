@@ -27,8 +27,6 @@ export default class GraphObject {
 
         this.position = new Vec3();
         this.scale = new Vec3(1, 1, 1);
-        // this.rotation = new Euler();
-        // this.quaternion = new Quaternion();
 
         let rotation = new Euler(),
             proxyForRotation = new Proxy(rotation, {
@@ -55,6 +53,8 @@ export default class GraphObject {
         this.matrixAutoUpdate = true;
 
         this._worldMatrixNeedsUpdate = false;
+
+        this.visible = true;
     }
 
     add(object) {

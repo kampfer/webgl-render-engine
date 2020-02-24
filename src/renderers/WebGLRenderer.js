@@ -203,7 +203,7 @@ export default class WebGLRenderer {
     getRenderList(object) {
         let list = [];
 
-        if (object.type === OBJECT_TYPE_MESH || object.type === OBJECT_TYPE_LINE_SEGMENTS) {
+        if (object.visible === true && (object.type === OBJECT_TYPE_MESH || object.type === OBJECT_TYPE_LINE_SEGMENTS)) {
             list.push(object);
         }
 
