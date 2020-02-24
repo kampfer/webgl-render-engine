@@ -2,7 +2,7 @@ import Example from './Example';
 import CameraHelper from '../src/helpers/CameraHelper';
 import PerspectiveCamera from '../src/camera/PerspectiveCamera';
 import OrthgraphicCamera from '../src/camera/OrthgraphicCamera';
-import degToRad from '../src/math/utils';
+import { degToRad } from '../src/math/utils';
 import Mesh from '../src/objects/Mesh';
 import BoxGeometry from '../src/geometries/BoxGeometry';
 import Material from '../src/materials/Material';
