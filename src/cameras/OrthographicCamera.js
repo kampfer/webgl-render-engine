@@ -20,6 +20,7 @@ export default class OrthographicCamera extends Camera {
 
     updateProjectionMatrix() {
         this.projectionMatrix.setOrthographic(this._left, this._right, this._top, this._bottom, this._far, this._near);
+        this.projectionMatrixInverse.setInverseOf(this.projectionMatrix);
     }
 
 }

@@ -24,6 +24,7 @@ export default class PerspectiveCamera extends Camera {
             left = -0.5 * width;
 
         this.projectionMatrix.setPerspective(left, left + width, top, top - height, near, this.far);
+        this.projectionMatrixInverse.setInverseOf(this.projectionMatrix);
     }
 
 }

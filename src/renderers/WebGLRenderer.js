@@ -16,6 +16,7 @@ export default class WebGLRenderer {
 
     constructor({
         canvas = document.createElement('canvas'),
+        autoClear = true,
         autoClearColor = true,
         autoClearDepth = true,
         autoClearStencil = true
@@ -24,6 +25,7 @@ export default class WebGLRenderer {
         this.domElement = canvas;
 
         // 清理缓冲的设置
+        this.autoClear = autoClear;
         this.autoClearColor = autoClearColor;
         this.autoClearDepth = autoClearDepth;
         this.autoClearStencil = autoClearStencil;
@@ -139,7 +141,9 @@ export default class WebGLRenderer {
         gl.clearColor(...this._clearColor);
 
         // 清理颜色缓冲区、深度缓冲区、模板缓冲区
-        this.clear(this.autoClearColor, this.autoClearDepth, this.autoClearStencil);
+        if (this.autoClear) {
+            this.clear(this.autoClearColor, this.autoClearDepth, this.autoClearStencil);
+        }
 
         let renderList = this.getRenderList(scene);
 
