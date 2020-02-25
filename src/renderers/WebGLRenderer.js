@@ -111,7 +111,7 @@ export default class WebGLRenderer {
             material = object.material,
             programUniforms = program.getUniforms();
 
-        this.setUniformM3(programUniforms.normalMatrix, false, object.normalMatrix)
+        this.setUniformM3(programUniforms.normalMatrix, false, object.normalMatrix);
 
         this.setUniformM4(programUniforms.modelMatrix, false, object.worldMatrix);
 
@@ -121,12 +121,7 @@ export default class WebGLRenderer {
 
         let color = material.color;
         if (color) {
-            if (Array.isArray(color)) {
-                gl.uniform4fv(programUniforms.color, color);
-                console.warn('将数组color替换成Color类');
-            } else {
-                gl.uniform4fv(programUniforms.color, [color.r, color.g, color.b, 1]);
-            }
+            gl.uniform4fv(programUniforms.color, [color.r, color.g, color.b, 1]);
         }
     }
 

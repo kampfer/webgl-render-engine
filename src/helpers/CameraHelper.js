@@ -116,13 +116,13 @@ export default class CameraHelper extends LineSegments {
             }
         }
 
-        // camera设置更改后需要手动updateProjectionMatrix，这里调用updateProjectionMatrix就能保证设置被更新到projectionMatrix
+        // camera的参数更改后需要手动updateProjectionMatrix，这里调用updateProjectionMatrix就能保证参数被更新到projectionMatrix
         this._camera.updateProjectionMatrix();
 
-        // 只需要将定点从NDC变换到相机坐标系，所以这里只复制相机的逆投影矩阵，不复制相机的逆视图矩阵（即相机的worldMatrix）
+        // 只需要将顶点从NDC变换到相机坐标系，所以这里只复制相机的逆投影矩阵，不复制相机的逆视图矩阵（即相机的worldMatrix）
         _camera.projectionMatrixInverse.copy(this._camera.projectionMatrixInverse);
 
-        // p的值始终保持为(0,0,0)，unproject反而会导致值得改变，这不是我们想要的结果，所以这里不能调用setPoint
+        // p的值需要保持为(0,0,0)，unproject反而会导致值得改变，这不是我们想要的结果，所以这里不能调用setPoint
         // setPoint('p', 0, 0, 0);
 
         setPoint('c', 0, 0, -1);

@@ -42,6 +42,8 @@ export default class Color {
             this.setStyle(c);
         } else if (Array.isArray(c)) {
             this.setFromArray(c);
+        } else {
+            console.warn(`Color: 错误的参数(${c})`);
         }
         return this;
     }
