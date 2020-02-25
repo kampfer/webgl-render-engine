@@ -1,7 +1,7 @@
 import LineSegments from '../objects/LineSegments';
 import BufferAttribute from '../renderers/BufferAttribute';
 import Camera from '../cameras/Camera';
-import Vec3 from '../math/Vect3';
+import Vec3 from '../math/Vec3';
 import Color from '../math/Color';
 import Material from '../materials/Material';
 import Geometry from '../geometries/Geometry';
@@ -22,7 +22,7 @@ export default class CameraHelper extends LineSegments {
         }
 
         function addPoint(p) {
-            
+
             vertices.push(0, 0, 0);
 
             if (pointMap[p] === undefined) {
@@ -73,7 +73,6 @@ export default class CameraHelper extends LineSegments {
         addLine('cf1', 'cf3');
         addLine('cf2', 'cf4');
 
-
         let geometry = new Geometry();
         geometry.setAttribute('position', new BufferAttribute(new Float32Array(vertices), 3));
 
@@ -97,7 +96,7 @@ export default class CameraHelper extends LineSegments {
     // 当camera发生变化时需要调用此方法，更新CameraHelper
     update() {
 
-        let position = this.getAttribute('position'),
+        let position = this.geometry.getAttribute('position'),
             pointMap = this._pointMap;
 
         function setPoint(point, x, y, z) {
@@ -125,7 +124,9 @@ export default class CameraHelper extends LineSegments {
         // 这样可以使用_camera将点从NDC坐标系变换回世界坐标系，并且不经过this.camera的仿射变换
         _camera.projectionMatrixInverse.copy(this._camera.projectionMatrixInverse);
 
-        setPoint('p', 0, 0, 0);
+        // unproject后p的值不再是(0,0,0)，这不是我们想要的结果，所以不能调用setPoint
+        // setPoint('p', 0, 0, 0);
+
         setPoint('c', 0, 0, -1);
         setPoint('t', 0, 0, 1);
 
@@ -134,10 +135,10 @@ export default class CameraHelper extends LineSegments {
         setPoint('n3', -1, -1, -1);
         setPoint('n4', 1, -1, -1);
 
-        setPoint('n1', 1, 1, 1);
-        setPoint('n2', -1, 1, 1);
-        setPoint('n3', -1, -1, 1);
-        setPoint('n4', 1, -1, 1);
+        setPoint('f1', 1, 1, 1);
+        setPoint('f2', -1, 1, 1);
+        setPoint('f3', -1, -1, 1);
+        setPoint('f4', 1, -1, 1);
 
         setPoint('u1', 0.7 * 1, 1.1 * 1, -1);
         setPoint('u2', 0, 2 * 1, -1);
