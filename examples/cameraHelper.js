@@ -11,7 +11,7 @@ import Color from '../src/math/Color';
 const winWidth = window.innerWidth;
 const winHeight = window.innerHeight;
 const aspect = winWidth / winHeight;
-const frustumSize = 600;
+const frustumSize = 10;
 
 export default class CameraHelperExample extends Example {
 
@@ -30,13 +30,13 @@ export default class CameraHelperExample extends Example {
         this.camera.lookAt(0, 0, 0);
         this.camera.updateWorldMatrix();
 
-        let perspectiveCamera = new PerspectiveCamera(degToRad(60), 0.5 * aspect, 1, 100),
+        let perspectiveCamera = new PerspectiveCamera(degToRad(60), 0.5 * aspect, 1, 10),
             orthographicCamera = new OrthographicCamera(
                 -0.5 * frustumSize * aspect / 2,
                 0.5 * frustumSize * aspect / 2,
                 frustumSize / 2,
                 -frustumSize / 2,
-                100, 1000
+                1, 10
             );
 
         perspectiveCamera.lookAt(mesh.position);
@@ -66,13 +66,14 @@ export default class CameraHelperExample extends Example {
 
         this.renderer.autoClear = false;
 
-        this.setActiveCamera('perspective');
+        this.setActiveCamera('orthgraphic');
 
+        let self = this;
         this.handleKeyPress = function (e) {
-            if (e.keyCode === 80) {
-                this.setActiveCamera('perspective');
-            } else if (e.keyCode === 79) {
-                this.setActiveCamera('orthgraphic');
+            if (e.keyCode === 112) {    // p
+                self.setActiveCamera('perspective');
+            } else if (e.keyCode === 111) { // o
+                self.setActiveCamera('orthgraphic');
             }
         }
 

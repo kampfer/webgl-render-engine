@@ -119,12 +119,10 @@ export default class CameraHelper extends LineSegments {
         // camera设置更改后需要手动updateProjectionMatrix，这里调用updateProjectionMatrix就能保证设置被更新到projectionMatrix
         this._camera.updateProjectionMatrix();
 
-        // 令_camera的投影矩阵的逆矩阵和this.camera保持一致
-        // 但是_camera的模型矩阵必须保持为单位矩阵（即没有进行过仿射变换）
-        // 这样可以使用_camera将点从NDC坐标系变换回世界坐标系，并且不经过this.camera的仿射变换
+        // 只需要将定点从NDC变换到相机坐标系，所以这里只复制相机的逆投影矩阵，不复制相机的逆视图矩阵（即相机的worldMatrix）
         _camera.projectionMatrixInverse.copy(this._camera.projectionMatrixInverse);
 
-        // unproject后p的值不再是(0,0,0)，这不是我们想要的结果，所以不能调用setPoint
+        // p的值始终保持为(0,0,0)，unproject反而会导致值得改变，这不是我们想要的结果，所以这里不能调用setPoint
         // setPoint('p', 0, 0, 0);
 
         setPoint('c', 0, 0, -1);
