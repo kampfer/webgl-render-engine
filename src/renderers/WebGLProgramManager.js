@@ -1,45 +1,55 @@
 import WebGLProgram from './WebGLProgram';
 import {
-    OBJECT_TYPE_POINTS,
-    OBJECT_TYPE_LINE,
-    OBJECT_TYPE_PLANE,
-    OBJECT_TYPE_MESH
+    MATERIAL_TYPE_BASIC,
+    MATERIAL_TYPE_LINE_BASIC,
 } from '../constants';
+
+const shaderTypes = {
+    [MATERIAL_TYPE_BASIC]: 'base',
+    [MATERIAL_TYPE_LINE_BASIC]: 'line',
+};
 
 export default class WebGLProgramManager {
 
-    constructor(gl) {
+    constructor(gl, capabilities) {
         this._gl = gl;
+        this._capabilities = capabilities;
         this._programs = {};
     }
 
-    // 暂时使用绘制对象的类型作为program的标识符
-    getProgramType(graphObject) {
-        let type;
-        switch(graphObject.type) {
-            case OBJECT_TYPE_POINTS:
-                type = 'points';
-                break;
-            case OBJECT_TYPE_LINE:
-                type = 'line';
-                break;
-            case OBJECT_TYPE_PLANE:
-            case OBJECT_TYPE_MESH:
-                type = 'base';
-                break;
-            default:
-                type = 'base';
-        }
-        return type;
+    getParameters(object) {
+
+        let material = object.material,
+            materialType = material.type,
+            shaderType = shaderTypes[materialType],
+            isWebGL2 = this._capabilities.isWebGL2;
+
+        return {
+            isWebGL2,
+            materialType,
+            shaderType,
+        };
+
     }
 
-    getProgram(graphObject) {
+    getProgramKey(parameters) {
+
+        let key = [];
+
+        if (parameters.shaderType) {
+            key.push(parameters.shaderType);
+        }
+
+        return key.join();
+
+    }
+
+    getProgram(key, parameters) {
         let gl = this._gl,
-            type = this.getProgramType(graphObject),
-            program = this._programs[type];
+            program = this._programs[key];
 
         if (!program) {
-            this._programs[type] = program = new WebGLProgram(gl, graphObject);
+            this._programs[key] = program = new WebGLProgram(gl, key, parameters);
         }
 
         return program;

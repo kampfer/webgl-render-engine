@@ -8,6 +8,7 @@ import {
     OBJECT_TYPE_LINE_LOOP,
     OBJECT_TYPE_POINTS
 } from '../constants';
+import WebGLCapabilities from './WebGLCapabilities';
 
 let mat4Array = new Float32Array(16),
     mat3Array = new Float32Array(9);
@@ -32,12 +33,17 @@ export default class WebGLRenderer {
 
         this._pixelRatio = window.devicePixelRatio;
 
-        this._gl = webglUtils.getWebGLContext(this.domElement);
+        let gl = webglUtils.getWebGLContext(this.domElement);
+        this._gl = gl;
 
         this._clearColor = [0, 0, 0, 1];
 
-        this._programManager = new WebGLProgramManager(this._gl);
-        this._bufferManager = new WebGLBufferManager(this._gl);
+        let capabilities = new WebGLCapabilities(gl);
+        this._capabilities = capabilities;
+
+        this._programManager = new WebGLProgramManager(gl, capabilities);
+
+        this._bufferManager = new WebGLBufferManager(gl);
 
     }
 
@@ -126,7 +132,8 @@ export default class WebGLRenderer {
     }
 
     render(scene, camera) {
-        let gl = this._gl;
+        let gl = this._gl,
+            programManager = this._programManager;
 
         scene.updateWorldMatrix();
 
@@ -145,8 +152,11 @@ export default class WebGLRenderer {
         for(let i = 0; i < renderList.length; i++) {
             let object = renderList[i];
 
-            let programInfo = this._programManager.getProgram(object),
+            let parameters = programManager.getParameters(object),
+                programKey = programManager.getProgramKey(parameters),
+                programInfo = programManager.getProgram(programKey, parameters),
                 program = programInfo.getProgram();
+
             if (this._currentProgram !== program) {
                 this._currentProgram = program;
                 gl.useProgram(program);

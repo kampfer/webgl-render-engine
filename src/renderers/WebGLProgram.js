@@ -1,25 +1,14 @@
 import shaders from '../shaders';
 import  * as webglUtils from '../utils/webgl';
-import {
-    OBJECT_TYPE_LINE_SEGMENTS,
-} from '../constants';
 
 export default class {
     
-    constructor(gl, object) {
+    constructor(gl, key, parameters) {
         this._gl = gl;
-        this._program = this.createProgram(this._gl, this.getShaderType(object));
+        this._key = key;
+        this._program = this.createProgram(this._gl, parameters.shaderType);
         this._attributeCache = null;
         this._uniformCache = null;
-    }
-
-    getShaderType(object) {
-        // return this._renderer.getProgramType(graphObject);
-        if (object.type === OBJECT_TYPE_LINE_SEGMENTS) {
-            return 'line';
-        } else {
-            return 'base';
-        }
     }
 
     createProgram(gl, shaderType) {

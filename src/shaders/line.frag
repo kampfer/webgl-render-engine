@@ -2,9 +2,9 @@
 precision mediump float;
 #endif
 
-uniform vec4 color;
+uniform vec4 diffuse;
 
 void main() {
 
-    gl_FragColor = color;
+    gl_FragColor = diffuse;
 }

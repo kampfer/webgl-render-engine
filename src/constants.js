@@ -15,6 +15,9 @@ export const OBJECT_TYPE_LINE_LOOP = 5;
 export const OBJECT_TYPE_PLANE = 6;
 export const OBJECT_TYPE_POINTS = 7;
 
+export const MATERIAL_TYPE_BASIC = 'BasicMaterial';
+export const MATERIAL_TYPE_LINE_BASIC = 'LineBasicMaterial';
+
 export const LINEAR_INTERPOLATION = 2020;
 export const STEP_INTERPOLATION = 2021;
 export const CUBIC_SPLINE_INTERPOLATION = 2022;

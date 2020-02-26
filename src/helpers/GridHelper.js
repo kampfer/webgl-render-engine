@@ -2,7 +2,7 @@
 import LineSegments from '../objects/LineSegments';
 import BufferAttribute from '../renderers/BufferAttribute';
 import Geometry from '../geometries/Geometry';
-import Material from '../materials/Material';
+import Material from '../materials/LineBasicMaterial';
 import Color from '../math/Color';
 
 export default class GridHelper extends LineSegments {

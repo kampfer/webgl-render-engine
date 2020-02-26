@@ -14,16 +14,24 @@ export default class CameraHelper extends LineSegments {
     constructor(camera) {
 
         let vertices = [],
+            colors = [],
             pointMap = {};
 
-        function addLine(p1, p2) {
-            addPoint(p1);
-            addPoint(p2);
+        let colorFrustum = new Color(0xffaa00),
+            colorCone = new Color(0xff0000),
+            colorUp = new Color(0x00aaff ),
+            colorTarget = new Color(0xffffff),
+            colorCross = new Color(0x333333);
+
+        function addLine(p1, p2, color) {
+            addPoint(p1, color);
+            addPoint(p2, color);
         }
 
-        function addPoint(p) {
+        function addPoint(p, color) {
 
             vertices.push(0, 0, 0);
+            colors.push(color.r, color.g, color.b);
 
             if (pointMap[p] === undefined) {
                 pointMap[p] = [];
@@ -34,49 +42,50 @@ export default class CameraHelper extends LineSegments {
         }
 
         // 锥体
-        addLine('p', 'n1');
-        addLine('p', 'n2');
-        addLine('p', 'n3');
-        addLine('p', 'n4');
+        addLine('p', 'n1', colorCone);
+        addLine('p', 'n2', colorCone);
+        addLine('p', 'n3', colorCone);
+        addLine('p', 'n4', colorCone);
 
         // 近平面
-        addLine('n1', 'n2');
-        addLine('n2', 'n3');
-        addLine('n3', 'n4');
-        addLine('n4', 'n1');
+        addLine('n1', 'n2', colorFrustum);
+        addLine('n2', 'n3', colorFrustum);
+        addLine('n3', 'n4', colorFrustum);
+        addLine('n4', 'n1', colorFrustum);
 
         // 远平面
-        addLine('f1', 'f2');
-        addLine('f2', 'f3');
-        addLine('f3', 'f4');
-        addLine('f4', 'f1');
+        addLine('f1', 'f2', colorFrustum);
+        addLine('f2', 'f3', colorFrustum);
+        addLine('f3', 'f4', colorFrustum);
+        addLine('f4', 'f1', colorFrustum);
 
         // 侧平面
-        addLine('n1', 'f1');
-        addLine('n2', 'f2');
-        addLine('n3', 'f3');
-        addLine('n4', 'f4');
+        addLine('n1', 'f1', colorFrustum);
+        addLine('n2', 'f2', colorFrustum);
+        addLine('n3', 'f3', colorFrustum);
+        addLine('n4', 'f4', colorFrustum);
 
         // 上方向
-        addLine('u1', 'u2');
-        addLine('u2', 'u3');
-        addLine('u3', 'u1');
+        addLine('u1', 'u2', colorUp);
+        addLine('u2', 'u3', colorUp);
+        addLine('u3', 'u1', colorUp);
 
         // 朝向
-        addLine('p', 'c');
-        addLine('c', 't');
+        addLine('p', 'c', colorTarget);
+        addLine('c', 't', colorTarget);
 
         // cross
-        addLine('cn1', 'cn3');
-        addLine('cn2', 'cn4');
+        addLine('cn1', 'cn3', colorCross);
+        addLine('cn2', 'cn4', colorCross);
 
-        addLine('cf1', 'cf3');
-        addLine('cf2', 'cf4');
+        addLine('cf1', 'cf3', colorCross);
+        addLine('cf2', 'cf4', colorCross);
 
         let geometry = new Geometry();
         geometry.setAttribute('position', new BufferAttribute(new Float32Array(vertices), 3));
+        geometry.setAttribute('color', new BufferAttribute(new Float32Array(colors), 3));
 
-        let material = new Material();
+        let material = new Material({vertexColors: true});
         material.color = new Color('#000');
 
         super(geometry, material);

@@ -1,9 +1,13 @@
+import {
+    MATERIAL_TYPE_BASIC
+} from '../constants';
+
 export default class Material {
 
-    constructor(settings) {
-        // this.color = settings.color;
+    constructor(opts = {}) {
+        this.type = MATERIAL_TYPE_BASIC;
+        this.color = opts.color;
+        this.vertexColors = opts.vertexColors === true;
     }
-
-    update() {}
 
 }
