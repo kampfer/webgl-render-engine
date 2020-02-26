@@ -21,6 +21,8 @@ export default class WebGLProgramManager {
                 type = 'points';
                 break;
             case OBJECT_TYPE_LINE:
+                type = 'line';
+                break;
             case OBJECT_TYPE_PLANE:
             case OBJECT_TYPE_MESH:
                 type = 'base';
