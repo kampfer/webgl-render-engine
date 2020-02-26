@@ -1,7 +1,9 @@
-import baseVertGLSL from './baseVertGLSL';
-import baseFragGLSL from './baseFragGLSL';
+import baseVertGLSL from './base.vert';
+import baseFragGLSL from './base.frag';
 import pointsVertGLSL from './pointsVertGLSL';
 import pointsFragGLSL from './pointsFragGLSL';
+import lineVertGLSL from './line.vert';
+import lineFragGLSL from './line.frag';
 
 export default {
     base: {
@@ -11,5 +13,9 @@ export default {
     points: {
         vertexShader: pointsVertGLSL,
         fragmentShader: pointsFragGLSL,
+    },
+    line: {
+        vertexShader: lineVertGLSL,
+        fragmentShader: lineFragGLSL,
     }
 };

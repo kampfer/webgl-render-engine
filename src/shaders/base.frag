@@ -1,4 +1,3 @@
-export default `
 #ifdef GL_ES
 precision mediump float;
 #endif
@@ -13,4 +12,3 @@ void main() {
     vec4 ambient = ambientColor * color;
     gl_FragColor = vec4((lightColor * color * fDot).xyz + ambient.xyz, color.a);
 }
-`;

@@ -1,4 +1,3 @@
-export default `
 attribute vec4 position;
 attribute vec3 normal;
 uniform mat4 modelMatrix;
@@ -10,4 +9,3 @@ void main() {
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;
     vNormal = normalMatrix * normal;
 }
-`;
