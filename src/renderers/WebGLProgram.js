@@ -1,4 +1,5 @@
 import shaders from './shaders';
+import WebGLUniforms from './WebGLUniforms';
 
 export default class {
     
@@ -98,16 +99,9 @@ export default class {
             return this._uniforms;
         }
 
-        let uniforms = this._uniforms = {},
-            gl = this._gl,
-            program = this._program,
-            n = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
-        for (let i = 0; i < n; i++) {
-            let info = gl.getActiveUniform(program, i),
-                name = info.name,
-                addr = gl.getUniformLocation(program, name);
-            uniforms[name] = addr;
-        }
+        let uniforms = new WebGLUniforms(this._gl, this._program);
+        this._uniforms = uniforms;
+
         return uniforms;
     }
 

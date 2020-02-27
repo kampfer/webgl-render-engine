@@ -115,33 +115,14 @@ export default class WebGLRenderer {
         }
     }
 
-    setUniformM4(addr, transpose, v) {
-        mat4Array.set(v.elements);
-        this._gl.uniformMatrix4fv(addr, transpose, mat4Array);
-    }
-
-    setUniformM3(addr, transpose, v) {
-        mat3Array.set(v.elements);
-        this._gl.uniformMatrix3fv(addr, transpose, mat3Array);
-    }
-
     setUniforms(program, object, camera) {
         let gl = this._gl,
-            material = object.material,
             programUniforms = program.getUniforms();
 
-        this.setUniformM3(programUniforms.normalMatrix, false, object.normalMatrix);
-
-        this.setUniformM4(programUniforms.modelMatrix, false, object.worldMatrix);
-
-        this.setUniformM4(programUniforms.viewMatrix, false, camera.inverseWorldMatrix);
-
-        this.setUniformM4(programUniforms.projectionMatrix, false, camera.projectionMatrix);
-
-        let color = material.color;
-        if (color) {
-            gl.uniform4fv(programUniforms.color, [color.r, color.g, color.b, 1]);
-        }
+        programUniforms.eachUniform((uniform) => {
+            let value = uniform.calculateValue(object, camera);
+            uniform.setValue(gl, value);
+        });
     }
 
     render(scene, camera) {
