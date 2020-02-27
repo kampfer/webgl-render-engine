@@ -1,4 +1,3 @@
-import * as webglUtils from '../utils/webgl';
 import WebGLProgramManager from './WebGLProgramManager';
 import WebGLBufferManager from './WebGLBufferManager';
 import {
@@ -33,10 +32,9 @@ export default class WebGLRenderer {
 
         this._pixelRatio = window.devicePixelRatio;
 
-        let gl = webglUtils.getWebGLContext(this.domElement);
-        this._gl = gl;
-
         this._clearColor = [0, 0, 0, 1];
+
+        let gl = this.getContext(this.domElement);
 
         let capabilities = new WebGLCapabilities(gl);
         this._capabilities = capabilities;
@@ -48,6 +46,21 @@ export default class WebGLRenderer {
     }
 
     getContext() {
+        if (this._gl === undefined) {
+            let names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"],
+                canvas = this.domElement,
+                context = null;
+            for (let i = 0; i < names.length; i++) {
+                try {
+                    context = canvas.getContext(names[i]);
+                } catch(e) { /**/ }
+                if (context) break;
+            }
+            if (!context) {
+                console.error('WebGLRenderer：读取context失败！');
+            }
+            this._gl = context;
+        }
         return this._gl;
     }
 

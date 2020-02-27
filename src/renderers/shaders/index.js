@@ -7,15 +7,15 @@ import lineFragGLSL from './line.frag';
 
 export default {
     base: {
-        vertexShader: baseVertGLSL,
-        fragmentShader: baseFragGLSL,
+        vertex: baseVertGLSL,
+        fragment: baseFragGLSL,
     },
     points: {
-        vertexShader: pointsVertGLSL,
-        fragmentShader: pointsFragGLSL,
+        vertex: pointsVertGLSL,
+        fragment: pointsFragGLSL,
     },
     line: {
-        vertexShader: lineVertGLSL,
-        fragmentShader: lineFragGLSL,
+        vertex: lineVertGLSL,
+        fragment: lineFragGLSL,
     }
 };

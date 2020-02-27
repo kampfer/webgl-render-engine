@@ -49,7 +49,7 @@ export default class WebGLProgramManager {
             program = this._programs[key];
 
         if (!program) {
-            this._programs[key] = program = new WebGLProgram(gl, key, parameters);
+            this._programs[key] = program = new WebGLProgram(gl, parameters);
         }
 
         return program;
