@@ -1,10 +1,17 @@
-#ifdef GL_ES
-precision mediump float;
+#ifdef USE_COLOR
+    varying vec3 vColor;
 #endif
 
-uniform vec4 diffuse;
+uniform vec3 diffuse;
 
 void main() {
 
-    gl_FragColor = diffuse;
+    vec4 diffuseColor = vec4(diffuse, 1);
+
+    #ifdef USE_COLOR
+        diffuseColor.rgb *= vColor;
+    #endif
+
+    gl_FragColor = diffuseColor;
+
 }

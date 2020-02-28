@@ -16,7 +16,8 @@ export default class WebGLRenderer {
         autoClear = true,
         autoClearColor = true,
         autoClearDepth = true,
-        autoClearStencil = true
+        autoClearStencil = true,
+        precision
     } = {}) {
 
         this.domElement = canvas;
@@ -33,7 +34,9 @@ export default class WebGLRenderer {
 
         let gl = this.getContext(this.domElement);
 
-        let capabilities = new WebGLCapabilities(gl);
+        let capabilities = new WebGLCapabilities(gl, {
+                precision,
+            });
         this._capabilities = capabilities;
 
         this._programManager = new WebGLProgramManager(gl, capabilities);

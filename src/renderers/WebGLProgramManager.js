@@ -19,19 +19,31 @@ export default class WebGLProgramManager {
 
     getParameters(object) {
 
-        let material = object.material,
+        let capabilities = this._capabilities,
+            material = object.material,
             materialType = material.type,
             shaderType = shaderTypes[materialType],
-            isWebGL2 = this._capabilities.isWebGL2;
+            precision = capabilities.precision,
+            isWebGL2 = capabilities.isWebGL2;
+
+        if (material.precision !== null) {
+            let precision = capabilities.getMaxPrecision(material.precision);
+            if (precision !== material.precision) {
+                console.warn(`不支持material.precision = ${material.precision}，将使用${precision}`);
+            }
+        }
 
         return {
             isWebGL2,
             materialType,
             shaderType,
+            vertexColors: material.vertexColors,
+            precision,
         };
 
     }
 
+    // 使用部分参数来合成key
     getProgramKey(parameters) {
 
         let key = [];
@@ -44,6 +56,7 @@ export default class WebGLProgramManager {
 
     }
 
+    // 使用key作为缓存的键，当配置参数相同时key相同，此时就能复用program
     getProgram(key, parameters) {
         let gl = this._gl,
             program = this._programs[key];

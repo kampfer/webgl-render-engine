@@ -6,7 +6,6 @@ import { degToRad } from '../src/math/utils';
 import Mesh from '../src/objects/Mesh';
 import BoxGeometry from '../src/geometries/BoxGeometry';
 import Material from '../src/materials/Material';
-import Color from '../src/math/Color';
 
 const winWidth = window.innerWidth;
 const winHeight = window.innerHeight;

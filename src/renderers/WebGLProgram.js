@@ -1,8 +1,33 @@
 import shaders from './shaders';
 import WebGLUniforms from './WebGLUniforms';
 
+function generatePrecision(parameters) {
+
+    let precision = parameters.precision,
+        precisionDefine;
+
+    if (precision === 'highp') {
+        precisionDefine = '#define HIGH_PRECISION';
+    } else if (precision === 'mediump') {
+        precisionDefine = '#define MEDIUM_PRECISION';
+    } else if (precision === 'lowp') {
+        precisionDefine = '#define LOW_PRECISION';
+    }
+
+    return `
+        precision ${precision} float;
+        precision ${precision} int;
+        ${precisionDefine}
+    `;
+
+}
+
+function filterEmptyLine( string ) {
+    return string !== '';
+}
+
 export default class {
-    
+
     constructor(gl, parameters) {
 
         this._gl = gl;
@@ -12,9 +37,32 @@ export default class {
 
         this.debug = true;
 
-        let shaderGlsl = shaders[parameters.shaderType],
-            vertexGlsl = shaderGlsl.vertex,
-            fragmentGlsl = shaderGlsl.fragment,
+
+        let prefixVertex, prefixFragment;
+
+        if ( parameters.isRawShaderMaterial ) {
+
+            // TODO：自定义的shader
+
+        } else {
+
+            prefixVertex = [
+                generatePrecision(parameters),
+                parameters.vertexColors ? '#define USE_COLOR' : '',
+                '\n'
+            ].filter(filterEmptyLine).join('\n');
+
+            prefixFragment = [
+                generatePrecision(parameters),
+                parameters.vertexColors ? '#define USE_COLOR' : '',
+                '\n'
+            ].filter(filterEmptyLine).join('\n');
+
+        }
+
+        let shader = shaders[parameters.shaderType],
+            vertexGlsl = prefixVertex + shader.vertex,
+            fragmentGlsl = prefixFragment + shader.fragment,
             vertexShader = this.createShader(gl.VERTEX_SHADER, vertexGlsl),
             fragmentShader = this.createShader(gl.FRAGMENT_SHADER, fragmentGlsl),
             program = this.createProgram(vertexShader, fragmentShader);
@@ -42,7 +90,7 @@ export default class {
             let status = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
             if (!status) {
                 let error = gl.getShaderInfoLog(shader);
-                console.error(`创建Shader失败！错误信息：${error}`);
+                console.error(`创建Shader${type}失败！错误信息：${error}`);
             }
         }
 

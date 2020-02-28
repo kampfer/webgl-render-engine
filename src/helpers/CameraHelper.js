@@ -85,7 +85,7 @@ export default class CameraHelper extends LineSegments {
         geometry.setAttribute('position', new BufferAttribute(new Float32Array(vertices), 3));
         geometry.setAttribute('color', new BufferAttribute(new Float32Array(colors), 3));
 
-        let material = new LineBasicMaterial({color: '#000', vertexColors: true});
+        let material = new LineBasicMaterial({vertexColors: true});
 
         super(geometry, material);
 

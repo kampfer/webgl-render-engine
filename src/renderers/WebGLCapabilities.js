@@ -1,14 +1,17 @@
 export default class WebGLCapabilities {
 
-    constructor(gl) {
+    constructor(gl, {
+        precision = 'highp'
+    }) {
+
+        this._gl = gl;
 
         let isWebGL2 = ( typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext ) ||
         ( typeof WebGL2ComputeRenderingContext !== 'undefined' && gl instanceof WebGL2ComputeRenderingContext );
 
         this.isWebGL2 = isWebGL2;
 
-        let precision = 'highp',
-            maxPrecision = this.getMaxPrecision(gl, precision);
+        let maxPrecision = this.getMaxPrecision(precision);
 
         if ( maxPrecision !== precision ) {
             precision = maxPrecision;
@@ -18,7 +21,9 @@ export default class WebGLCapabilities {
 
     }
 
-    getMaxPrecision(gl, precision) {
+    getMaxPrecision(precision) {
+
+        let gl = this._gl;
 
         if (precision === 'highp') {
             if ( gl.getShaderPrecisionFormat( gl.VERTEX_SHADER, gl.HIGH_FLOAT ).precision > 0 &&
