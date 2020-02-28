@@ -153,8 +153,7 @@ export default class WebGLRenderer {
                 gl.useProgram(program);
             }
 
-            // object.geometry.update();
-
+            // TODO：移入uniform.caculateValue
             object.modelViewMatrix.multiplyMatrices(camera.inverseWorldMatrix, object.worldMatrix);
             object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
 

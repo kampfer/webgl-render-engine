@@ -3,7 +3,7 @@ import BufferAttribute from '../renderers/BufferAttribute';
 import Camera from '../cameras/Camera';
 import Vec3 from '../math/Vec3';
 import Color from '../math/Color';
-import Material from '../materials/Material';
+import LineBasicMaterial from '../materials/LineBasicMaterial';
 import Geometry from '../geometries/Geometry';
 
 let _camera = new Camera(),
@@ -85,8 +85,7 @@ export default class CameraHelper extends LineSegments {
         geometry.setAttribute('position', new BufferAttribute(new Float32Array(vertices), 3));
         geometry.setAttribute('color', new BufferAttribute(new Float32Array(colors), 3));
 
-        let material = new Material({vertexColors: true});
-        material.color = new Color('#000');
+        let material = new LineBasicMaterial({color: '#000', vertexColors: true});
 
         super(geometry, material);
 

@@ -102,7 +102,7 @@ export default class {
         let uniforms = new WebGLUniforms(this._gl, this._program);
         this._uniforms = uniforms;
 
-        return uniforms;
+        return this._uniforms;
     }
 
     destroy() {

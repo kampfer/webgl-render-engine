@@ -19,9 +19,8 @@ export default class CameraHelperExample extends Example {
         super();
 
         let boxGeometry = new BoxGeometry(1, 1, 1),
-            material = new Material(),
+            material = new Material({color: 'red'}),
             mesh = new Mesh(boxGeometry, material);
-        material.color = new Color('red');
         mesh.position.set(5, 0, 0);
         this.scene.add(mesh);
 
