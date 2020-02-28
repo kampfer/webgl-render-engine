@@ -2,8 +2,7 @@
 import LineSegments from '../objects/LineSegments';
 import BufferAttribute from '../renderers/BufferAttribute';
 import Geometry from '../geometries/Geometry';
-import Material from '../materials/LineBasicMaterial';
-import Color from '../math/Color';
+import LineBasicMaterial from '../materials/LineBasicMaterial';
 
 export default class GridHelper extends LineSegments {
 
@@ -21,8 +20,7 @@ export default class GridHelper extends LineSegments {
         let geometry = new Geometry();
         geometry.setAttribute('position', new BufferAttribute(new Float32Array(vertices), 3));
 
-        let material = new Material();
-        material.color = new Color(color);
+        let material = new LineBasicMaterial({ color });
 
         super(geometry, material);
 

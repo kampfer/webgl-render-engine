@@ -1,4 +1,4 @@
-import WebGLUniform from './uniforms/WebGLUniform';
+import uniforms from './uniforms';
 
 export default class WebGLUniforms {
 
@@ -12,9 +12,10 @@ export default class WebGLUniforms {
 
             let info = gl.getActiveUniform(program, i),
                 name = info.name,
-                addr = gl.getUniformLocation(program, name);
+                addr = gl.getUniformLocation(program, name),
+                UniformConstructor = uniforms[name];
 
-            this._uniformMap[name] = new WebGLUniform(info, addr);
+            this._uniformMap[name] = new UniformConstructor(info, addr);
 
         }
 

@@ -9,9 +9,6 @@ import {
 } from '../constants';
 import WebGLCapabilities from './WebGLCapabilities';
 
-let mat4Array = new Float32Array(16),
-    mat3Array = new Float32Array(9);
-
 export default class WebGLRenderer {
 
     constructor({
