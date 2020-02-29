@@ -26,6 +26,20 @@ function filterEmptyLine( string ) {
     return string !== '';
 }
 
+function addLineNumbers(string) {
+
+    var lines = string.split( '\n' );
+
+    for ( var i = 0; i < lines.length; i ++ ) {
+
+        lines[i] = (i + 1) + ': ' + lines[i];
+
+    }
+
+    return lines.join( '\n' );
+
+}
+
 export default class {
 
     constructor(gl, parameters) {
@@ -61,8 +75,8 @@ export default class {
         }
 
         let shader = shaders[parameters.shaderType],
-            vertexGlsl = prefixVertex + shader.vertex,
-            fragmentGlsl = prefixFragment + shader.fragment,
+            vertexGlsl = prefixVertex + shader.vertex.compile(),
+            fragmentGlsl = prefixFragment + shader.fragment.compile(),
             vertexShader = this.createShader(gl.VERTEX_SHADER, vertexGlsl),
             fragmentShader = this.createShader(gl.FRAGMENT_SHADER, fragmentGlsl),
             program = this.createProgram(vertexShader, fragmentShader);
@@ -89,8 +103,9 @@ export default class {
         if (this.debug === true) {
             let status = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
             if (!status) {
-                let error = gl.getShaderInfoLog(shader);
-                console.error(`创建Shader${type}失败！错误信息：${error}`);
+                let error = gl.getShaderInfoLog(shader),
+                    source = gl.getShaderSource(shader);
+                console.error(`创建Shader失败！错误信息：${error}\n${addLineNumbers(source)}`);
             }
         }
 
