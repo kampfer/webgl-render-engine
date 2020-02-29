@@ -1,7 +1,7 @@
 const examples = {
     gridHelper: () => import('./gridHelper'),
     cameraHelper: () => import('./cameraHelper'),
-    axesHelper: () => import('./axesHelper')
+    axesHelper: () => import('./axesHelper'),
 };
 
 function appendExampleList() {

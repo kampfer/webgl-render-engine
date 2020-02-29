@@ -28,12 +28,10 @@ function filterEmptyLine( string ) {
 
 function addLineNumbers(string) {
 
-    var lines = string.split( '\n' );
+    let lines = string.split( '\n' );
 
-    for ( var i = 0; i < lines.length; i ++ ) {
-
+    for (let i = 0, l = lines.length; i < l; i++) {
         lines[i] = (i + 1) + ': ' + lines[i];
-
     }
 
     return lines.join( '\n' );

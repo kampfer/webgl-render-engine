@@ -1,4 +1,3 @@
-// import GraphObject from '../objects/GraphObject';
 import LineSegments from '../objects/LineSegments';
 import BufferAttribute from '../renderers/BufferAttribute';
 import Geometry from '../geometries/Geometry';
