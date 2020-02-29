@@ -1,7 +1,4 @@
-#ifdef USE_COLOR
-    varying vec3 vColor;
-    attribute vec3 color;
-#endif
+#include './chunks/colorHead.vert'
 
 attribute vec4 position;
 uniform mat4 modelMatrix;
@@ -10,9 +7,7 @@ uniform mat4 projectionMatrix;
 
 void main() {
 
-    #ifdef USE_COLOR
-        vColor = color;
-    #endif
+    #include './chunks/colorMain.vert'
 
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;
 

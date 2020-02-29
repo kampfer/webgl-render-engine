@@ -1,4 +1,5 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path');
 
 module.exports = {
     module: {
@@ -37,8 +38,7 @@ module.exports = {
             test: /\.(glsl|vs|fs|vert|frag)$/,
             exclude: /node_modules/,
             use: [
-                'raw-loader',
-                'glslify-loader'
+                path.join(__dirname, './shaderLoader.js')
             ]
         }]
     },
@@ -47,5 +47,10 @@ module.exports = {
             filename: '[name].css',
             chunkFilename: '[id].css'
         })
-    ]
+    ],
+    output: {
+        filename: '[name].[hash].js',
+        chunkFilename: '[id].[hash].js',
+        path: path.join(__dirname, '../output/web')
+    }
 };
