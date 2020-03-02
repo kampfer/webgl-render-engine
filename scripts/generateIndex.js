@@ -3,7 +3,10 @@ const fs = require('fs');
 const { walk } = require('./utils');
 
 let entries = [],
-    dir = 'src';
+    dir = pathLib.join(__dirname, '../src'),
+    indexPath = pathLib.join(dir, 'index.js');
+
+fs.unlinkSync(indexPath);
 
 walk(dir, (root, dirs, files) => {
 
@@ -36,11 +39,21 @@ entries.forEach((entry) => {
     let name = entry.name,
         entryPath = entry.path;
 
-    if (entryPath === './index') return;
-
     if (entry.name === 'index') {
         entryPath = pathLib.dirname(entryPath);
         name = pathLib.basename(entryPath);
+    }
+
+    if (entryPath === './constants') {
+        indexContent.push(`import * as ${name} from '${entryPath}';`);
+        indexContent.push(`export { ${name} };`);
+        return;
+    }
+
+    if (entryPath === './math/utils') {
+        indexContent.push(`import * as mathUtils from '${entryPath}';`);
+        indexContent.push(`export { mathUtils };`);
+        return;
     }
 
     // indexContent.push(`export ${entry.name} from '${entry.path}';`);
@@ -50,4 +63,4 @@ entries.forEach((entry) => {
 
 });
 
-fs.writeFileSync(pathLib.join(dir, 'index.js'), indexContent.join('\n'));
+fs.writeFileSync(indexPath, indexContent.join('\n'));

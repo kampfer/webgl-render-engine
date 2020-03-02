@@ -2,7 +2,7 @@ const path = require('path');
 
 const includeReg = /#include\s+['"]([^'"]*)['"]/g;
 const shadersDir = path.join(__dirname, '../src/renderers/shaders');
-const shaderCodePath = path.join(shadersDir, 'shaderCode');
+const shaderCodePath = path.join(shadersDir, 'ShaderCode');
 
 function takeDependencies(source) {
 

@@ -2,11 +2,13 @@
   "name": "webgl_render_engine",
   "version": "1.0.0",
   "description": "kampfer's webgl render engine",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
+    "start": "npm run example",
     "dev": "webpack-dev-server --config scripts/webpack.dev.config.js",
     "example": "webpack-dev-server --config scripts/webpack.example.config.js",
-    "test": "webpack-dev-server --config scripts/webpack.test.config.js",
+    "build": "webpack --config scripts/webpack.pro.config.js",
+    "test": "",
     "analyse": "webpack --profile --json > stats.json"
   },
   "author": "https://github.com/kampfer",

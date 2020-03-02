@@ -1,5 +1,6 @@
 export { default as Clock } from './Clock';
-export { default as constants } from './constants';
+import * as constants from './constants';
+export { constants };
 export { default as AnimationClip } from './animation/AnimationClip';
 export { default as AnimationMixer } from './animation/AnimationMixer';
 export { default as KeyFrameTrack } from './animation/tracks/KeyFrameTrack';
@@ -27,7 +28,8 @@ export { default as Mat3 } from './math/Mat3';
 export { default as Mat4 } from './math/Mat4';
 export { default as Quaternion } from './math/Quaternion';
 export { default as Spherical } from './math/Spherical';
-export { default as utils } from './math/utils';
+import * as mathUtils from './math/utils';
+export { mathUtils };
 export { default as Vec3 } from './math/Vec3';
 export { default as CubicSplineInterpolant } from './math/interpolants/CubicSplineInterpolant';
 export { default as Interpolant } from './math/interpolants/Interpolant';

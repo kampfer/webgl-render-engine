@@ -51,3 +51,37 @@ exports.walk = function walk(path, callback) {
     }
 
 }
+
+exports.findEntries = function findEntries(dir) {
+    let paths = fs.readdirSync(dir),
+        entries = {};
+
+    for(let i = 0, l = paths.length; i < l; i++) {
+        let p = pathLib.join(dir, paths[i]),
+            extname = pathLib.extname(p);
+        if (extname === '') {
+            let subEntries = findEntries(p);
+            for (let name in subEntries) {
+                entries[name] = subEntries[name];
+            }
+        } else if(extname === '.html') {
+            let basename = pathLib.basename(p, extname);
+            entries[basename] = {
+                name: basename,
+                html: pathLib.format({
+                    dir,
+                    name: basename,
+                    ext: '.html'
+                }),
+                js: pathLib.format({
+                    dir,
+                    name: basename,
+                    ext: '.js'
+                })
+            };
+        }
+    }
+
+    return entries;
+}
+
