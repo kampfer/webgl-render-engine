@@ -48,9 +48,8 @@ export default class WebGLProgramManager {
 
         let key = [];
 
-        if (parameters.shaderType) {
-            key.push(parameters.shaderType);
-        }
+        key.push(parameters.shaderType);
+        key.push(parameters.vertexColors);
 
         return key.join();
 
