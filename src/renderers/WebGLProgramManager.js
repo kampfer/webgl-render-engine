@@ -1,43 +1,68 @@
 import WebGLProgram from './WebGLProgram';
 import {
-    OBJECT_TYPE_POINTS,
-    OBJECT_TYPE_LINE,
-    OBJECT_TYPE_PLANE,
-    OBJECT_TYPE_MESH
+    MATERIAL_TYPE_BASIC,
+    MATERIAL_TYPE_LINE_BASIC,
 } from '../constants';
+
+const shaderTypes = {
+    [MATERIAL_TYPE_BASIC]: 'base',
+    [MATERIAL_TYPE_LINE_BASIC]: 'line',
+};
 
 export default class WebGLProgramManager {
 
-    constructor(gl) {
+    constructor(gl, capabilities) {
         this._gl = gl;
+        this._capabilities = capabilities;
         this._programs = {};
     }
 
-    // 暂时使用绘制对象的类型作为program的标识符
-    getProgramType(graphObject) {
-        let type;
-        switch(graphObject.type) {
-            case OBJECT_TYPE_POINTS:
-                type = 'points';
-                break;
-            case OBJECT_TYPE_LINE:
-            case OBJECT_TYPE_PLANE:
-            case OBJECT_TYPE_MESH:
-                type = 'base';
-                break;
-            default:
-                type = 'base';
+    getParameters(object) {
+
+        let capabilities = this._capabilities,
+            material = object.material,
+            materialType = material.type,
+            shaderType = shaderTypes[materialType],
+            precision = capabilities.precision,
+            isWebGL2 = capabilities.isWebGL2;
+
+        if (material.precision !== null) {
+            let precision = capabilities.getMaxPrecision(material.precision);
+            if (precision !== material.precision) {
+                console.warn(`不支持material.precision = ${material.precision}，将使用${precision}`);
+            }
         }
-        return type;
+
+        return {
+            isWebGL2,
+            materialType,
+            shaderType,
+            vertexColors: material.vertexColors,
+            precision,
+        };
+
     }
 
-    getProgram(graphObject) {
+    // 使用部分参数来合成key
+    getProgramKey(parameters) {
+
+        let key = [];
+
+        if (parameters.shaderType) {
+            key.push(parameters.shaderType);
+        }
+
+        return key.join();
+
+    }
+
+    // 使用key作为缓存的键，当配置参数相同时key相同，此时就能复用program
+    getProgram(key, parameters) {
         let gl = this._gl,
-            type = this.getProgramType(graphObject),
-            program = this._programs[type];
+            program = this._programs[key];
 
         if (!program) {
-            this._programs[type] = program = new WebGLProgram(gl, graphObject);
+            this._programs[key] = program = new WebGLProgram(gl, parameters);
         }
 
         return program;

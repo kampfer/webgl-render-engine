@@ -1,4 +1,3 @@
-import * as webglUtils from '../utils/webgl';
 import WebGLProgramManager from './WebGLProgramManager';
 import WebGLBufferManager from './WebGLBufferManager';
 import {
@@ -8,38 +7,60 @@ import {
     OBJECT_TYPE_LINE_LOOP,
     OBJECT_TYPE_POINTS
 } from '../constants';
-
-let mat4Array = new Float32Array(16),
-    mat3Array = new Float32Array(9);
+import WebGLCapabilities from './WebGLCapabilities';
 
 export default class WebGLRenderer {
 
     constructor({
         canvas = document.createElement('canvas'),
+        autoClear = true,
         autoClearColor = true,
         autoClearDepth = true,
-        autoClearStencil = true
+        autoClearStencil = true,
+        precision
     } = {}) {
 
         this.domElement = canvas;
 
         // 清理缓冲的设置
+        this.autoClear = autoClear;
         this.autoClearColor = autoClearColor;
         this.autoClearDepth = autoClearDepth;
         this.autoClearStencil = autoClearStencil;
 
         this._pixelRatio = window.devicePixelRatio;
 
-        this._gl = webglUtils.getWebGLContext(this.domElement);
-
         this._clearColor = [0, 0, 0, 1];
 
-        this._programManager = new WebGLProgramManager(this._gl);
-        this._bufferManager = new WebGLBufferManager(this._gl);
+        let gl = this.getContext(this.domElement);
+
+        let capabilities = new WebGLCapabilities(gl, {
+                precision,
+            });
+        this._capabilities = capabilities;
+
+        this._programManager = new WebGLProgramManager(gl, capabilities);
+
+        this._bufferManager = new WebGLBufferManager(gl);
 
     }
 
     getContext() {
+        if (this._gl === undefined) {
+            let names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"],
+                canvas = this.domElement,
+                context = null;
+            for (let i = 0; i < names.length; i++) {
+                try {
+                    context = canvas.getContext(names[i]);
+                } catch(e) { /**/ }
+                if (context) break;
+            }
+            if (!context) {
+                console.error('WebGLRenderer：读取context失败！');
+            }
+            this._gl = context;
+        }
         return this._gl;
     }
 
@@ -94,42 +115,19 @@ export default class WebGLRenderer {
         }
     }
 
-    setUniformM4(addr, transpose, v) {
-        mat4Array.set(v.elements);
-        this._gl.uniformMatrix4fv(addr, transpose, mat4Array);
-    }
-
-    setUniformM3(addr, transpose, v) {
-        mat3Array.set(v.elements);
-        this._gl.uniformMatrix3fv(addr, transpose, mat3Array);
-    }
-
     setUniforms(program, object, camera) {
         let gl = this._gl,
-            material = object.material,
             programUniforms = program.getUniforms();
 
-        this.setUniformM3(programUniforms.normalMatrix, false, object.normalMatrix)
-
-        this.setUniformM4(programUniforms.modelMatrix, false, object.worldMatrix);
-
-        this.setUniformM4(programUniforms.viewMatrix, false, camera.inverseWorldMatrix);
-
-        this.setUniformM4(programUniforms.projectionMatrix, false, camera.projectionMatrix);
-
-        let color = material.color;
-        if (color) {
-            if (Array.isArray(color)) {
-                gl.uniform4fv(programUniforms.color, color);
-                console.warn('将数组color替换成Color类');
-            } else {
-                gl.uniform4fv(programUniforms.color, [color.r, color.g, color.b, 1]);
-            }
-        }
+        programUniforms.eachUniform((uniform) => {
+            let value = uniform.calculateValue(object, camera);
+            uniform.setValue(gl, value);
+        });
     }
 
     render(scene, camera) {
-        let gl = this._gl;
+        let gl = this._gl,
+            programManager = this._programManager;
 
         scene.updateWorldMatrix();
 
@@ -139,22 +137,26 @@ export default class WebGLRenderer {
         gl.clearColor(...this._clearColor);
 
         // 清理颜色缓冲区、深度缓冲区、模板缓冲区
-        this.clear(this.autoClearColor, this.autoClearDepth, this.autoClearStencil);
+        if (this.autoClear) {
+            this.clear(this.autoClearColor, this.autoClearDepth, this.autoClearStencil);
+        }
 
         let renderList = this.getRenderList(scene);
 
         for(let i = 0; i < renderList.length; i++) {
             let object = renderList[i];
 
-            let programInfo = this._programManager.getProgram(object),
+            let parameters = programManager.getParameters(object),
+                programKey = programManager.getProgramKey(parameters),
+                programInfo = programManager.getProgram(programKey, parameters),
                 program = programInfo.getProgram();
+
             if (this._currentProgram !== program) {
                 this._currentProgram = program;
                 gl.useProgram(program);
             }
 
-            // object.geometry.update();
-
+            // TODO：移入uniform.caculateValue
             object.modelViewMatrix.multiplyMatrices(camera.inverseWorldMatrix, object.worldMatrix);
             object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
 
@@ -203,7 +205,7 @@ export default class WebGLRenderer {
     getRenderList(object) {
         let list = [];
 
-        if (object.type === OBJECT_TYPE_MESH || object.type === OBJECT_TYPE_LINE_SEGMENTS) {
+        if (object.visible === true && (object.type === OBJECT_TYPE_MESH || object.type === OBJECT_TYPE_LINE_SEGMENTS)) {
             list.push(object);
         }
 

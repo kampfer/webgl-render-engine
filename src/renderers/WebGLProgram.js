@@ -1,23 +1,136 @@
-import shaders from '../shaders';
-import  * as webglUtils from '../utils/webgl';
+import shaders from './shaders';
+import WebGLUniforms from './WebGLUniforms';
+
+function generatePrecision(parameters) {
+
+    let precision = parameters.precision,
+        precisionDefine;
+
+    if (precision === 'highp') {
+        precisionDefine = '#define HIGH_PRECISION';
+    } else if (precision === 'mediump') {
+        precisionDefine = '#define MEDIUM_PRECISION';
+    } else if (precision === 'lowp') {
+        precisionDefine = '#define LOW_PRECISION';
+    }
+
+    return `
+        precision ${precision} float;
+        precision ${precision} int;
+        ${precisionDefine}
+    `;
+
+}
+
+function filterEmptyLine( string ) {
+    return string !== '';
+}
+
+function addLineNumbers(string) {
+
+    let lines = string.split( '\n' );
+
+    for (let i = 0, l = lines.length; i < l; i++) {
+        lines[i] = (i + 1) + ': ' + lines[i];
+    }
+
+    return lines.join( '\n' );
+
+}
 
 export default class {
-    
-    constructor(gl, graphObject) {
+
+    constructor(gl, parameters) {
+
         this._gl = gl;
-        this._program = this.createProgram(this._gl, this.getShaderType(graphObject));
-        this._attributeCache = null;
-        this._uniformCache = null;
+
+        this._attributes = null;
+        this._uniforms = null;
+
+        this.debug = true;
+
+
+        let prefixVertex, prefixFragment;
+
+        if ( parameters.isRawShaderMaterial ) {
+
+            // TODO：自定义的shader
+
+        } else {
+
+            prefixVertex = [
+                generatePrecision(parameters),
+                parameters.vertexColors ? '#define USE_COLOR' : '',
+                '\n'
+            ].filter(filterEmptyLine).join('\n');
+
+            prefixFragment = [
+                generatePrecision(parameters),
+                parameters.vertexColors ? '#define USE_COLOR' : '',
+                '\n'
+            ].filter(filterEmptyLine).join('\n');
+
+        }
+
+        let shader = shaders[parameters.shaderType],
+            vertexGlsl = prefixVertex + shader.vertex.compile(),
+            fragmentGlsl = prefixFragment + shader.fragment.compile(),
+            vertexShader = this.createShader(gl.VERTEX_SHADER, vertexGlsl),
+            fragmentShader = this.createShader(gl.FRAGMENT_SHADER, fragmentGlsl),
+            program = this.createProgram(vertexShader, fragmentShader);
+
+        this._program = program;
+        this._vertexShader = vertexShader;
+        this._fragmentShader = fragmentShader;
+
+        this.usedTimes = 0;
+
+        gl.deleteShader(vertexShader);
+        gl.deleteShader(fragmentShader);
+
     }
 
-    getShaderType(graphObject) {
-        // return this._renderer.getProgramType(graphObject);
-        return 'base';
+    createShader(type, source) {
+
+        let gl = this._gl,
+            shader = gl.createShader(type);
+
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+
+        if (this.debug === true) {
+            let status = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+            if (!status) {
+                let error = gl.getShaderInfoLog(shader),
+                    source = gl.getShaderSource(shader);
+                console.error(`创建Shader失败！错误信息：${error}\n${addLineNumbers(source)}`);
+            }
+        }
+
+        return shader;
+
     }
 
-    createProgram(gl, shaderType) {
-        let shaderGlsl  = shaders[shaderType];
-        return webglUtils.createProgramBySource(gl, shaderGlsl.vertexShader, shaderGlsl.fragmentShader);
+    createProgram(vertexShader, fragmentShader) {
+
+        let gl = this._gl,
+            program = gl.createProgram();
+
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+
+        gl.linkProgram(program);
+
+        if (this.debug === true) {
+            let status = gl.getProgramParameter(program, gl.LINK_STATUS);
+            if (!status) {
+                var error = gl.getProgramInfoLog(program);
+                console.error(`创建program失败！错误信息：${error}`);
+            }
+        }
+
+        return program;
+
     }
 
     getProgram() {
@@ -25,11 +138,11 @@ export default class {
     }
 
     getAttributes() {
-        if (this._attributeCache) {
-            return this._attributeCache;
+        if (this._attributes) {
+            return this._attributes;
         }
 
-        let attributes = this._attributeCache = {},
+        let attributes = this._attributes = {},
             gl = this._gl,
             program = this._program,
             n = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
@@ -43,21 +156,14 @@ export default class {
     }
 
     getUniforms() {
-        if (this._uniformCache) {
-            return this._uniformCache;
+        if (this._uniforms) {
+            return this._uniforms;
         }
 
-        let uniforms = this._uniformCache = {},
-            gl = this._gl,
-            program = this._program,
-            n = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
-        for (let i = 0; i < n; i++) {
-            let info = gl.getActiveUniform(program, i),
-                name = info.name,
-                addr = gl.getUniformLocation(program, name);
-            uniforms[name] = addr;
-        }
-        return uniforms;
+        let uniforms = new WebGLUniforms(this._gl, this._program);
+        this._uniforms = uniforms;
+
+        return this._uniforms;
     }
 
     destroy() {

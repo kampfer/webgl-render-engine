@@ -1,9 +1,9 @@
 import LineSegments from '../objects/LineSegments';
 import BufferAttribute from '../renderers/BufferAttribute';
 import Camera from '../cameras/Camera';
-import Vec3 from '../math/Vect3';
+import Vec3 from '../math/Vec3';
 import Color from '../math/Color';
-import Material from '../materials/Material';
+import LineBasicMaterial from '../materials/LineBasicMaterial';
 import Geometry from '../geometries/Geometry';
 
 let _camera = new Camera(),
@@ -14,16 +14,24 @@ export default class CameraHelper extends LineSegments {
     constructor(camera) {
 
         let vertices = [],
+            colors = [],
             pointMap = {};
 
-        function addLine(p1, p2) {
-            addPoint(p1);
-            addPoint(p2);
+        let colorFrustum = new Color(0xffaa00),
+            colorCone = new Color(0xff0000),
+            colorUp = new Color(0x00aaff ),
+            colorTarget = new Color(0xffffff),
+            colorCross = new Color(0x333333);
+
+        function addLine(p1, p2, color) {
+            addPoint(p1, color);
+            addPoint(p2, color);
         }
 
-        function addPoint(p) {
-            
+        function addPoint(p, color) {
+
             vertices.push(0, 0, 0);
+            colors.push(color.r, color.g, color.b);
 
             if (pointMap[p] === undefined) {
                 pointMap[p] = [];
@@ -34,51 +42,50 @@ export default class CameraHelper extends LineSegments {
         }
 
         // 锥体
-        addLine('p', 'n1');
-        addLine('p', 'n2');
-        addLine('p', 'n3');
-        addLine('p', 'n4');
+        addLine('p', 'n1', colorCone);
+        addLine('p', 'n2', colorCone);
+        addLine('p', 'n3', colorCone);
+        addLine('p', 'n4', colorCone);
 
         // 近平面
-        addLine('n1', 'n2');
-        addLine('n2', 'n3');
-        addLine('n3', 'n4');
-        addLine('n4', 'n1');
+        addLine('n1', 'n2', colorFrustum);
+        addLine('n2', 'n3', colorFrustum);
+        addLine('n3', 'n4', colorFrustum);
+        addLine('n4', 'n1', colorFrustum);
 
         // 远平面
-        addLine('f1', 'f2');
-        addLine('f2', 'f3');
-        addLine('f3', 'f4');
-        addLine('f4', 'f1');
+        addLine('f1', 'f2', colorFrustum);
+        addLine('f2', 'f3', colorFrustum);
+        addLine('f3', 'f4', colorFrustum);
+        addLine('f4', 'f1', colorFrustum);
 
         // 侧平面
-        addLine('n1', 'f1');
-        addLine('n2', 'f2');
-        addLine('n3', 'f3');
-        addLine('n4', 'f4');
+        addLine('n1', 'f1', colorFrustum);
+        addLine('n2', 'f2', colorFrustum);
+        addLine('n3', 'f3', colorFrustum);
+        addLine('n4', 'f4', colorFrustum);
 
         // 上方向
-        addLine('u1', 'u2');
-        addLine('u2', 'u3');
-        addLine('u3', 'u1');
+        addLine('u1', 'u2', colorUp);
+        addLine('u2', 'u3', colorUp);
+        addLine('u3', 'u1', colorUp);
 
         // 朝向
-        addLine('p', 'c');
-        addLine('c', 't');
+        addLine('p', 'c', colorTarget);
+        addLine('c', 't', colorTarget);
 
         // cross
-        addLine('cn1', 'cn3');
-        addLine('cn2', 'cn4');
+        addLine('cn1', 'cn3', colorCross);
+        addLine('cn2', 'cn4', colorCross);
 
-        addLine('cf1', 'cf3');
-        addLine('cf2', 'cf4');
-
+        addLine('cf1', 'cf3', colorCross);
+        addLine('cf2', 'cf4', colorCross);
 
         let geometry = new Geometry();
         geometry.setAttribute('position', new BufferAttribute(new Float32Array(vertices), 3));
+        geometry.setAttribute('color', new BufferAttribute(new Float32Array(colors), 3));
 
-        let material = new Material();
-        material.color = new Color('#000');
+        let material = new LineBasicMaterial({vertexColors: true});
 
         super(geometry, material);
 
@@ -97,7 +104,7 @@ export default class CameraHelper extends LineSegments {
     // 当camera发生变化时需要调用此方法，更新CameraHelper
     update() {
 
-        let position = this.getAttribute('position'),
+        let position = this.geometry.getAttribute('position'),
             pointMap = this._pointMap;
 
         function setPoint(point, x, y, z) {
@@ -117,15 +124,15 @@ export default class CameraHelper extends LineSegments {
             }
         }
 
-        // camera设置更改后需要手动updateProjectionMatrix，这里调用updateProjectionMatrix就能保证设置被更新到projectionMatrix
+        // camera的参数更改后需要手动updateProjectionMatrix，这里调用updateProjectionMatrix就能保证参数被更新到projectionMatrix
         this._camera.updateProjectionMatrix();
 
-        // 令_camera的投影矩阵的逆矩阵和this.camera保持一致
-        // 但是_camera的模型矩阵必须保持为单位矩阵（即没有进行过仿射变换）
-        // 这样可以使用_camera将点从NDC坐标系变换回世界坐标系，并且不经过this.camera的仿射变换
+        // 只需要将顶点从NDC变换到相机坐标系，所以这里只复制相机的逆投影矩阵，不复制相机的逆视图矩阵（即相机的worldMatrix）
         _camera.projectionMatrixInverse.copy(this._camera.projectionMatrixInverse);
 
-        setPoint('p', 0, 0, 0);
+        // p的值需要保持为(0,0,0)，unproject反而会导致值得改变，这不是我们想要的结果，所以这里不能调用setPoint
+        // setPoint('p', 0, 0, 0);
+
         setPoint('c', 0, 0, -1);
         setPoint('t', 0, 0, 1);
 
@@ -134,10 +141,10 @@ export default class CameraHelper extends LineSegments {
         setPoint('n3', -1, -1, -1);
         setPoint('n4', 1, -1, -1);
 
-        setPoint('n1', 1, 1, 1);
-        setPoint('n2', -1, 1, 1);
-        setPoint('n3', -1, -1, 1);
-        setPoint('n4', 1, -1, 1);
+        setPoint('f1', 1, 1, 1);
+        setPoint('f2', -1, 1, 1);
+        setPoint('f3', -1, -1, 1);
+        setPoint('f4', 1, -1, 1);
 
         setPoint('u1', 0.7 * 1, 1.1 * 1, -1);
         setPoint('u2', 0, 2 * 1, -1);
