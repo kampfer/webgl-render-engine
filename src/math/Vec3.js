@@ -49,6 +49,14 @@ export default class Vec3 {
         return this;
     }
 
+    setFromMatrix4Column(m, index) {
+        return this.setFromArray(m, index * 4);
+    }
+
+    setFromMatrix3Column(m, index) {
+        return this.setFromArray(m, index * 3);
+    }
+
     getComponent(index) {
         switch (index) {
             case 0:

@@ -1,10 +1,17 @@
 import Vec3 from '../math/Vec3';
 import Spherical from '../math/Spherical';
+import {
+    OBJECT_TYPE_PERSPECTIVE_CAMERA,
+    OBJECT_TYPE_ORTHOGRAPHIC_CAMERA,
+} from '../constants';
+
+let _v = new Vec3(),
+    _offset = new Vec3();
 
 export default class {
 
-    constructor(camera, domElement) {
-        this.camera = camera;
+    constructor(object, domElement) {
+        this.object = object;
 
         this.domElement = domElement;
 
@@ -12,12 +19,12 @@ export default class {
 
         this.target = new Vec3(0, 0, 0);
 
-        this._deltaTheta = 0;
-        this._deltaPhi = 0;
+        this.enablePan = true;
 
-        this._offset = new Vec3();
         this.panSpeed = 1;
 
+        this._panOffset = new Vec3();
+        this._sphericalDelta = new Spherical();
         this._scale = 1;
 
         domElement.addEventListener('mousedown', this, false);
@@ -61,25 +68,49 @@ export default class {
     }
 
     update() {
-        let position = this.camera.position;
+        let position = this.object.position;
 
         // 直接使用position，球坐标是以原点为中心的，而我们期望的是以target为中心计算球坐标
         // 所以这里先计算出向量再转换成球坐标。
-        this._offset.copy(position).sub(this.target);
+        _offset.copy(position).sub(this.target);
 
-        this.spherical.setFromVector3(this._offset);
+        this.spherical.setFromVector3(_offset);
 
-        this.spherical.theta += this._deltaTheta;
-        this.spherical.phi += this._deltaPhi;
+        this.spherical.theta += this._sphericalDelta.theta;
+        this.spherical.phi += this._sphericalDelta.phi;
         this.spherical.radius *= this._scale;
 
-        this._offset.setFromSpherical(this.spherical);
+        _offset.setFromSpherical(this.spherical);
 
-        position.copy(this.target).add(this._offset);
+        position.copy(this.target).add(this._panOffset);
 
-        this.camera.lookAt(this.target);
+        this.object.lookAt(this.target);
 
-        this.camera.updateWorldMatrix();
+        this.object.updateWorldMatrix();
+    }
+
+    panLeft(distance) {
+        // local matrix
+        let matrix = this.object.matrix;
+        _v.setFromMatrix4Column(matrix, 0).multiplyScalar(-distance);
+        this._panOffset.add(_v);
+    }
+
+    panUp(distance) {
+        let matrix = this.object.matrix;
+        _v.setFromMatrix4Column(matrix, 1).multiplyScalar(distance);
+        this._panOffset.add(_v);
+    }
+
+    
+    // 鼠标右滑，deltaX > 0，phi减小
+    rotateLeft(angle) {
+        this._sphericalDelta.phi -= angle;
+    }
+
+    // 鼠标下滑，deltaY > 0，theta减小
+    rotateUp(angle) {
+        this._sphericalDelta.theta -= angle;
     }
 
     _handleMouseDown(event) {
@@ -88,32 +119,57 @@ export default class {
     }
 
     _handleMouseMove(event) {
-        if (!this._dragging) {
-            return;
-        }
+        if (!this._dragging) return;
 
-        let mousePosition = this.getMousePosition(event),
+        let object = this.object,
+            domElement = this.domElement,
+            clientWidth = domElement.clientWidth,
+            clientHeight = domElement.clientHeight,
+            mousePosition = this.getMousePosition(event),
             deltaX = mousePosition[0] - this._lastMousePosition[0],
             deltaY = mousePosition[1] - this._lastMousePosition[1];
 
-        if (this._shiftKeyDown) {
-            this.target.x -= deltaX * this.panSpeed;
-            this.target.y += deltaY * this.panSpeed;
-        } else {
-            let deltaTheta = Math.PI * 2 * deltaY / this.domElement.clientHeight,
-                deltaPhi = Math.PI * 2 * deltaX / this.domElement.clientWidth;
+        if (this.enablePan && this._shiftKeyDown) {
 
-            // 鼠标下滑，deltaY > 0，theta减小
-            // 鼠标右滑，deltaX > 0，phi减小
-            this._deltaTheta -= deltaTheta;
-            this._deltaPhi -= deltaPhi;
+            if (object.type === OBJECT_TYPE_PERSPECTIVE_CAMERA) {
+
+                let position = object.position,
+                    targetDistance;
+
+                _offset.copy(position).sub(this.target);
+
+                targetDistance = _offset.length();
+                targetDistance *= Math.tan(object.fov * 0.5);
+
+                this.panLeft(deltaX * (targetDistance / (clientWidth / 2)));
+                this.panUp(deltaY * (targetDistance / (clientHeight / 2)));
+
+            } else if (object.type === OBJECT_TYPE_ORTHOGRAPHIC_CAMERA) {
+
+                this.panLeft(deltaX * ((object.right - object.left) / clientWidth));
+                this.panUp(deltaY * ((object.top - object.bottom) / clientHeight));
+
+            } else {
+
+                console.warn('object不是camera，不支持pan操作');
+                this.enablePan = false;
+
+            }
+
+        } else {
+
+            let deltaTheta = Math.PI * 2 * deltaY / clientHeight,
+                deltaPhi = Math.PI * 2 * deltaX / clientWidth;
+
+            this.rotateLeft(deltaPhi);
+            this.rotateUp(deltaTheta);
+
         }
 
         this.update();
 
-        this._deltaTheta = 0;
-        this._deltaPhi = 0;
-
+        this._panOffset.set(0, 0, 0);
+        this._sphericalDelta.set(0, 0, 0);
         this._lastMousePosition = mousePosition;
     }
 
