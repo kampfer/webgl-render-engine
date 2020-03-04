@@ -20,15 +20,13 @@ export default class {
 
         this._scale = 1;
 
-        this.domElement.focus();
-
         domElement.addEventListener('mousedown', this, false);
         domElement.addEventListener('mousemove', this, false);
         domElement.addEventListener('mouseup', this, false);
         domElement.addEventListener('mouseout', this, false);
         domElement.addEventListener('wheel', this, false);
-        domElement.addEventListener('keydown', this, false);
-        domElement.addEventListener('keyup', this, false);
+        document.addEventListener('keydown', this, false);
+        document.addEventListener('keyup', this, false);
     }
 
     handleEvent(event) {
@@ -139,7 +137,9 @@ export default class {
     }
 
     _handleKeyDown(event) {
-        if (event.shiftKey) this._shiftKeyDown = true;
+        if (event.shiftKey) {
+            this._shiftKeyDown = true;
+        }
     }
 
     _handleKeyUp() {
@@ -152,8 +152,8 @@ export default class {
         this.domElement.removeEventListener('mouseup', this);
         this.domElement.removeEventListener('mouseout', this);
         this.domElement.removeEventListener('wheel', this);
-        this.domElement.removeEventListener('keydown', this);
-        this.domElement.removeEventListener('keyup', this);
+        document.removeEventListener('keydown', this);
+        document.removeEventListener('keyup', this);
     }
 
 }
