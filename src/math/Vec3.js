@@ -50,11 +50,11 @@ export default class Vec3 {
     }
 
     setFromMatrix4Column(m, index) {
-        return this.setFromArray(m, index * 4);
+        return this.setFromArray(m.elements, index * 4);
     }
 
     setFromMatrix3Column(m, index) {
-        return this.setFromArray(m, index * 3);
+        return this.setFromArray(m.elements, index * 3);
     }
 
     getComponent(index) {

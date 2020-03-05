@@ -5,8 +5,7 @@ import {
     OBJECT_TYPE_ORTHOGRAPHIC_CAMERA,
 } from '../constants';
 
-let _v = new Vec3(),
-    _offset = new Vec3();
+let _offset = new Vec3();
 
 export default class {
 
@@ -19,9 +18,23 @@ export default class {
 
         this.target = new Vec3(0, 0, 0);
 
+        // TODO: 同时支持平行于屏幕的和垂直于object上方向的pan操作
         this.enablePan = true;
-
         this.panSpeed = 1;
+
+        this.enableRotate = true;
+        this.rotateSpeed = 1;
+        // polar angle - 垂直方向 - [0, PI]
+        this.minThetaAngle = 0;
+        this.maxThetaAngle = Infinity;
+        // azimuth angle - 水平方向 - [-PI, pI]
+        this.minPhiAngle = -Infinity;
+        this.maxPhiAngle = Infinity;
+
+        this.enableZoom = true;
+        this.zoomSpeed = 1;
+        this.minZoom = 0;
+        this.maxZoom = Infinity;
 
         this._panOffset = new Vec3();
         this._deltaTheta = 0;
@@ -69,41 +82,49 @@ export default class {
     }
 
     update() {
-        let position = this.object.position;
+        let position = this.object.position,
+            spherical = this.spherical;
 
         // 直接使用position，球坐标是以原点为中心的，而我们期望的是以target为中心计算球坐标
         // 所以这里先计算出向量再转换成球坐标。
         _offset.copy(position).sub(this.target);
+        spherical.setFromVector3(_offset);
 
-        this.spherical.setFromVector3(_offset);
+        spherical.theta += this._deltaTheta;
+        spherical.theta = Math.max(this.minThetaAngle, Math.min(this.maxThetaAngle, spherical.theta));
 
-        this.spherical.theta += this._deltaTheta;
-        this.spherical.phi += this._deltaPhi;
-        this.spherical.radius *= this._scale;
+        spherical.phi += this._deltaPhi;
+        spherical.phi = Math.max(this.minPhiAngle, Math.min(this.maxPhiAngle, spherical.phi));
 
-        _offset.setFromSpherical(this.spherical);
+        spherical.radius *= this._scale;
+        spherical.radius = Math.max(this.minZoom, Math.min(this.maxZoom, spherical.radius));
 
+        this.target.add(this._panOffset);
+
+        _offset.setFromSpherical(spherical);
         position.copy(this.target).add(_offset);
 
         this.object.lookAt(this.target);
 
+        // TODO: renderer.render中如果会调用updateWorldMatrix，这里就不需要再调用
         this.object.updateWorldMatrix();
     }
 
+    // distance 是相机坐标系中的位移
     panLeft(distance) {
         // local matrix
         let matrix = this.object.matrix;
-        _v.setFromMatrix4Column(matrix, 0).multiplyScalar(-distance);
-        this._panOffset.add(_v);
+        _offset.setFromMatrix4Column(matrix, 0).multiplyScalar(-distance);
+        this._panOffset.add(_offset);
     }
 
+    // distance 是相机坐标系中的位移
     panUp(distance) {
         let matrix = this.object.matrix;
-        _v.setFromMatrix4Column(matrix, 1).multiplyScalar(distance);
-        this._panOffset.add(_v);
+        _offset.setFromMatrix4Column(matrix, 1).multiplyScalar(distance);
+        this._panOffset.add(_offset);
     }
 
-    
     // 鼠标右滑，deltaX > 0，phi减小
     rotateLeft(angle) {
         this._deltaPhi -= angle;
@@ -132,6 +153,9 @@ export default class {
 
         if (this.enablePan && this._shiftKeyDown) {
 
+            deltaX *= this.panSpeed;
+            deltaY *= this.panSpeed;
+
             if (object.type === OBJECT_TYPE_PERSPECTIVE_CAMERA) {
 
                 let position = object.position,
@@ -159,11 +183,12 @@ export default class {
 
         } else {
 
-            let deltaTheta = Math.PI * 2 * deltaY / clientHeight,
+            let rotateSpeed = this.rotateSpeed,
+                deltaTheta = Math.PI * 2 * deltaY / clientHeight,
                 deltaPhi = Math.PI * 2 * deltaX / clientWidth;
 
-            this.rotateLeft(deltaPhi);
-            this.rotateUp(deltaTheta);
+            this.rotateLeft(rotateSpeed * deltaPhi);
+            this.rotateUp(rotateSpeed * deltaTheta);
 
         }
 
@@ -182,11 +207,6 @@ export default class {
     _handleMouseWheel(event) {
         let height = this.domElement.clientHeight;
 
-        // if (event.deltaY > 0) {
-        //     scale *= (1 + event.deltaY / height);
-        // } else if (event.deltaY < 0) {
-        //     scale *= (1 + event.deltaY / height);
-        // }
         this._scale *= (1 + event.deltaY / height);
 
         this.update();
