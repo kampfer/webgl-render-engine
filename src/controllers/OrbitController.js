@@ -24,7 +24,8 @@ export default class {
         this.panSpeed = 1;
 
         this._panOffset = new Vec3();
-        this._sphericalDelta = new Spherical();
+        this._deltaTheta = 0;
+        this._deltaPhi = 0;
         this._scale = 1;
 
         domElement.addEventListener('mousedown', this, false);
@@ -76,13 +77,13 @@ export default class {
 
         this.spherical.setFromVector3(_offset);
 
-        this.spherical.theta += this._sphericalDelta.theta;
-        this.spherical.phi += this._sphericalDelta.phi;
+        this.spherical.theta += this._deltaTheta;
+        this.spherical.phi += this._deltaPhi;
         this.spherical.radius *= this._scale;
 
         _offset.setFromSpherical(this.spherical);
 
-        position.copy(this.target).add(this._panOffset);
+        position.copy(this.target).add(_offset);
 
         this.object.lookAt(this.target);
 
@@ -105,12 +106,12 @@ export default class {
     
     // 鼠标右滑，deltaX > 0，phi减小
     rotateLeft(angle) {
-        this._sphericalDelta.phi -= angle;
+        this._deltaPhi -= angle;
     }
 
     // 鼠标下滑，deltaY > 0，theta减小
     rotateUp(angle) {
-        this._sphericalDelta.theta -= angle;
+        this._deltaTheta -= angle;
     }
 
     _handleMouseDown(event) {
@@ -139,7 +140,7 @@ export default class {
                 _offset.copy(position).sub(this.target);
 
                 targetDistance = _offset.length();
-                targetDistance *= Math.tan(object.fov * 0.5);
+                targetDistance *= Math.tan(object.fovy * 0.5);
 
                 this.panLeft(deltaX * (targetDistance / (clientWidth / 2)));
                 this.panUp(deltaY * (targetDistance / (clientHeight / 2)));
@@ -169,7 +170,8 @@ export default class {
         this.update();
 
         this._panOffset.set(0, 0, 0);
-        this._sphericalDelta.set(0, 0, 0);
+        this._deltaTheta = 0;
+        this._deltaPhi = 0;
         this._lastMousePosition = mousePosition;
     }
 
