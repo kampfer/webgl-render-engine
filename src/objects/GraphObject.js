@@ -216,6 +216,8 @@ export default class GraphObject {
     }
 
     copy(src, recursive = true) {
+        this.name = src.name;
+
         this.up.copy(src.up);
 
         this.position.copy(src.position);
