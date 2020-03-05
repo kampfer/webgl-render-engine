@@ -5,7 +5,9 @@ import OrbitController from '../src/controllers/OrbitController';
 
 export default class Example {
 
-    constructor() {
+    constructor({
+        useOrbit = true
+    } = {}) {
         this.scene = new Scene();
 
         let renderer = new WebGLRenderer();
@@ -20,7 +22,9 @@ export default class Example {
         camera.updateWorldMatrix();
         this.camera = camera;
 
-        this.cameraController = new OrbitController(camera, renderer.domElement);
+        if (useOrbit) {
+            this.cameraController = new OrbitController(camera, renderer.domElement);
+        }
 
         this.animate = this.animate.bind(this);
     }

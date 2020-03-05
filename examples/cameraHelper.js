@@ -15,7 +15,7 @@ const frustumSize = 10;
 export default class CameraHelperExample extends Example {
 
     constructor() {
-        super();
+        super({useOrbit: false});
 
         let boxGeometry = new BoxGeometry(1, 1, 1),
             material = new Material({color: 'red'}),
