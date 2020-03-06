@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "npm run example",
-    "dev": "webpack-dev-server --config scripts/webpack.dev.config.js",
+    "dev": "webpack --config scripts/webpack.dev.config.js -w",
     "example": "webpack-dev-server --config scripts/webpack.example.config.js",
     "build": "webpack --config scripts/webpack.pro.config.js",
     "test": "",
