@@ -37,6 +37,7 @@ export { default as LinearInterpolant } from './math/interpolants/LinearInterpol
 export { default as QuaternionLinearInterpolant } from './math/interpolants/QuaternionLinearInterpolant';
 export { default as StepInterpolant } from './math/interpolants/StepInterpolant';
 export { default as GraphObject } from './objects/GraphObject';
+export { default as Group } from './objects/Group';
 export { default as Line } from './objects/Line';
 export { default as LineSegments } from './objects/LineSegments';
 export { default as Mesh } from './objects/Mesh';

@@ -230,8 +230,8 @@ export default class GraphObject {
         this._worldMatrixNeedsUpdate = src._worldMatrixNeedsUpdate;
 
         if (recursive === true) {
-            for(let i = 0, l = this.children.length; i < l; i++) {
-                let child = this.children[i];
+            for(let i = 0, l = src.children.length; i < l; i++) {
+                let child = src.children[i];
                 this.add(child.clone(recursive));
             }
         }
