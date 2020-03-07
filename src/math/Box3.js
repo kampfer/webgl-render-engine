@@ -38,9 +38,12 @@ export default class Box3 {
     }
 
     expandByObject(object) {
+        // 注意：因为在后面会递归的expandByObject子辈，所以这里不需更新子辈的matrix
+        // TODO: 参考threejs，这里也没有更新父辈的matrix，是否合适？
         object.updateRelativeWorldMatrix(false, false);
 
         let geometry = object.geometry;
+        // 没有geometry的对象不会被计算，比如：camera
         if (geometry) {
             let boundingBox = geometry.getBoundingBox();
             _box.copy(boundingBox);
