@@ -20,6 +20,13 @@ export default class Vec3 {
         return this;
     }
 
+    setFromScalar(scalar) {
+        this.x = scalar;
+        this.y = scalar;
+        this.z = scalar;
+        return this;
+    }
+
     setFromArray(array, offset = 0) {
         this.x = array[offset];
         this.y = array[offset + 1];

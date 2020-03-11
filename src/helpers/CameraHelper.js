@@ -19,7 +19,7 @@ export default class CameraHelper extends LineSegments {
 
         let colorFrustum = new Color(0xffaa00),
             colorCone = new Color(0xff0000),
-            colorUp = new Color(0x00aaff ),
+            colorUp = new Color(0x00aaff),
             colorTarget = new Color(0xffffff),
             colorCross = new Color(0x333333);
 
