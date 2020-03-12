@@ -205,13 +205,13 @@ export default class WebGLRenderer {
     getRenderList(object) {
         let list = [];
 
-        if (object.visible === true && (object.type === OBJECT_TYPE_MESH || object.type === OBJECT_TYPE_LINE_SEGMENTS)) {
-            list.push(object);
-        }
+        if (object.visible === true) {
+            if (object.geometry && object.material) list.push(object);
 
-        let children = object.children;
-        for(let i = 0, l = children.length; i < l; i++) {
-            list.push(...this.getRenderList(children[i]));
+            let children = object.children;
+            for(let i = 0, l = children.length; i < l; i++) {
+                list.push(...this.getRenderList(children[i]));
+            }
         }
 
         return list;
