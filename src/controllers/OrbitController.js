@@ -5,7 +5,8 @@ import {
     OBJECT_TYPE_ORTHOGRAPHIC_CAMERA,
 } from '../constants';
 
-let _offset = new Vec3();
+let _offset = new Vec3(),
+    _spherical = new Spherical();
 
 export default class {
 
@@ -13,8 +14,6 @@ export default class {
         this.object = object;
 
         this.domElement = domElement;
-
-        this.spherical = new Spherical();
 
         this.target = new Vec3(0, 0, 0);
 
@@ -82,26 +81,25 @@ export default class {
     }
 
     update() {
-        let position = this.object.position,
-            spherical = this.spherical;
+        let position = this.object.position;
 
         // 直接使用position，球坐标是以原点为中心的，而我们期望的是以target为中心计算球坐标
         // 所以这里先计算出向量再转换成球坐标。
         _offset.copy(position).sub(this.target);
-        spherical.setFromVector3(_offset);
+        _spherical.setFromVector3(_offset);
 
-        spherical.theta += this._deltaTheta;
-        spherical.theta = Math.max(this.minThetaAngle, Math.min(this.maxThetaAngle, spherical.theta));
+        _spherical.theta += this._deltaTheta;
+        _spherical.theta = Math.max(this.minThetaAngle, Math.min(this.maxThetaAngle, _spherical.theta));
 
-        spherical.phi += this._deltaPhi;
-        spherical.phi = Math.max(this.minPhiAngle, Math.min(this.maxPhiAngle, spherical.phi));
+        _spherical.phi += this._deltaPhi;
+        _spherical.phi = Math.max(this.minPhiAngle, Math.min(this.maxPhiAngle, _spherical.phi));
 
-        spherical.radius *= this._scale;
-        spherical.radius = Math.max(this.minZoom, Math.min(this.maxZoom, spherical.radius));
+        _spherical.radius *= this._scale;
+        _spherical.radius = Math.max(this.minZoom, Math.min(this.maxZoom, _spherical.radius));
 
         this.target.add(this._panOffset);
 
-        _offset.setFromSpherical(spherical);
+        _offset.setFromSpherical(_spherical);
         position.copy(this.target).add(_offset);
 
         this.object.lookAt(this.target);
