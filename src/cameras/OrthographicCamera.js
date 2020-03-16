@@ -15,17 +15,14 @@ export default class OrthographicCamera extends Camera {
         this._near = near;
         this._far = far;
 
-        this.updateProjectionMatrix();
-    }
+        this.zoom = 1;
 
-    setZoom(zoom = 1) {
-        this._zoom = zoom;
         this.updateProjectionMatrix();
     }
 
     updateProjectionMatrix() {
-        let dx = ( this._right - this._left ) / ( 2 * this._zoom ),
-            dy = ( this._top - this._bottom ) / ( 2 * this._zoom ),
+        let dx = ( this._right - this._left ) / ( 2 * this.zoom ),
+            dy = ( this._top - this._bottom ) / ( 2 * this.zoom ),
             cx = ( this._right + this._left ) / 2,
             cy = ( this._top + this._bottom ) / 2,
             left = cx - dx,

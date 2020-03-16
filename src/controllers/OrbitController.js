@@ -205,7 +205,12 @@ export default class {
     _handleMouseWheel(event) {
         let height = this.domElement.clientHeight;
 
-        this._scale *= (1 + event.deltaY / height);
+        if (this.object.type === OBJECT_TYPE_PERSPECTIVE_CAMERA) {
+            this._scale *= (1 + event.deltaY / height);
+        } else if (this.object.type === OBJECT_TYPE_ORTHOGRAPHIC_CAMERA) {
+            this.object.zoom *= (1 - event.deltaY / height);
+            this.object.updateProjectionMatrix();
+        }
 
         this.update();
 

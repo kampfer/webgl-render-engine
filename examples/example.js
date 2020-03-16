@@ -6,7 +6,8 @@ import OrbitController from '../src/controllers/OrbitController';
 export default class Example {
 
     constructor({
-        useOrbit = true
+        useOrbit = true,
+        camera,
     } = {}) {
         this.scene = new Scene();
 
@@ -15,11 +16,13 @@ export default class Example {
         renderer.setClearColor([1, 1, 1, 1]);
         document.body.appendChild(renderer.domElement);
         this.renderer = renderer;
-        
-        let camera = new PerspectiveCamera(60 * Math.PI / 180, window.innerWidth / window.innerHeight, 0.1, 100);
-        camera.lookAt(0, 0, 0);
-        camera.position.set(0, 0, 10);
-        camera.updateWorldMatrix();
+
+        if (!camera) {
+            camera = new PerspectiveCamera(60 * Math.PI / 180, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.lookAt(0, 0, 0);
+            camera.position.set(0, 0, 10);
+            camera.updateWorldMatrix();
+        }
         this.camera = camera;
 
         if (useOrbit) {
@@ -43,7 +46,7 @@ export default class Example {
     }
 
     destroy() {
-        this.cameraController.destroy();
+        if (this.cameraController) this.cameraController.destroy();
         cancelAnimationFrame(this._animationTimer);
     }
 
