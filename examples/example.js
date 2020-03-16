@@ -33,6 +33,7 @@ export default class Example {
     }
 
     render() {
+        if (this.update) this.update();
         this.renderer.render(this.scene, this.camera);
     }
 

@@ -3,6 +3,7 @@ const examples = {
     cameraHelper: () => import('./cameraHelper'),
     axesHelper: () => import('./axesHelper'),
     camera: () => import('./camera'),
+    wireframe: () => import('./wireframe')
 };
 
 function appendExampleList() {
