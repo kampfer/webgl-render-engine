@@ -144,7 +144,17 @@ export default class WebGLRenderer {
         let renderList = this.getRenderList(scene);
 
         for(let i = 0; i < renderList.length; i++) {
-            let object = renderList[i];
+            let object = renderList[i],
+                geometry = object.geometry,
+                material = object.material,
+                index = geometry.getAttribute('index'),
+                position = geometry.getAttribute('position');
+
+            if (!index) {
+                if (!position || position.count === 0) return;
+            } else if (index.count === 0) {
+                return;
+            }
 
             let parameters = programManager.getParameters(object),
                 programKey = programManager.getProgramKey(parameters),
@@ -165,14 +175,15 @@ export default class WebGLRenderer {
 
             this.setAttributes(programInfo, object);
 
-            let index = object.geometry.getAttribute('index');
+            if (material.wireframe === true) index = geometry.getWireframeAttribute();
+
+            let mode = object.drawMode;
+            if (object.material.wireframe) mode = gl.LINES;
+
             if (index) {
                 let indexBuffer = this._bufferManager.get(index);
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-            }
 
-            let mode = object.drawMode || this.getDrawModeByObjectType(object.type);
-            if (index) {
                 gl.drawElements(mode, index.count, index.glType, 0);
             } else {
                 let count = object.geometry.getAttribute('position').count;

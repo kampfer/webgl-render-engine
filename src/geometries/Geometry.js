@@ -9,9 +9,6 @@ export default class Geometry {
         this.colors = [];
         this.indices = [];
         this._attributes = {};
-        this.verticesNeedUpdate = false;
-        this.colorsNeedUpdate = false;
-        this.indicesNeedUpdate = false;
     }
 
     setIndex(v) {
@@ -36,23 +33,6 @@ export default class Geometry {
         return this._attributes;
     }
 
-    update() {
-        if (this.verticesNeedUpdate === true) {
-            this.setAttribute('position', new BufferAttribute(new Float32Array(this.vertices), 3));
-            this.verticesNeedUpdate = false;
-        }
-
-        if (this.colorsNeedUpdate === true) {
-            this.setAttribute('color', new BufferAttribute(new Float32Array(this.colors), 3));
-            this.colorsNeedUpdate = false;
-        }
-
-        if (this.indicesNeedUpdate === true && this.indices.length > 0) {
-            this.setIndex(new BufferAttribute(new Int8Array(this.indices), 1));
-            this.indicesNeedUpdate = false;
-        }
-    }
-
     getBoundingBox() {
         if (!this._boundingBox) {
             this._boundingBox = this.computeBoundingBox();
@@ -73,6 +53,58 @@ export default class Geometry {
         }
 
         return box;
+    }
+
+    getWireframeAttribute() {
+
+        if (!this._wireframeAttribute) {
+
+            // this._wireframeAttribute = new BufferAttribute();
+            let indices = [],
+                indexAttribute = this.getAttribute('index'),
+                positionAttribute = this.getAttribute('position');
+            
+            if (indexAttribute) {
+
+                let array = indexAttribute.array;
+
+                for(let i = 0, l = array.length; i < l; i += 3) {
+
+                    let a = array[i],
+                        b = array[i + 1],
+                        c = array[i + 2];
+
+                    indices.push(a, b, b, c, c, a);
+
+                }
+
+            } else if (positionAttribute) {
+
+                let array = positionAttribute.array;
+
+                for(let i = 0, l = array.length / 3; i < l; i += 3) {
+
+                    let a = i,
+                        b = i + 1,
+                        c = i + 2;
+
+                    indices.push(a, b, b, c, c, a);
+
+                }
+
+            }
+
+            let TypedArrayConstructor = Math.max(...indices) > 65535 ? Uint32Array : Uint16Array,
+                attribute = new BufferAttribute(new TypedArrayConstructor(indices), 1);
+
+            attribute.isIndex = true;
+            attribute.name = 'wireframeIndex';
+            this._wireframeAttribute = attribute;
+
+        }
+
+        return this._wireframeAttribute;
+
     }
 
 }

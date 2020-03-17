@@ -10,6 +10,7 @@ export default class Material {
         if (opts.color) this.color = new Color(opts.color);
         this.vertexColors = opts.vertexColors === true;
         this.precision = null;
+        this.wireframe = opts.wireframe;
     }
 
 }

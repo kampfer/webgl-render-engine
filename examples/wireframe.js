@@ -13,15 +13,13 @@ export default class AxesHelperExample extends Example {
 
         super();
 
-        let material = new Material({color: '#ccc'});
-
         let boxGeometry = new BoxGeometry(2, 2, 2),
-            box = new Mesh(boxGeometry, material);
+            box = new Mesh(boxGeometry, new Material({color: '#ccc', wireframe: true}));
         box.position.set(3, 0, 0);
         this.scene.add(box);
 
         let wireframeGeometry = new WireframeGeometry(boxGeometry),
-            box2 = new Mesh(wireframeGeometry, material);
+            box2 = new Mesh(wireframeGeometry, new Material({color: '#ccc'}));
         box2.drawMode = 1;
         box2.position.set(-3, 0, 0);
         this.scene.add(box2);

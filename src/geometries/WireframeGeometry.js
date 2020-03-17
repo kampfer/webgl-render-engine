@@ -4,6 +4,7 @@ import BufferAttribute from '../renderers/BufferAttribute';
 
 let _v3 = new Vec3();
 
+// 不论原geometry是否含有index属性，都只会生成一个仅含有position属性的geometry，体积会明显增大。
 export default class WireframeGeometry extends Geometry {
 
     constructor(geometry) {
