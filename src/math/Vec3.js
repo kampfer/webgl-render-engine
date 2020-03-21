@@ -223,4 +223,8 @@ export default class Vec3 {
         return this.applyMatrix4(camera.projectionMatrixInverse).applyMatrix4(camera.worldMatrix);
     }
 
+    clone() {
+        return new this.constructor(this.x, this.y, this.z);
+    }
+
 }
