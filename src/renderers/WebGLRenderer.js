@@ -179,36 +179,40 @@ export default class WebGLRenderer {
 
             if (material.wireframe === true) index = geometry.getWireframeAttribute();
 
-            let mode = object.drawMode;
-            if (object.material.wireframe) mode = gl.LINES;
+            let drawMode = this.getDrawMode(object);
 
             if (index) {
                 let indexBuffer = this._bufferManager.get(index);
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
                 // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawElements
                 // 支持的type：gl.UNSIGNED_BYTE、gl.UNSIGNED_SHORT、gl.UNSIGNED_INT（OES_element_index_uint）
-                gl.drawElements(mode, index.count, index.glType, 0);
+                gl.drawElements(drawMode, index.count, index.glType, 0);
             } else {
                 let count = object.geometry.getAttribute('position').count;
-                gl.drawArrays(mode, 0, count);
+                gl.drawArrays(drawMode, 0, count);
             }
         }
     }
 
-    getDrawModeByObjectType(type) {
+    // 优先级：wireframe > object.drawMode > object.type
+    getDrawMode(object) {
         let gl = this._gl,
-            mode;
-        if (type === OBJECT_TYPE_MESH) {
-            mode = gl.TRIANGLES;
-        } else if (type === OBJECT_TYPE_LINE) {
-            mode = gl.LINE_STRIP;
-        } else if (type === OBJECT_TYPE_LINE_SEGMENTS) {
-            mode = gl.LINES;
-        } else if (type === OBJECT_TYPE_LINE_LOOP) {
-            mode = gl.LINE_LOOP;
-        } else if (type === OBJECT_TYPE_POINTS) {
-            mode = gl.POINTS;
+            type = object.type,
+            mode = object.drawMode;
+        if (mode === undefined) {
+            if (type === OBJECT_TYPE_MESH) {
+                mode = gl.TRIANGLES;
+            } else if (type === OBJECT_TYPE_LINE) {
+                mode = gl.LINE_STRIP;
+            } else if (type === OBJECT_TYPE_LINE_SEGMENTS) {
+                mode = gl.LINES;
+            } else if (type === OBJECT_TYPE_LINE_LOOP) {
+                mode = gl.LINE_LOOP;
+            } else if (type === OBJECT_TYPE_POINTS) {
+                mode = gl.POINTS;
+            }
         }
+        if (object.material.wireframe) mode = gl.LINES;
         return mode;
     }
 

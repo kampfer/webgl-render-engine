@@ -161,4 +161,11 @@ export default class Color {
         return new this.constructor(this.r, this.g, this.b);
     }
 
+    toArray(array = [], offset = 0) {
+        array[offset + 0] = this.r;
+        array[offset + 1] = this.g;
+        array[offset + 2] = this.b;
+        return array;
+    }
+
 }

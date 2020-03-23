@@ -1,4 +1,5 @@
 import Box3 from '../math/Box3';
+import { arrayMax } from '../math/utils';
 import BufferAttribute from '../renderers/BufferAttribute';
 
 export default class Geometry {
@@ -94,7 +95,9 @@ export default class Geometry {
 
             }
 
-            let TypedArrayConstructor = Math.max(...indices) > 65535 ? Uint32Array : Uint16Array,
+            // 当indices成员太大时使用Math.max会报错：range error
+            // 自己使用循环遍历的方式找出最大值就没问题了
+            let TypedArrayConstructor = arrayMax(indices) > 65535 ? Uint32Array : Uint16Array,
                 attribute = new BufferAttribute(new TypedArrayConstructor(indices), 1);
 
             attribute.isIndex = true;

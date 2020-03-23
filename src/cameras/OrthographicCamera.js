@@ -8,12 +8,12 @@ export default class OrthographicCamera extends Camera {
 
         this.type = OBJECT_TYPE_ORTHOGRAPHIC_CAMERA;
 
-        this._left = left;
-        this._right = right;
-        this._top = top;
-        this._bottom = bottom;
-        this._near = near;
-        this._far = far;
+        this.left = left;
+        this.right = right;
+        this.top = top;
+        this.bottom = bottom;
+        this.near = near;
+        this.far = far;
 
         this.zoom = 1;
 
@@ -21,10 +21,10 @@ export default class OrthographicCamera extends Camera {
     }
 
     updateProjectionMatrix() {
-        let dx = ( this._right - this._left ) / ( 2 * this.zoom ),
-            dy = ( this._top - this._bottom ) / ( 2 * this.zoom ),
-            cx = ( this._right + this._left ) / 2,
-            cy = ( this._top + this._bottom ) / 2,
+        let dx = ( this.right - this.left ) / ( 2 * this.zoom ),
+            dy = ( this.top - this.bottom ) / ( 2 * this.zoom ),
+            cx = ( this.right + this.left ) / 2,
+            cy = ( this.top + this.bottom ) / 2,
             left = cx - dx,
             right = cx + dx,
             top = cy + dy,
@@ -36,7 +36,7 @@ export default class OrthographicCamera extends Camera {
         // right - left = right - left / zoom
         // right + left = right + left
 
-        this.projectionMatrix.setOrthographic(left, right, top, bottom, this._near, this._far);
+        this.projectionMatrix.setOrthographic(left, right, top, bottom, this.near, this.far);
         this.projectionMatrixInverse.setInverseOf(this.projectionMatrix);
     }
 
