@@ -108,6 +108,8 @@ export default class WebGLRenderer {
 
                     gl.enableVertexAttribArray(programAttribute);
                     gl.bindBuffer(target, buffer);
+                    // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/vertexAttribPointer
+                    // 支持的type有：GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT, GL_FLOAT, gl.HALF_FLOAT(WebGL 2 context)
                     gl.vertexAttribPointer(programAttribute, itemSize, type, normalized, stride, offset);
                 }
 
@@ -183,7 +185,8 @@ export default class WebGLRenderer {
             if (index) {
                 let indexBuffer = this._bufferManager.get(index);
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-
+                // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawElements
+                // 支持的type：gl.UNSIGNED_BYTE、gl.UNSIGNED_SHORT、gl.UNSIGNED_INT（OES_element_index_uint）
                 gl.drawElements(mode, index.count, index.glType, 0);
             } else {
                 let count = object.geometry.getAttribute('position').count;
