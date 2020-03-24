@@ -8,6 +8,7 @@ import {
     OBJECT_TYPE_POINTS
 } from '../constants';
 import WebGLCapabilities from './WebGLCapabilities';
+import Color from '../math/Color';
 
 export default class WebGLRenderer {
 
@@ -30,7 +31,7 @@ export default class WebGLRenderer {
 
         this._pixelRatio = window.devicePixelRatio;
 
-        this._clearColor = [0, 0, 0, 1];
+        this._clearColor = new Color('black');
 
         let gl = this.getContext(this.domElement);
 
@@ -136,7 +137,7 @@ export default class WebGLRenderer {
         gl.enable(gl.DEPTH_TEST);
 
         // 设置清理颜色缓冲区时使用的颜色
-        gl.clearColor(...this._clearColor);
+        gl.clearColor(this._clearColor.r, this._clearColor.g, this._clearColor.b, 1);
 
         // 清理颜色缓冲区、深度缓冲区、模板缓冲区
         if (this.autoClear) {
