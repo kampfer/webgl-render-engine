@@ -32,8 +32,12 @@ export default class {
 
         this.enableZoom = true;
         this.zoomSpeed = 1;
+        // 控制正交投影的缩放比例：近平面与object的尺寸比例
         this.minZoom = 0;
         this.maxZoom = Infinity;
+        // 控制透视投影的缩放比例：相机与target的距离
+        this.minDistance = 0;
+        this.maxDistance = Infinity;
 
         this._panOffset = new Vec3();
         this._deltaTheta = 0;
@@ -95,7 +99,7 @@ export default class {
         _spherical.phi = Math.max(this.minPhiAngle, Math.min(this.maxPhiAngle, _spherical.phi));
 
         _spherical.radius *= this._scale;
-        _spherical.radius = Math.max(this.minZoom, Math.min(this.maxZoom, _spherical.radius));
+        _spherical.radius = Math.max(this.minDistance, Math.min(this.maxDistance, _spherical.radius));
 
         this.target.add(this._panOffset);
 
@@ -203,12 +207,24 @@ export default class {
     }
 
     _handleMouseWheel(event) {
-        let height = this.domElement.clientHeight;
-
         if (this.object.type === OBJECT_TYPE_PERSPECTIVE_CAMERA) {
-            this._scale *= (1 + event.deltaY / height);
+            let scale = this._scale;
+            if (event.deltaY > 0) {
+                scale /= Math.pow(0.95, this.zoomSpeed);
+            } else if (event.deltaY < 0) {
+                scale *= Math.pow(0.95, this.zoomSpeed);
+            }
+            // console.log('persp', scale);
+            this._scale = scale;
         } else if (this.object.type === OBJECT_TYPE_ORTHOGRAPHIC_CAMERA) {
-            this.object.zoom *= (1 - event.deltaY / height);
+            let zoom = this.object.zoom;
+            if (event.deltaY > 0) {
+                zoom *= Math.pow(0.95, this.zoomSpeed);
+            } else if (event.deltaY < 0) {
+                zoom /= Math.pow(0.95, this.zoomSpeed);
+            }
+            this.object.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, zoom));
+            // console.log('ortho', zoom);
             this.object.updateProjectionMatrix();
         }
 
