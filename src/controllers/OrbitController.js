@@ -234,11 +234,12 @@ export default class {
     }
 
     _handleKeyDown(event) {
-        if (event.shiftKey) {
+        if (event.shiftKey && !event.ctrlKey) {
             this._shiftKeyDown = true;
         }
     }
 
+    // firefox: 调用window.prompt()后document没有触发keyup
     _handleKeyUp() {
         this._shiftKeyDown = false;
     }
