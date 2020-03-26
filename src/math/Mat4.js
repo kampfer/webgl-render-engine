@@ -4,18 +4,18 @@ export default class Mat4 {
 
     constructor(src) {
         if (src) {
-            let d = [];
+            let d = new Float32Array(16);
             for (let i = 0; i < 16; i++) {
                 d[i] = src[i];
             }
             this.elements = d;
         } else {
-            this.elements = [
+            this.elements = new Float32Array([
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
                 0, 0, 0, 1,
-            ];
+            ]);
         }
     }
 

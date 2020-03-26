@@ -1,15 +1,13 @@
 export default class Mat3 {
 
     constructor() {
-        // this.elements必须使用普通array！
-        // 否则在计算行列式和逆矩阵时，结果的精度会有问题，和参考网站以及threejs的结果不一致。
-        // 其他数学方法估计也有问题，所以干脆和threejs一样用普通array，传入webgl之前再转换成typearray。
-        // mat4也有类似问题
-        this.elements = [
+        // 普通array和typedarray在进行数学计算时，结果的精度是不一样的。
+        // Float32Array比Array低。（Float64Array可能是一致的，因为普通array中的数值是按64位双精度浮点数的格式存储的）
+        this.elements = new Float32Array([
             1, 0, 0,
             0, 1, 0,
             0, 0, 1,
-        ];
+        ]);
     }
 
     set(m11, m12, m13, m21, m22, m23, m31, m32, m33) {
