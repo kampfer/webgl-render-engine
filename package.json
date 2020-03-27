@@ -9,7 +9,7 @@
     "example": "webpack-dev-server --config scripts/webpack.example.config.js",
     "build": "webpack --config scripts/webpack.pro.config.js",
     "test": "",
-    "analyse": "webpack --profile --json > stats.json"
+    "analyse": "webpack --config scripts/webpack.pro.config.js --profile --json > stats.json"
   },
   "author": "https://github.com/kampfer",
   "license": "ISC",
