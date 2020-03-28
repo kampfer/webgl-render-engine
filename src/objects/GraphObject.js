@@ -11,6 +11,13 @@ let _target = new Vec3(),
     _m1 = new Mat4(),
     uid = 0;
 
+let supportProxy = false;
+try {
+    supportProxy = Proxy !== undefined;
+} catch(e) {
+    console.error('浏览器不支持Proxy！');
+}
+
 export default class GraphObject {
 
     constructor() {
@@ -29,7 +36,7 @@ export default class GraphObject {
         this.scale = new Vec3(1, 1, 1);
 
         let rotation = new Euler(),
-            proxyForRotation = new Proxy(rotation, {
+            proxyForRotation = supportProxy && new Proxy(rotation, {
                 set: function(target, key, value) {
                     target[key] = value;
                     quaternion.setFromEuler(target);
@@ -37,15 +44,15 @@ export default class GraphObject {
                 }
             }),
             quaternion = new Quaternion(),
-            proxyForQuaternion = new Proxy(quaternion, {
+            proxyForQuaternion = supportProxy && new Proxy(quaternion, {
                 set: function(target, key, value) {
                     target[key] = value;
                     rotation.setFromQuaternion(target);
                     return true;
                 }
             });
-        this.rotation = proxyForRotation;
-        this.quaternion = proxyForQuaternion;
+        this.rotation = supportProxy ? proxyForRotation : rotation;
+        this.quaternion = supportProxy ? proxyForQuaternion : quaternion;
 
         this.up = new Vec3(0, 1, 0);
 
