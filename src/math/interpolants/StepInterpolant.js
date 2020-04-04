@@ -6,7 +6,7 @@ export default class StepInterpolant extends Interpolant {
         let yArray = this.yArray,
             stride = this.ySize,
             result = new yArray.constructor(stride),
-            offset = i1 - 1;
+            offset = i1 * stride;
 
         for(let i = 0, l = result.length; i < l; i++) {
             result[i] = yArray[offset + i];
