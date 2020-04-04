@@ -3,7 +3,8 @@ const examples = {
     cameraHelper: () => import('./cameraHelper'),
     axesHelper: () => import('./axesHelper'),
     camera: () => import('./camera'),
-    wireframe: () => import('./wireframe')
+    wireframe: () => import('./wireframe'),
+    interpolation: () => import('./interpolation'),
 };
 
 function appendExampleList() {
