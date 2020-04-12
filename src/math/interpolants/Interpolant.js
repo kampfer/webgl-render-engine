@@ -30,7 +30,11 @@ export default class Interpolant {
             }
         }
 
-        return this._interpolate(i1, t0, t, t1);
+        if (i1 !== undefined && t0 !== undefined && t1 !== undefined) {
+            return this._interpolate(i1, t0, t, t1);
+        } else {
+            return null;
+        }
     }
 
 }

@@ -26,7 +26,7 @@ export default class AnimationMixer {
                 time %= clip.duration;
 
                 let result = interpolant.evaluate(time);
-                node[property].setFromArray(result);
+                if (result) node[property].setFromArray(result);
             }
         }
     }
