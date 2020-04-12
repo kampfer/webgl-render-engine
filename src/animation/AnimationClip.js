@@ -1,4 +1,4 @@
-let uid = 0;
+import { generateUid } from '../math/utils';
 
 export default class AnimationClip {
     
@@ -6,7 +6,7 @@ export default class AnimationClip {
         this.name = name;
         this.duration = duration;
         this.tracks = tracks;
-        this.uuid = ++uid;
+        this.uid = generateUid();
 
         if (this.duration < 0) {
             this.setDurationFromTracks();

@@ -24,3 +24,9 @@ export function arrayMax(array) {
 
     return max;
 }
+
+let _uid = 0;
+
+export function generateUid() {
+    return _uid++;
+}
