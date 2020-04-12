@@ -73,7 +73,6 @@ export default class InterpolationExample extends Example {
                     interpolation = STEP_INTERPOLATION;
                 } else {
                     interpolation = CUBIC_SPLINE_INTERPOLATION;
-                    continue;
                 }
 
                 if (property === 'position') {
@@ -95,7 +94,7 @@ export default class InterpolationExample extends Example {
                     tracks.push(new QuaternionKeyFrameTrack(box, property, times, values, interpolation));
                 } else if (property === 'scale') {
                     values.push(1, 1, 1);
-                    values.push(2, 2, 1);
+                    values.push(2, 2, 2);
                     values.push(1, 1, 1);
 
                     tracks.push(new VectorKeyFrameTrack(box, property, times, values, interpolation));
