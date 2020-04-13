@@ -11,7 +11,7 @@ void main() {
 
     vec4 lightColor = vec4(1, 1, 1, 1);
     vec3 lightDirection = normalize(vec3(0.5, 3, 4));
-    vec4 ambientColor = vec4(1, 1, 1, 1);
+    vec4 ambientColor = vec4(0.2, 0.2, 0.2, 1);
 
     vec3 normal = normalize(vNormal);
 

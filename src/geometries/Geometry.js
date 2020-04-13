@@ -9,7 +9,11 @@ export default class Geometry {
         this.normals = [];
         this.colors = [];
         this.indices = [];
+
         this._attributes = {};
+        this._morphAttributes = {};
+
+        this.morphTargetsRelative = false;
     }
 
     setIndex(v) {
@@ -32,6 +36,23 @@ export default class Geometry {
 
     getAttributes() {
         return this._attributes;
+    }
+
+    setMorphAttribute(name, value) {
+        this._morphAttributes[name] = value;
+        value.name = name;
+    }
+
+    removeMorphAttribue(name) {
+        delete this._morphAttributes[name];
+    }
+
+    getMorphAttribute(name) {
+        return this._morphAttributes[name];
+    }
+
+    getMorphAttributes() {
+        return this._morphAttributes;
     }
 
     getBoundingBox() {
