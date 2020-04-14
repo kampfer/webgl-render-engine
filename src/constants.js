@@ -12,7 +12,6 @@ export const OBJECT_TYPE_ORTHOGRAPHIC_CAMERA = 2;
 export const OBJECT_TYPE_LINE = 3;
 export const OBJECT_TYPE_LINE_SEGMENTS = 4;
 export const OBJECT_TYPE_LINE_LOOP = 5;
-export const OBJECT_TYPE_PLANE = 6;
 export const OBJECT_TYPE_POINTS = 7;
 export const OBJECT_TYPE_GROUP = 8;
 export const OBJECT_TYPE_SCENE = 9;
