@@ -1,6 +1,6 @@
-import WebGLUniform from './WebGLUniform';
+import { PureArrayUniform } from './WebGLUniform';
 
-export default class ModelViewMatrixUniform extends WebGLUniform {
+export default class ModelViewMatrixUniform extends PureArrayUniform {
 
     calculateValue(object) {
         return object.modelViewMatrix.elements;

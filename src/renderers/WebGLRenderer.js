@@ -169,10 +169,6 @@ export default class WebGLRenderer {
                 gl.useProgram(program);
             }
 
-            if (material.morphTargets === true || material.morphNormals === true) {
-                object.updateMorphTargetInfluences();
-            }
-
             // TODO：移入uniform.caculateValue
             // 将以下计算移入caculateValue后，需要保证先计算modelViewMatrix再计算normalMatrix。
             // 但是caculateValue的调用顺序无法保证（webgl并没有规定getActiveUniform读取变量的顺序，这完全取决于编译器的实现）。
