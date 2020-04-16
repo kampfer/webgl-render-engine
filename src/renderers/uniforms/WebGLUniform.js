@@ -1,3 +1,27 @@
+function arraysEqual(a, b) {
+
+    if (a.length !== b.length) return false;
+
+    for (var i = 0, l = a.length; i < l; i++) {
+
+        if (a[i] !== b[i]) return false;
+
+    }
+
+    return true;
+
+}
+
+function copyArray(a, b) {
+
+    for (var i = 0, l = b.length; i < l; i++) {
+
+        a[i] = b[i];
+
+    }
+
+}
+
 /************ Array Setter start ************/
 
 function setValue1fv(gl, v) {
@@ -226,7 +250,7 @@ export default class WebGLUnifrom {
     }
 
     // 所有子类实现的setValue方法必须保持统一：
-    // 接受且只接受两个，第一个参数是webgl上下文对象，第二个参数是uniform变量的值
+    // 接受且只接受两个参数，第一个参数是webgl上下文对象，第二个参数是uniform变量的值（需要传递多个值时使用单个向量）
     setValue(/*gl, value*/) {
         throw('WebGLUnifrom子类没有实现 setValue(object, camera) 方法');
     }

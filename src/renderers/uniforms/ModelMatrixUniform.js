@@ -1,6 +1,6 @@
-import { PureArrayUniform } from './WebGLUniform';
+import { SingleUniform } from './WebGLUniform';
 
-export default class ModelMatrixUniform extends PureArrayUniform {
+export default class ModelMatrixUniform extends SingleUniform {
 
     calculateValue(object) {
         return object.worldMatrix.elements;

@@ -1,6 +1,6 @@
-import { PureArrayUniform } from './WebGLUniform';
+import { SingleUniform } from './WebGLUniform';
 
-export default class MorphTargetInfluencesUniform extends PureArrayUniform {
+export default class MorphTargetInfluencesUniform extends SingleUniform {
 
     calculateValue(object) {
 

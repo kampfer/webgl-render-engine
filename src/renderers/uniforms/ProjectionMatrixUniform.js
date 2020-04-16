@@ -1,6 +1,6 @@
-import { PureArrayUniform } from './WebGLUniform';
+import { SingleUniform } from './WebGLUniform';
 
-export default class ProjectionMatrixUniform extends PureArrayUniform {
+export default class ProjectionMatrixUniform extends SingleUniform {
 
     calculateValue(object, camera) {
         return camera.projectionMatrix.elements;
