@@ -1,6 +1,7 @@
-import { SingleUniform } from './WebGLUniform';
+import { PureArrayUniform } from './WebGLUniform';
 
-export default class MorphTargetInfluencesUniform extends SingleUniform {
+// morphTargetInfluences是一维数组，必须用v后缀的方法（uniform1fv），所以继承PureArrayUniform。
+export default class MorphTargetInfluencesUniform extends PureArrayUniform {
 
     calculateValue(object) {
 

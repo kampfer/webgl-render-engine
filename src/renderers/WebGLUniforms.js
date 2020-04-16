@@ -20,8 +20,8 @@ export default class WebGLUniforms {
     }
 
     // uniform变量名有多种形式：
-    // 1. 普通变量：`position`
-    // 2. 数组: `morphTargtInfluences[0]`
+    // 1. 普通变量(float, int)：`position`
+    // 2. 数组(float []): `morphTargtInfluences[0]`
     parseUniform(info, addr) {
 
         let reg = /(\w+)/gu,
