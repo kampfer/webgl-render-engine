@@ -73,37 +73,121 @@ function setValue4iv(gl, v) {
 /************ Singular Setter start ************/
 
 function setValue1f(gl, v) {
+
+    let cache = this._cache;
+
+    if (cache[0] === v) return;
+
     gl.uniform1f(this._addr, v);
+
+    cache[0] = v;
+
 }
 
 function setValue2f(gl, v) {
-    if (v.x !== undefined) {    // vec2
-        gl.uniform2f(this._addr, v.x, v.y);
+
+    let cache = this._cache;
+
+    if (v.x !== undefined && v.y !== undefined) {    // vec2
+
+        if (cache[0] !== v.x || cache[1] !== v.y) {
+
+            gl.uniform2f(this._addr, v.x, v.y);
+
+            cache[0] = v.x;
+            cache[1] = v.y;
+
+        }
+
     } else {    // array
+
+        if (arraysEqual(cache, v)) return;
+
         gl.uniform2fv(this._addr, v);
+
+        copyArray(cache, v);
+
     }
 }
 
 function setValue3f(gl, v) {
-    if (v.x !== undefined) {    // vec3
-        gl.uniform3f(this._addr, v.x, v.y, v.z);
+
+    let cache = this._cache;
+
+    if (v.x !== undefined && v.y !== undefined && v.z !== undefined) {    // vec3
+
+        if (cache[0] !== v.x || cache[1] !== v.y || cache[2] !== v.z) {
+
+            gl.uniform3f(this._addr, v.x, v.y, v.z);
+
+            cache[0] = v.x;
+            cache[1] = v.y;
+            cache[2] = v.z;
+
+        }
+
     } else if (v.r !== undefined) { // color
-        gl.uniform3f(this._addr, v.r, v.g, v.b);
+
+        if (cache[0] !== v.r || cache[1] !== v.g || cache[2] !== v.b) {
+
+            gl.uniform3f(this._addr, v.r, v.g, v.b);
+
+            cache[0] = v.r;
+            cache[1] = v.g;
+            cache[2] = v.b;
+
+        }
+        
     } else {    // array
+
+        if (arraysEqual(cache, v)) return;
+
         gl.uniform3fv(this._addr, v);
+
+        copyArray(cache, v);
+
     }
 }
 
 function setValue4f(gl, v) {
-    if (v.x !== undefined) {    // vec4
-        gl.uniform4f(this._addr, v.x, v.y, v.z, v.w);
-    } else {    // array
+
+    let cache = this.cache;
+
+    if (v.x !== undefined && v.y !== undefined && v.z !== undefined && v.w !== undefined) {
+
+        if (cache[0] !== v.x || cache[1] !== v.y || cache[2] !== v.z || cache[3] !== v.w) {
+
+            gl.uniform4f(this._addr, v.x, v.y, v.z, v.w);
+
+            cache[0] = v.x;
+            cache[1] = v.y;
+            cache[2] = v.z;
+            cache[3] = v.w;
+
+        }
+
+    } else {
+
+        if (arraysEqual(cache, v)) return;
+
         gl.uniform4fv(this._addr, v);
+
+        copyArray(cache, v);
+
     }
+
 }
 
 function setValue1i(gl, v) {
+
+    let cache = this._cache;
+
+    if (cache[0] === v) return;
+
     gl.uniform1i(this._addr, v);
+
+    cache[0] = v;
+
 }
 
 function setValue2i(gl, v) {
@@ -132,38 +216,87 @@ function setValue4i(gl, v) {
     }
 }
 
+const _mat4array = new Float32Array(16);
+const _mat3array = new Float32Array(9);
+const _mat2array = new Float32Array(4);
+
 function setValueMatrix2f(gl, v) {
 
-    let elements = v.elements;
+    let cache = this._cache,
+        elements = v.elements;
 
     if (elements === undefined) {   // array
+
+        if (arraysEqual(cache, v)) return;
+
         gl.uniformMatrix2fv(this._addr, false, v);
+
+        copyArray(cache, v);
+
     } else {    // mat2
-        gl.uniformMatrix2fv(this._addr, false, elements);
+
+        if (arraysEqual(cache, elements)) return;
+
+        _mat2array.set(elements);
+
+        gl.uniformMatrix2fv(this._addr, false, _mat2array);
+
+        copyArray(cache, _mat2array);
+
     }
 
 }
 
 function setValueMatrix3f(gl, v) {
     
-    let elements = v.elements;
+    let cache = this._cache,
+        elements = v.elements;
 
     if (elements === undefined) {   // array
+
+        if (arraysEqual(cache, v)) return;
+
         gl.uniformMatrix3fv(this._addr, false, v);
+
+        copyArray(cache, v);
+
     } else {    // mat3
-        gl.uniformMatrix3fv(this._addr, false, elements);
+
+        if (arraysEqual(cache, elements)) return;
+
+        _mat3array.set(elements);
+
+        gl.uniformMatrix3fv(this._addr, false, _mat3array);
+
+        copyArray(cache, _mat3array);
+
     }
 
 }
 
 function setValueMatrix4f(gl, v) {
-    
-    let elements = v.elements;
+
+    let cache = this._cache,
+        elements = v.elements;
 
     if (elements === undefined) {   // array
+
+        if (arraysEqual(cache, v)) return;
+
         gl.uniformMatrix4fv(this._addr, false, v);
+
+        copyArray(cache, v);
+
     } else {    // mat4
-        gl.uniformMatrix4fv(this._addr, false, elements);
+
+        if (arraysEqual(cache, elements)) return;
+
+        _mat4array.set(elements);
+
+        gl.uniformMatrix4fv(this._addr, false, _mat4array);
+
+        copyArray(cache, _mat4array);
+
     }
 
 }
@@ -243,6 +376,7 @@ export default class WebGLUnifrom {
     constructor(info, addr) {
         this._info = info;
         this._addr = addr;
+        this._cache = [];
     }
 
     calculateValue(/*object, camera*/) {
