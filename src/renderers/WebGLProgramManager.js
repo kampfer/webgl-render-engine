@@ -38,6 +38,8 @@ export default class WebGLProgramManager {
             materialType,
             shaderType,
             vertexColors: material.vertexColors,
+            morphTargets: material.morphTargets,
+            morphNormals: material.morphNormals,
             precision,
         };
 
@@ -46,10 +48,12 @@ export default class WebGLProgramManager {
     // 使用部分参数来合成key
     getProgramKey(parameters) {
 
-        let key = [];
-
-        key.push(parameters.shaderType);
-        key.push(parameters.vertexColors);
+        let key = [
+            parameters.shaderType,
+            parameters.vertexColors,
+            parameters.morphTargets,
+            parameters.morphNormals,
+        ];
 
         return key.join();
 

@@ -169,13 +169,21 @@ export default class WebGLRenderer {
                 gl.useProgram(program);
             }
 
+            if (material.morphTargets === true || material.morphNormals === true) {
+                object.updateMorphTargetInfluences();
+            }
+
             // TODO：移入uniform.caculateValue
+            // 将以下计算移入caculateValue后，需要保证先计算modelViewMatrix再计算normalMatrix。
+            // 但是caculateValue的调用顺序无法保证（webgl并没有规定getActiveUniform读取变量的顺序，这完全取决于编译器的实现）。
+            // 最暴力的做法是每次caculateValue都先计算modelViewMatrix再计算normalMatrix，但是这样会造成冗余计算，拖累性能。
             object.modelViewMatrix.multiplyMatrices(camera.inverseWorldMatrix, object.worldMatrix);
             object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
 
             // TODO：不需要每个循环内都设置一次uniform
             this.setUniforms(programInfo, object, camera);
 
+            // TODO: 每次循环生成要使用的attribute和uniform变量的快照，并与上一次循环的快照进行对比。销毁不再使用的变量，更新发生变化的变量。
             this.setAttributes(programInfo, object);
 
             if (material.wireframe === true) index = geometry.getWireframeAttribute();

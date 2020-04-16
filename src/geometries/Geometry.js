@@ -11,8 +11,8 @@ export default class Geometry {
         this.indices = [];
 
         this._attributes = {};
-        this._morphAttributes = {};
 
+        this._morphAttributes = {};
         this.morphTargetsRelative = false;
     }
 
@@ -21,6 +21,7 @@ export default class Geometry {
         v.isIndex = true;
     }
 
+    // value: BufferAttribute
     setAttribute(name, value) {
         this._attributes[name] = value;
         value.name = name;
@@ -38,9 +39,9 @@ export default class Geometry {
         return this._attributes;
     }
 
+    // value: array
     setMorphAttribute(name, value) {
         this._morphAttributes[name] = value;
-        value.name = name;
     }
 
     removeMorphAttribue(name) {
@@ -65,7 +66,7 @@ export default class Geometry {
     computeBoundingBox() {
         let box = new Box3(),
             position = this.getAttribute('position');
-        
+
         if (position) {
             box.setFromBufferAttribute(position);
 
