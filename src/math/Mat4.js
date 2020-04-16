@@ -2,20 +2,23 @@ import Vec3 from './Vec3';
 
 export default class Mat4 {
 
+    // 普通array和typedarray在进行数学计算时，结果的精度是不一样的：Float32Array比Array低。
+    // Float64Array可能是一致的，因为普通array中的数值是按64位双精度浮点数的格式存储的。（此条待验证）
+    // 另外把typedarray传入webgl，比把array传入webgl，性能要高1个数量级（10倍）。
     constructor(src) {
         if (src) {
-            let d = new Float32Array(16);
+            let d = new Array(16);
             for (let i = 0; i < 16; i++) {
                 d[i] = src[i];
             }
             this.elements = d;
         } else {
-            this.elements = new Float32Array([
+            this.elements = [
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
                 0, 0, 0, 1,
-            ]);
+            ];
         }
     }
 
