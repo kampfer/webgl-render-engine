@@ -1,10 +1,14 @@
 import Box3 from '../math/Box3';
 import { arrayMax } from '../math/utils';
 import BufferAttribute from '../renderers/BufferAttribute';
+import { generateUid } from '../math/utils';
 
 export default class Geometry {
 
     constructor() {
+
+        this.uid = generateUid();
+
         this.vertices = [];
         this.normals = [];
         this.colors = [];
@@ -14,6 +18,7 @@ export default class Geometry {
 
         this._morphAttributes = {};
         this.morphTargetsRelative = false;
+
     }
 
     setIndex(v) {

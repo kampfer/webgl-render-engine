@@ -2,10 +2,13 @@ import {
     MATERIAL_TYPE_BASIC
 } from '../constants';
 import Color from '../math/Color';
+import { generateUid } from '../math/utils';
 
 export default class Material {
 
     constructor(opts = {}) {
+
+        this.uid = generateUid();
 
         this.type = MATERIAL_TYPE_BASIC;
 
