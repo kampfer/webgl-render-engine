@@ -10,7 +10,16 @@ export default class Mesh extends GraphObject {
         this.material = material;
         this.type = OBJECT_TYPE_MESH;
 
+        this.morphTargetBaseInfluence = null;
+        this.morphTargetInfluences = null;
+
         this.updateMorphTargetInfluences();
+    }
+
+    copy(mesh, recursive) {
+        super.copy(mesh, recursive);
+        this.updateMorphTargetInfluences();
+        return this;
     }
 
     clone(recursive) {
