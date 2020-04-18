@@ -9,6 +9,7 @@ import {
 } from '../constants';
 import WebGLCapabilities from './WebGLCapabilities';
 import Color from '../math/Color';
+import WebGLExtensionManager from './WebGLExtensionManager';
 
 export default class WebGLRenderer {
 
@@ -35,12 +36,11 @@ export default class WebGLRenderer {
 
         let gl = this.getContext(this.domElement);
 
-        let capabilities = new WebGLCapabilities(gl, {
-                precision,
-            });
-        this._capabilities = capabilities;
+        this._extensionManager = new WebGLExtensionManager(gl);
 
-        this._programManager = new WebGLProgramManager(gl, capabilities);
+        this._capabilities = new WebGLCapabilities(gl, this._extensionManager, { precision });
+
+        this._programManager = new WebGLProgramManager(gl, this._capabilities);
 
         this._bufferManager = new WebGLBufferManager(gl);
 
