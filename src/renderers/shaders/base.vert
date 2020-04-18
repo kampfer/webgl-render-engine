@@ -33,7 +33,35 @@
 
 #endif
 
-/********************* morphTargets head start *********************/
+/********************* morphTargets head end *********************/
+
+/********************* skin head start *********************/
+
+#ifdef USE_SKINNING
+
+    attribute vec4 skinIndex;
+    attribute vec4 skinWeight;
+
+    uniform mat4 bindMatrix;
+    uniform mat4 bindMatrixInverse;
+
+    #ifdef BONE_TEXTURE
+
+    #else
+
+        uniform mat4 boneMatrices[MAX_BONES];
+
+        // 存储限定符 参数限定符 变量类型 变量名
+        mat4 getBoneMatrix(const in float i) {
+            mat4 bone = boneMatrices[int(i)];
+            return bone;
+        }
+
+    #endif
+
+#endif
+
+/********************* skin head end *********************/
 
 attribute vec3 position;
 uniform mat4 modelViewMatrix;
@@ -58,6 +86,25 @@ void main() {
         objectNormal += morphNormal1 * morphTargetInfluences[ 1 ];
         objectNormal += morphNormal2 * morphTargetInfluences[ 2 ];
         objectNormal += morphNormal3 * morphTargetInfluences[ 3 ];
+
+    #endif
+
+    #ifdef USE_SKINNING
+
+        mat4 skinMatrix = mat4(0.0);
+        skinMatrix += skinWeight.x * boneMatX;
+        skinMatrix += skinWeight.y * boneMatY;
+        skinMatrix += skinWeight.z * boneMatZ;
+        skinMatrix += skinWeight.w * boneMatW;
+        skinMatrix = bindMatrixInverse * skinMatrix * bindMatrix;
+
+        objectNormal = vec4(skinMatrix * vec4(objectNormal, 0.0)).xyz;
+
+        #ifdef USE_TANGENT
+
+            objectTangent = vec4(skinMatrix * vec4(objectTangent, 0.0)).xyz;
+
+        #endif
 
     #endif
 
@@ -95,6 +142,29 @@ void main() {
     #endif
 
     /********************* morphTargets end start *********************/
+
+    /********************* skin main start *********************/
+
+    #ifdef USE_SKINNING
+
+        mat4 boneMatX = getBoneMatrix(skinIndex.x);
+        mat4 boneMatY = getBoneMatrix(skinIndex.y);
+        mat4 boneMatZ = getBoneMatrix(skinIndex.z);
+        mat4 boneMatW = getBoneMatrix(skinIndex.w);
+
+        vec4 skinVertex = bindMatrix * vec4(transformed, 1.0);
+
+        vec4 skinned = vec4(0.0);
+        skinned += boneMatX * skinVertex * skinWeight.x;
+        skinned += boneMatY * skinVertex * skinWeight.y;
+        skinned += boneMatZ * skinVertex * skinWeight.z;
+        skinned += boneMatW * skinVertex * skinWeight.w;
+
+        transformed = (bindMatrixInverse * skinned).xyz;
+
+    #endif
+
+    /********************* skin main end *********************/
 
     vec4 mvPosition = vec4(transformed, 1.0);
 

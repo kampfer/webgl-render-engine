@@ -1,6 +1,6 @@
 // morphTargetBaseInfluence和transformed的算法由Geometry.morphTargetsRelative决定：
-// 当morphTargetsRelative等于false时: position + (morphTarget - position) * morphTargetInfluences，此时morphTargetBaseInfluence等于1 - sum(morphTargetInfluences)
-// 等morphTargetsRelative等于true时: position + morphTarget * morphTargetInfluences，此时morphTargetBaseInfluence等于sum(morphTargetInfluences)
+// 当morphTargetsRelative等于false时: normal + (morphTarget - normal) * morphTargetInfluences，此时morphTargetBaseInfluence等于1 - sum(morphTargetInfluences)
+// 等morphTargetsRelative等于true时: normal + morphTarget * morphTargetInfluences，此时morphTargetBaseInfluence等于sum(morphTargetInfluences)
 
 #ifdef USE_MORPHNORMALS
 

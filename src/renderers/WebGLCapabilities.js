@@ -31,7 +31,7 @@ export default class WebGLCapabilities {
         this.floatVertexTextures = vertexTextures && floatFragmentTextures;
 
         // https://webglstats.com/webgl2/parameter/MAX_VERTEX_UNIFORM_VECTORS
-        // this.maxVertexUniforms = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
+        this.maxVertexUniforms = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
 
     }
 
