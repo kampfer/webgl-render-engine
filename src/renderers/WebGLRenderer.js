@@ -5,7 +5,8 @@ import {
     OBJECT_TYPE_LINE,
     OBJECT_TYPE_LINE_SEGMENTS,
     OBJECT_TYPE_LINE_LOOP,
-    OBJECT_TYPE_POINTS
+    OBJECT_TYPE_POINTS,
+    OBJECT_TYPE_SKINNED_MESH
 } from '../constants';
 import WebGLCapabilities from './WebGLCapabilities';
 import Color from '../math/Color';
@@ -205,7 +206,7 @@ export default class WebGLRenderer {
             type = object.type,
             mode = object.drawMode;
         if (mode === undefined) {
-            if (type === OBJECT_TYPE_MESH) {
+            if (type === OBJECT_TYPE_MESH || OBJECT_TYPE_SKINNED_MESH) {
                 mode = gl.TRIANGLES;
             } else if (type === OBJECT_TYPE_LINE) {
                 mode = gl.LINE_STRIP;
