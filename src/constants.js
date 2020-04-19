@@ -15,6 +15,9 @@ export const OBJECT_TYPE_LINE_LOOP = 5;
 export const OBJECT_TYPE_POINTS = 7;
 export const OBJECT_TYPE_GROUP = 8;
 export const OBJECT_TYPE_SCENE = 9;
+export const OBJECT_TYPE_BONE = 10;
+export const OBJECT_TYPE_SKELETON = 11;
+export const OBJECT_TYPE_SKINNED_MESH = 12;
 
 export const MATERIAL_TYPE_BASIC = 'BasicMaterial';
 export const MATERIAL_TYPE_LINE_BASIC = 'LineBasicMaterial';
