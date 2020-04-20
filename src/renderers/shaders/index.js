@@ -1,7 +1,7 @@
 import baseVertGLSL from './base.vert';
 import baseFragGLSL from './base.frag';
-import pointsVertGLSL from './pointsVertGLSL';
-import pointsFragGLSL from './pointsFragGLSL';
+import pointsVertGLSL from './points.vert';
+import pointsFragGLSL from './points.frag';
 import lineVertGLSL from './line.vert';
 import lineFragGLSL from './line.frag';
 

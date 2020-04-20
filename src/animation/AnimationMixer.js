@@ -15,18 +15,29 @@ export default class AnimationMixer {
             clips = this._clips;
 
         for(let i = 0, l = clips.length; i < l; i++) {
+
             let clip = clips[i],
                 tracks = clip.tracks;
+
+            time %= clip.duration;
+
             for(let j = 0, jl = tracks.length; j < jl; j++) {
+
                 let track = tracks[j],
                     node = track.node,
                     property = track.property,
-                    interpolant = track.interpolant;
+                    interpolant = track.interpolant,
+                    result = interpolant.evaluate(time);
 
-                time %= clip.duration;
+                if (result) {
 
-                let result = interpolant.evaluate(time);
-                if (result) node[property].setFromArray(result);
+                    if (property === 'morphTargetInfluences') {
+                        node[property] = result;
+                    } else {
+                        node[property].setFromArray(result);
+                    }
+
+                }
             }
         }
     }

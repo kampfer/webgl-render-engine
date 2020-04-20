@@ -60,7 +60,10 @@ export default class {
 
             prefixVertex = [
                 generatePrecision(parameters),
+                '#define MAX_BONES ' + parameters.maxBones,
                 parameters.vertexColors ? '#define USE_COLOR' : '',
+                parameters.morphTargets ? '#define USE_MORPHTARGETS' : '',
+                parameters.morphNormals ? '#define USE_MORPHNORMALS' : '',
                 '\n'
             ].filter(filterEmptyLine).join('\n');
 

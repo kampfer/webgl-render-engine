@@ -11,14 +11,32 @@ export default class WebGLUniforms {
         for (let i = 0; i < n; i++) {
 
             let info = gl.getActiveUniform(program, i),
-                name = info.name,
-                addr = gl.getUniformLocation(program, name),
-                UniformConstructor = uniforms[name];
+                addr = gl.getUniformLocation(program, info.name);
 
-            this._uniformMap[name] = new UniformConstructor(info, addr);
+            this.parseUniform(info, addr);
 
         }
 
+    }
+
+    // uniform变量名有多种形式：
+    // 1. 普通变量(float, int)：`position`
+    // 2. 数组(float []): `morphTargtInfluences[0]`
+    parseUniform(info, addr) {
+
+        let reg = /(\w+)/gu,
+            match = reg.exec(info.name),
+            name = match[1];
+
+        let UniformConstructor = uniforms[name],
+            uniform = new UniformConstructor(info, addr);
+
+        this.addUniform(name, uniform);
+
+    }
+
+    addUniform(name, uniform) {
+        this._uniformMap[name] = uniform;
     }
 
     getUniform(name) {

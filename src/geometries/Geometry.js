@@ -1,15 +1,28 @@
 import Box3 from '../math/Box3';
 import { arrayMax } from '../math/utils';
 import BufferAttribute from '../renderers/BufferAttribute';
+import { generateUid } from '../math/utils';
+import Vec3 from '../math/Vec3';
+
+const _box = new Box3();
+const _vec3 = new Vec3();
 
 export default class Geometry {
 
     constructor() {
+
+        this.uid = generateUid();
+
         this.vertices = [];
         this.normals = [];
         this.colors = [];
         this.indices = [];
+
         this._attributes = {};
+
+        this._morphAttributes = {};
+        this.morphTargetsRelative = false;
+
     }
 
     setIndex(v) {
@@ -17,6 +30,7 @@ export default class Geometry {
         v.isIndex = true;
     }
 
+    // value: BufferAttribute
     setAttribute(name, value) {
         this._attributes[name] = value;
         value.name = name;
@@ -34,6 +48,23 @@ export default class Geometry {
         return this._attributes;
     }
 
+    // value: array
+    setMorphAttribute(name, value) {
+        this._morphAttributes[name] = value;
+    }
+
+    removeMorphAttribue(name) {
+        delete this._morphAttributes[name];
+    }
+
+    getMorphAttribute(name) {
+        return this._morphAttributes[name];
+    }
+
+    getMorphAttributes() {
+        return this._morphAttributes;
+    }
+
     getBoundingBox() {
         if (!this._boundingBox) {
             this._boundingBox = this.computeBoundingBox();
@@ -42,18 +73,48 @@ export default class Geometry {
     }
 
     computeBoundingBox() {
+
         let box = new Box3(),
-            position = this.getAttribute('position');
-        
+            position = this.getAttribute('position'),
+            morphPositions = this.getMorphAttribute('position');
+
         if (position) {
+
             box.setFromBufferAttribute(position);
 
-            // TODO：还需要处理morph attributes
+            if (morphPositions) {
+
+                for(let i = 0, l = morphPositions.length; i < l; i++) {
+
+                    _box.setFromBufferAttribute(morphPositions[i]);
+
+                    if (this.morphTargetsRelative) {
+
+                        _vec3.setFromVectorsSum(box.max, _box.max);
+                        box.expandByPoint(_vec3);
+
+                        _vec3.setFromVectorsSum(box.min, _box.min);
+                        box.expandByPoint(_vec3);
+
+                    } else {
+
+                        box.expandByPoint(_box.max);
+                        box.expandByPoint(_box.min);
+
+                    }
+
+                }
+
+            }
+
         } else {
+
             box.setEmpty();
+
         }
 
         return box;
+
     }
 
     getWireframeAttribute() {
