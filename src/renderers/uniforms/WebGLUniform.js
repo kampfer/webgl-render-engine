@@ -376,7 +376,6 @@ export default class WebGLUnifrom {
     constructor(info, addr) {
         this._info = info;
         this._addr = addr;
-        this._cache = [];
     }
 
     calculateValue(/*object, camera*/) {
@@ -395,6 +394,8 @@ export class SingleUniform extends WebGLUnifrom {
 
     constructor(info, addr) {
         super(info, addr);
+        // 暂时只有SingleUniform支持缓存
+        this._cache = [];
         this.setValue = getSingularSetter(info.type);
     }
 
