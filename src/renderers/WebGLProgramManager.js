@@ -2,6 +2,7 @@ import WebGLProgram from './WebGLProgram';
 import {
     MATERIAL_TYPE_BASIC,
     MATERIAL_TYPE_LINE_BASIC,
+    OBJECT_TYPE_SKINNED_MESH,
 } from '../constants';
 
 const shaderTypes = {
@@ -62,7 +63,7 @@ export default class WebGLProgramManager {
             shaderType = shaderTypes[materialType],
             precision = capabilities.precision,
             isWebGL2 = capabilities.isWebGL2,
-            maxBones = this.getMaxBones(object);
+            maxBones = object.type === OBJECT_TYPE_SKINNED_MESH ? this.getMaxBones(object) : 0;
 
         if (material.precision !== null) {
             let precision = capabilities.getMaxPrecision(material.precision);
@@ -77,6 +78,7 @@ export default class WebGLProgramManager {
             vertexColors: material.vertexColors,
             morphTargets: material.morphTargets,
             morphNormals: material.morphNormals,
+            skinning: material.skinning && maxBones > 0,
             precision,
             maxBones,
         };
@@ -93,6 +95,7 @@ export default class WebGLProgramManager {
             parameters.morphTargets,
             parameters.morphNormals,
             parameters.maxBones,
+            parameters.skinning,
         ];
 
         return key.join();
