@@ -41,12 +41,22 @@ export default class WebGLRenderer {
 
         this._capabilities = new WebGLCapabilities(gl, this._extensionManager, { precision });
 
+        // 默认使用WebGL1，需要添加一些拓展
+        if (this._capabilities.isWebGL2 === false) {
+
+            // drawElements支持gl.UNSIGNED_INT
+            // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawElements#Parameters
+            this._extensionManager.getExtension('OES_element_index_uint');
+
+        }
+
         this._programManager = new WebGLProgramManager(gl, this._capabilities);
 
         this._bufferManager = new WebGLBufferManager(gl);
 
     }
 
+    // 暂时使用WebGL 1 context
     getContext() {
         if (this._gl === undefined) {
             let names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"],
@@ -160,6 +170,7 @@ export default class WebGLRenderer {
                 return;
             }
 
+            // TODO: 不需要在每次渲染循环调用getParameters，只在object发生变化时调用即可（可以参考threejs的做法）
             let parameters = programManager.getParameters(object),
                 programKey = programManager.getProgramKey(parameters),
                 programInfo = programManager.getProgram(programKey, parameters),
