@@ -48,6 +48,9 @@ export default class WebGLRenderer {
             // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawElements#Parameters
             this._extensionManager.getExtension('OES_element_index_uint');
 
+            // 启动float texture，用于存储bone matrices
+            this._extensionManager.getExtension('OES_texture_float');
+
         }
 
         this._programManager = new WebGLProgramManager(gl, this._capabilities);
@@ -182,7 +185,7 @@ export default class WebGLRenderer {
             }
 
             // TODO：移入uniform.caculateValue
-            // 将以下计算移入caculateValue后，需要保证先计算modelViewMatrix再计算normalMatrix。
+            // 必须先计算modelViewMatrix再计算normalMatrix。
             // 但是caculateValue的调用顺序无法保证（webgl并没有规定getActiveUniform读取变量的顺序，这完全取决于编译器的实现）。
             // 最暴力的做法是每次caculateValue都先计算modelViewMatrix再计算normalMatrix，但是这样会造成冗余计算，拖累性能。
             object.modelViewMatrix.multiplyMatrices(camera.inverseWorldMatrix, object.worldMatrix);
