@@ -12,7 +12,7 @@ export default class Skeleton extends GraphObject {
 
         this.type = OBJECT_TYPE_SKELETON;
 
-        this.bones = bones;
+        this.bones = [...bones];
 
         this.boneMatrices = new Float32Array(bones.length * 16);
 
@@ -22,7 +22,7 @@ export default class Skeleton extends GraphObject {
 
         } else {
 
-            this.inverseBones = inverseBones;
+            this.inverseBones = [...inverseBones];
 
         }
 
