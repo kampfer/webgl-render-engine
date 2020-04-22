@@ -24,7 +24,7 @@ export default class WebGLProgramManager {
 
         // shader对uniform变量的数量有限制，并且旧式浏览器数量限制的较低，
         // 这导致可以用来存储骨骼信息（mat4）的uniform变量数量有限。
-        // 替代方案是：使用float texture替代uniform变量来存储信息。
+        // 替代方案是：使用float texture替代uniform变量来存储骨骼信息。
         // 详细解释见：https://webglfundamentals.org/webgl/lessons/webgl-skinning.html
         if (capabilities.floatVertexTextures) {
 
@@ -62,7 +62,7 @@ export default class WebGLProgramManager {
             materialType = material.type,
             shaderType = shaderTypes[materialType],
             precision = capabilities.precision,
-            isWebGL2 = capabilities.isWebGL2,
+            floatVertexTextures = capabilities.floatVertexTextures,
             maxBones = object.type === OBJECT_TYPE_SKINNED_MESH ? this.getMaxBones(object) : 0;
 
         if (material.precision !== null) {
@@ -74,29 +74,20 @@ export default class WebGLProgramManager {
 
         return {
             shaderType,
-            isWebGL2,
             vertexColors: material.vertexColors,
             morphTargets: material.morphTargets,
             morphNormals: material.morphNormals,
             skinning: material.skinning && maxBones > 0,
             precision,
             maxBones,
+            useBoneTexture: floatVertexTextures,
         };
 
     }
 
-    // 使用部分参数来合成key
     getProgramKey(parameters) {
 
-        let key = [
-            parameters.shaderType,
-            parameters.precision,
-            parameters.vertexColors,
-            parameters.morphTargets,
-            parameters.morphNormals,
-            parameters.maxBones,
-            parameters.skinning,
-        ];
+        let key = Object.values(parameters).map(value => value);
 
         return key.join();
 

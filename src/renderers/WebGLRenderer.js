@@ -11,6 +11,7 @@ import {
 import WebGLCapabilities from './WebGLCapabilities';
 import Color from '../math/Color';
 import WebGLExtensionManager from './WebGLExtensionManager';
+import WebGLTextrueManager from './WebGLTextrueManager';
 
 export default class WebGLRenderer {
 
@@ -41,6 +42,12 @@ export default class WebGLRenderer {
 
         this._capabilities = new WebGLCapabilities(gl, this._extensionManager, { precision });
 
+        this._programManager = new WebGLProgramManager(gl, this._capabilities);
+
+        this._bufferManager = new WebGLBufferManager(gl);
+
+        this._textureManager = new WebGLTextrueManager(gl, this._extensionManager, this._capabilities);
+
         // 默认使用WebGL1，需要添加一些拓展
         if (this._capabilities.isWebGL2 === false) {
 
@@ -52,10 +59,6 @@ export default class WebGLRenderer {
             this._extensionManager.getExtension('OES_texture_float');
 
         }
-
-        this._programManager = new WebGLProgramManager(gl, this._capabilities);
-
-        this._bufferManager = new WebGLBufferManager(gl);
 
     }
 
@@ -134,11 +137,12 @@ export default class WebGLRenderer {
 
     setUniforms(program, object, camera) {
         let gl = this._gl,
+            textureManager = this._textureManager,
             programUniforms = program.getUniforms();
 
         programUniforms.eachUniform((uniform) => {
             let value = uniform.calculateValue(object, camera);
-            uniform.setValue(gl, value);
+            uniform.setValue(gl, value, textureManager);
         });
     }
 

@@ -65,6 +65,7 @@ export default class {
                 parameters.morphTargets ? '#define USE_MORPHTARGETS' : '',
                 parameters.morphNormals ? '#define USE_MORPHNORMALS' : '',
                 parameters.skinning ? '#define USE_SKINNING' : '',
+                parameters.useBoneTexture ? '#define BONE_TEXTURE' : '',
                 '\n'
             ].filter(filterEmptyLine).join('\n');
 
