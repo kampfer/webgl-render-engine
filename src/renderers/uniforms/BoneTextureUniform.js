@@ -1,5 +1,6 @@
 import { SingleUniform } from './WebGLUniform';
 import DataTexture from '../../textures/DataTexture';
+import { FLOAT_TYPE } from '../../constants';
 
 export default class BoneTextureUniform extends SingleUniform {
 
@@ -7,12 +8,13 @@ export default class BoneTextureUniform extends SingleUniform {
 
         let skeleton = object.skeleton;
 
-        if (skeleton.boneTexture === undefined) {
+        if (!skeleton.boneTexture) {
 
             skeleton.boneTexture = new DataTexture({
                 data: skeleton.boneMatrices,
                 width: 4,
-                height: skeleton.bones.length
+                height: skeleton.bones.length,
+                texelType: FLOAT_TYPE
             });
 
         }

@@ -12,7 +12,7 @@ export default class Texture {
     constructor({
         image,
         format = RGBA_FORMAT,
-        type = UNSIGNED_BYTE_TYPE,
+        texelType = UNSIGNED_BYTE_TYPE,
         magFilter = LINEAR_FILTER,
         minFilter = LINEAR_MIPMAP_LINEAR_FILTER,
         wrapS = CLAMP_TO_EDGE_WRAPPING,
@@ -31,7 +31,7 @@ export default class Texture {
 
         this.format = format;
         this.internalFormat = null;
-        this.type = type;
+        this.texelType = texelType;
 
     }
 

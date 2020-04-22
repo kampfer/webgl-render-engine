@@ -135,14 +135,14 @@ export default class WebGLTextrueManager {
                 console.warn('纹理不是2的幂。Texture.minFilter应该设置为NEAREST或LINEAR');
             }
 
-            gl.texParameteri(target, gl.TEXTURE_MAG_FILTER, filterFallback(texture.magFilter));
-            gl.texParameteri(target, gl.TEXTURE_MIN_FILTER, filterFallback(texture.minFilter));
+            gl.texParameteri(target, gl.TEXTURE_MAG_FILTER, gl[filterFallback(texture.magFilter)]);
+            gl.texParameteri(target, gl.TEXTURE_MIN_FILTER, gl[filterFallback(texture.minFilter)]);
 
         }
 
         let image = texture.image,
-            glFormat = convertConstantToGLenum(texture.format),
-            glType = convertConstantToGLenum(texture.type),
+            glFormat = convertConstantToGLenum(texture.format, gl),
+            glType = convertConstantToGLenum(texture.texelType, gl),
             glInternalFormat = this.getInternalFormat(texture.internalFormat, glFormat, glType);
 
         // [填充纹理](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/texImage2D)

@@ -148,7 +148,10 @@ export default class WebGLRenderer {
 
     render(scene, camera) {
         let gl = this._gl,
+            textureManager = this._textureManager,
             programManager = this._programManager;
+
+        textureManager.resetTextrueUnits();
 
         scene.updateWorldMatrix();
 
@@ -194,6 +197,9 @@ export default class WebGLRenderer {
             // 最暴力的做法是每次caculateValue都先计算modelViewMatrix再计算normalMatrix，但是这样会造成冗余计算，拖累性能。
             object.modelViewMatrix.multiplyMatrices(camera.inverseWorldMatrix, object.worldMatrix);
             object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
+
+            // TODO: 存在多个object共用同一个skeleton的情况，需要保证每次渲染循环一个skeleton只update一次
+            if (object.type === OBJECT_TYPE_SKINNED_MESH) object.skeleton.update();
 
             // TODO：不需要每个循环内都设置一次uniform
             this.setUniforms(programInfo, object, camera);
