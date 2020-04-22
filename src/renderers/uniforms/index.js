@@ -9,6 +9,8 @@ import MorphTargetInfluencesUniform from './MorphTargetInfluencesUniform';
 import BoneMatricesUniform from './BoneMatricesUniform';
 import InverseBindMatrixUniform from './InverseBindMatrixUniform';
 import BindMatrixUniform from './BindMatrixUniform';
+import BoneTextureUniform from './BoneTextureUniform';
+import BoneNumUniform from './BoneNumUniform';
 
 export default {
     modelMatrix: ModelMatrixUniform,
@@ -22,4 +24,6 @@ export default {
     boneMatrices: BoneMatricesUniform,
     inverseBindMatrix: InverseBindMatrixUniform,
     bindMatrix: BindMatrixUniform,
+    boneTexture: BoneTextureUniform,
+    boneNum: BoneNumUniform,
 };

@@ -30,7 +30,7 @@ export default class Skeleton extends GraphObject {
 
     }
 
-    // 记录关节的姿势（逆矩阵）
+    // 记录关节的初始姿势（逆矩阵），初始化之后不再改变
     calculateInverseBones() {
 
         this.inverseBones = [];

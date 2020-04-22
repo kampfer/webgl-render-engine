@@ -53,6 +53,7 @@ export default class SkinnedMesh extends Mesh {
 
             _vec4.setFromBufferAttribute(skinWeight, i);
 
+            // 使用manhattanLength进行normalize，保证所有分量之和等于1
             let scale = 1 / _vec4.manhattanLength();
 
             if ( scale !== Infinity) {
