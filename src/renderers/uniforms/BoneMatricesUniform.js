@@ -6,8 +6,6 @@ export default class BoneMatricesUniform extends SingleUniform {
 
         let skeleton = object.skeleton;
 
-        skeleton.update();
-
         return skeleton.boneMatrices;
 
     }
