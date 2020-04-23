@@ -30,6 +30,8 @@ export default class SkinnedMesh extends Mesh {
 
         this.skeleton = skeleton;
 
+        this.material.skinning = true;
+
         // if (bindMatrix === undefined) {
 
         //     this.updateWorldMatrix(true);

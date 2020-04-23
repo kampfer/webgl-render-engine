@@ -1,14 +1,11 @@
-import GraphObject from './GraphObject';
 import { OBJECT_TYPE_SKELETON } from '../constants';
 import Mat4 from '../math/Mat4';
 
 const _mat4 = new Mat4();
 
-export default class Skeleton extends GraphObject {
+export default class Skeleton {
 
     constructor(bones = [], inverseBones) {
-
-        super();
 
         this.type = OBJECT_TYPE_SKELETON;
 
@@ -64,7 +61,7 @@ export default class Skeleton extends GraphObject {
 
         }
 
-        if (boneTexture) console.log('boneTexture');
+        if (boneTexture) {}
 
     }
 
