@@ -42,8 +42,8 @@
     attribute vec4 skinIndex;
     attribute vec4 skinWeight;
 
-    uniform mat4 bindMatrix;
-    uniform mat4 inverseBindMatrix;
+    // uniform mat4 bindMatrix;
+    // uniform mat4 inverseBindMatrix;
 
     #ifdef BONE_TEXTURE
 
@@ -142,7 +142,7 @@ void main() {
         skinMatrix += skinWeight.y * boneMatY;
         skinMatrix += skinWeight.z * boneMatZ;
         skinMatrix += skinWeight.w * boneMatW;
-        skinMatrix = inverseBindMatrix * skinMatrix * bindMatrix;
+        // skinMatrix = inverseBindMatrix * skinMatrix * bindMatrix;
 
         transformed = (skinMatrix * vec4(transformed, 1.0)).xyz;
 

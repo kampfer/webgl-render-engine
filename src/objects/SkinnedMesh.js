@@ -13,8 +13,8 @@ export default class SkinnedMesh extends Mesh {
 
         this.type = OBJECT_TYPE_SKINNED_MESH;
 
-        this.bindMatrix = new Mat4();
-        this.inverseBindMatrix = new Mat4();
+        // this.bindMatrix = new Mat4();
+        // this.inverseBindMatrix = new Mat4();
 
     }
 
@@ -22,7 +22,7 @@ export default class SkinnedMesh extends Mesh {
 
         super.updateWorldMatrix(force);
 
-        this.inverseBindMatrix.setInverseOf(this.worldMatrix);
+        // this.inverseBindMatrix.setInverseOf(this.worldMatrix);
 
     }
 
@@ -30,18 +30,18 @@ export default class SkinnedMesh extends Mesh {
 
         this.skeleton = skeleton;
 
-        if (bindMatrix === undefined) {
+        // if (bindMatrix === undefined) {
 
-            this.updateWorldMatrix(true);
+        //     this.updateWorldMatrix(true);
 
-            this.bindMatrix = this.worldMatrix;
+        //     this.bindMatrix = this.worldMatrix;
 
-        } else {
+        // } else {
 
-            this.bindMatrix.copy(bindMatrix);
-            this.inverseBindMatrix.setInverseOf(bindMatrix);
+        //     this.bindMatrix.copy(bindMatrix);
+        //     this.inverseBindMatrix.setInverseOf(bindMatrix);
 
-        }
+        // }
 
     }
 
