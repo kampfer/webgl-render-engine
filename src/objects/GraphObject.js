@@ -102,6 +102,21 @@ export default class GraphObject {
         }
     }
 
+    getChildByUid(uid) {
+
+        let child;
+
+        this.traverse((object) => {
+            if (object.uid === uid) {
+                child = object;
+                return false;
+            }
+        });
+
+        return child;
+
+    }
+
     updateMatrix() {
         this.matrix.compose(this.position, this.quaternion, this.scale);
         this._worldMatrixNeedsUpdate = true;
