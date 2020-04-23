@@ -12,6 +12,7 @@ import WebGLCapabilities from './WebGLCapabilities';
 import Color from '../math/Color';
 import WebGLExtensionManager from './WebGLExtensionManager';
 import WebGLTextrueManager from './WebGLTextrueManager';
+import Stats from './Stats';
 
 export default class WebGLRenderer {
 
@@ -25,6 +26,8 @@ export default class WebGLRenderer {
     } = {}) {
 
         this.domElement = canvas;
+
+        this.stats = new Stats();
 
         // 清理缓冲的设置
         this.autoClear = autoClear;
@@ -151,8 +154,6 @@ export default class WebGLRenderer {
             textureManager = this._textureManager,
             programManager = this._programManager;
 
-        textureManager.resetTextrueUnits();
-
         scene.updateWorldMatrix();
 
         gl.enable(gl.DEPTH_TEST);
@@ -191,6 +192,8 @@ export default class WebGLRenderer {
                 gl.useProgram(program);
             }
 
+            textureManager.resetTextrueUnits();
+
             // TODO：移入uniform.caculateValue
             // 必须先计算modelViewMatrix再计算normalMatrix。
             // 但是caculateValue的调用顺序无法保证（webgl并没有规定getActiveUniform读取变量的顺序，这完全取决于编译器的实现）。
@@ -199,7 +202,16 @@ export default class WebGLRenderer {
             object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
 
             // TODO: 存在多个object共用同一个skeleton的情况，需要保证每次渲染循环一个skeleton只update一次
-            if (object.type === OBJECT_TYPE_SKINNED_MESH) object.skeleton.update();
+            if (object.type === OBJECT_TYPE_SKINNED_MESH) {
+
+                // 记录skeleton.update的调用次数
+                // let entry = this.stats.getEntry('skeleton.update', Stats.WEAK_MAP_ENTRY);
+                // let record = entry.get(object.skeleton) || 0;
+                // entry.set(object.skeleton, ++record);
+
+                object.skeleton.update();
+
+            }
 
             // TODO：不需要每个循环内都设置一次uniform
             this.setUniforms(programInfo, object, camera);
