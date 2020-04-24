@@ -13,8 +13,15 @@ export default class SkinnedMesh extends Mesh {
 
         this.type = OBJECT_TYPE_SKINNED_MESH;
 
-        // this.bindMatrix = new Mat4();
-        // this.inverseBindMatrix = new Mat4();
+        // attached mode: 会忽略skinnedMesh本身的transform属性，实例的位置和朝向完全由骨骼控制
+        // detached mode: 实例的位置和朝向受到skinnedMesh本身的transform、骨骼的transform、bindMatrix控制
+        this.bindMode = SkinnedMesh.ATTACHED_MODE;
+
+        // projectionMatrix * viewMatrix * modelMatrix * inverseBindMatrix * boneMatrix * bindMatrix * position
+        // 从左往右，变换坐标系，从全局坐标变换到local坐标
+        // 从右往左，变换坐标变化，结果是全局系中的坐标
+        this.bindMatrix = new Mat4();
+        this.inverseBindMatrix = new Mat4();
 
     }
 
@@ -22,7 +29,11 @@ export default class SkinnedMesh extends Mesh {
 
         super.updateWorldMatrix(force);
 
-        // this.inverseBindMatrix.setInverseOf(this.worldMatrix);
+        if (this.bindMode === SkinnedMesh.ATTACHED_MODE) {
+            this.inverseBindMatrix.setInverseOf(this.worldMatrix);
+        } else if (this.bindMode === SkinnedMesh.DETACHED_MODE) {
+            this.inverseBindMatrix.setInverseOf(this.bindMatrix);
+        }
 
     }
 
@@ -32,18 +43,16 @@ export default class SkinnedMesh extends Mesh {
 
         this.material.skinning = true;
 
-        // if (bindMatrix === undefined) {
+        if (bindMatrix === undefined) {
 
-        //     this.updateWorldMatrix(true);
+            this.updateWorldMatrix(true);
 
-        //     this.bindMatrix = this.worldMatrix;
+            bindMatrix = this.worldMatrix;
 
-        // } else {
+        }
 
-        //     this.bindMatrix.copy(bindMatrix);
-        //     this.inverseBindMatrix.setInverseOf(bindMatrix);
-
-        // }
+        this.bindMatrix.copy(bindMatrix);
+        this.inverseBindMatrix.setInverseOf(bindMatrix);
 
     }
 
@@ -76,3 +85,6 @@ export default class SkinnedMesh extends Mesh {
     }
 
 }
+
+SkinnedMesh.ATTACHED_MODE = 0;
+SkinnedMesh.DETACHED_MODE = 1;
