@@ -47,9 +47,6 @@
 
     #ifdef BONE_TEXTURE
 
-        // threejs使用方形纹理存储骨骼信息，处理起来并不方便
-        // 这里采用[https://webglfundamentals.org/webgl/lessons/webgl-skinning.html]提供的方法
-        // 采用尺寸为4 x boneNum的纹理
         uniform sampler2D boneTexture;
         uniform float boneNum;
 
