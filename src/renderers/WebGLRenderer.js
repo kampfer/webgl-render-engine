@@ -11,6 +11,8 @@ import {
 import WebGLCapabilities from './WebGLCapabilities';
 import Color from '../math/Color';
 import WebGLExtensionManager from './WebGLExtensionManager';
+import WebGLTextrueManager from './WebGLTextrueManager';
+import Stats from './Stats';
 
 export default class WebGLRenderer {
 
@@ -24,6 +26,8 @@ export default class WebGLRenderer {
     } = {}) {
 
         this.domElement = canvas;
+
+        this.stats = new Stats();
 
         // 清理缓冲的设置
         this.autoClear = autoClear;
@@ -45,8 +49,23 @@ export default class WebGLRenderer {
 
         this._bufferManager = new WebGLBufferManager(gl);
 
+        this._textureManager = new WebGLTextrueManager(gl, this._extensionManager, this._capabilities);
+
+        // 默认使用WebGL1，需要添加一些拓展
+        if (this._capabilities.isWebGL2 === false) {
+
+            // drawElements支持gl.UNSIGNED_INT
+            // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawElements#Parameters
+            this._extensionManager.getExtension('OES_element_index_uint');
+
+            // 启动float texture，用于存储bone matrices
+            this._extensionManager.getExtension('OES_texture_float');
+
+        }
+
     }
 
+    // 暂时使用WebGL 1 context
     getContext() {
         if (this._gl === undefined) {
             let names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"],
@@ -121,16 +140,18 @@ export default class WebGLRenderer {
 
     setUniforms(program, object, camera) {
         let gl = this._gl,
+            textureManager = this._textureManager,
             programUniforms = program.getUniforms();
 
         programUniforms.eachUniform((uniform) => {
             let value = uniform.calculateValue(object, camera);
-            uniform.setValue(gl, value);
+            uniform.setValue(gl, value, textureManager);
         });
     }
 
     render(scene, camera) {
         let gl = this._gl,
+            textureManager = this._textureManager,
             programManager = this._programManager;
 
         scene.updateWorldMatrix();
@@ -160,6 +181,7 @@ export default class WebGLRenderer {
                 return;
             }
 
+            // TODO: 不需要在每次渲染循环调用getParameters，只在object发生变化时调用即可（可以参考threejs的做法）
             let parameters = programManager.getParameters(object),
                 programKey = programManager.getProgramKey(parameters),
                 programInfo = programManager.getProgram(programKey, parameters),
@@ -170,12 +192,26 @@ export default class WebGLRenderer {
                 gl.useProgram(program);
             }
 
+            textureManager.resetTextrueUnits();
+
             // TODO：移入uniform.caculateValue
-            // 将以下计算移入caculateValue后，需要保证先计算modelViewMatrix再计算normalMatrix。
+            // 必须先计算modelViewMatrix再计算normalMatrix。
             // 但是caculateValue的调用顺序无法保证（webgl并没有规定getActiveUniform读取变量的顺序，这完全取决于编译器的实现）。
             // 最暴力的做法是每次caculateValue都先计算modelViewMatrix再计算normalMatrix，但是这样会造成冗余计算，拖累性能。
             object.modelViewMatrix.multiplyMatrices(camera.inverseWorldMatrix, object.worldMatrix);
             object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
+
+            // TODO: 存在多个object共用同一个skeleton的情况，需要保证每次渲染循环一个skeleton只update一次
+            if (object.type === OBJECT_TYPE_SKINNED_MESH) {
+
+                // 记录skeleton.update的调用次数
+                // let entry = this.stats.getEntry('skeleton.update', Stats.WEAK_MAP_ENTRY);
+                // let record = entry.get(object.skeleton) || 0;
+                // entry.set(object.skeleton, ++record);
+
+                object.skeleton.update();
+
+            }
 
             // TODO：不需要每个循环内都设置一次uniform
             this.setUniforms(programInfo, object, camera);

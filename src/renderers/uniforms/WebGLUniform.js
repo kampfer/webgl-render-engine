@@ -301,6 +301,22 @@ function setValueMatrix4f(gl, v) {
 
 }
 
+function setValueT1(gl, v, textureManager) {
+
+    let cache = this._cache,
+        unit = textureManager.allocateTextrueUnit();
+
+    if (cache[0] !== unit) {
+
+        gl.uniform1i(this._addr, unit);
+        cache[0] = unit;
+
+    }
+
+    textureManager.setTexture2D(v, unit);
+
+}
+
 /************ Singular Setter end ************/
 
 // [WebGL Uniform types](https://developer.mozilla.org/zh-CN/docs/Web/API/WebGL_API/Constants#Uniform_types)
@@ -323,8 +339,7 @@ function getSingularSetter(type) {
         case 0x8b54: case 0x8b58: return setValue3i; // _VEC3
         case 0x8b55: case 0x8b59: return setValue4i; // _VEC4
 
-        // 暂时不支持的类型
-        // case 0x8b5e: case 0x8d66: return setValueT1; // SAMPLER_2D, SAMPLER_EXTERNAL_OES
+        case 0x8b5e: case 0x8d66: return setValueT1; // SAMPLER_2D, SAMPLER_EXTERNAL_OES
         // case 0x8b5f: return setValueT3D1; // SAMPLER_3D
         // case 0x8b60: return setValueT6; // SAMPLER_CUBE
         // case 0x8DC1: return setValueT2DArray1; // SAMPLER_2D_ARRAY
@@ -376,7 +391,6 @@ export default class WebGLUnifrom {
     constructor(info, addr) {
         this._info = info;
         this._addr = addr;
-        this._cache = [];
     }
 
     calculateValue(/*object, camera*/) {
@@ -395,6 +409,8 @@ export class SingleUniform extends WebGLUnifrom {
 
     constructor(info, addr) {
         super(info, addr);
+        // 暂时只有SingleUniform支持缓存
+        this._cache = [];
         this.setValue = getSingularSetter(info.type);
     }
 

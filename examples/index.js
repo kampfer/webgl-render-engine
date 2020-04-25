@@ -5,6 +5,8 @@ const examples = {
     camera: () => import('./camera'),
     wireframe: () => import('./wireframe'),
     interpolation: () => import('./interpolation'),
+    mat4: () => import('./mat4'),
+    skinnedMesh: () => import('./skinnedMesh'),
 };
 
 function appendExampleList() {

@@ -1,3 +1,5 @@
+/* global WebGL2ComputeRenderingContext */
+
 // webgl特性测试：https://webglreport.com/
 
 export default class WebGLCapabilities {
@@ -32,6 +34,9 @@ export default class WebGLCapabilities {
 
         // https://webglstats.com/webgl2/parameter/MAX_VERTEX_UNIFORM_VECTORS
         this.maxVertexUniforms = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
+
+        // 纹理单元的最大数量
+        this.maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
 
     }
 

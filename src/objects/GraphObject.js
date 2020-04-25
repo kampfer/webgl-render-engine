@@ -82,6 +82,8 @@ export default class GraphObject {
     }
 
     traverse(callback) {
+        callback(this);
+
         let children = this.children;
 
         for(let i = 0, l = children.length; i < l; i++) {
@@ -101,28 +103,19 @@ export default class GraphObject {
     }
 
     getChildByUid(uid) {
-        let node = null;
-        this.traverse(function (child) {
-            if (child.uid === uid) {
-                node = child;
+
+        let child;
+
+        this.traverse((object) => {
+            if (object.uid === uid) {
+                child = object;
                 return false;
             }
         });
-        return node;
-    }
 
-    getChildByName(name) {
-        let node = null;
-        this.traverse(function (child) {
-            if (child.name === name) {
-                node = child;
-                return false;
-            }
-        });
-        return node;
-    }
+        return child;
 
-    update() {}
+    }
 
     updateMatrix() {
         this.matrix.compose(this.position, this.quaternion, this.scale);

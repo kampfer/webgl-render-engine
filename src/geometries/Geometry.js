@@ -7,7 +7,18 @@ import Vec3 from '../math/Vec3';
 const _box = new Box3();
 const _vec3 = new Vec3();
 
-export default class Geometry {
+/**
+ * 渲染使用的attribute变量:
+ * position
+ * normal
+ * tangent
+ * uv
+ * uv2
+ * color
+ * skinIndex
+ * skinWeight
+ */
+ export default class Geometry {
 
     constructor() {
 

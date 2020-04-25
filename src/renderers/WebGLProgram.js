@@ -64,6 +64,8 @@ export default class {
                 parameters.vertexColors ? '#define USE_COLOR' : '',
                 parameters.morphTargets ? '#define USE_MORPHTARGETS' : '',
                 parameters.morphNormals ? '#define USE_MORPHNORMALS' : '',
+                parameters.skinning ? '#define USE_SKINNING' : '',
+                parameters.useBoneTexture ? '#define BONE_TEXTURE' : '',
                 '\n'
             ].filter(filterEmptyLine).join('\n');
 

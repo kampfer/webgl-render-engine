@@ -33,12 +33,12 @@ export default class Example {
     }
 
     render() {
-        if (this.update) this.update();
         this.renderer.render(this.scene, this.camera);
     }
 
     animate() {
         this._animationTimer = requestAnimationFrame(this.animate);
+        if (this.update) this.update();
         this.render();
     }
 

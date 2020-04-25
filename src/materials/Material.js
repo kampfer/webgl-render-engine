@@ -25,6 +25,10 @@ export default class Material {
 
         this.morphTargets = false;
         this.morphNormals = false;
+
+        // 骨骼绑定
+        this.skinning = false;
+
     }
 
 }
