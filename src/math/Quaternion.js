@@ -356,4 +356,8 @@ export default class Quaternion {
         dst[dstOffset + 3] = w0;
     }
 
+    clone() {
+        return new this.constructor(this._x, this._y, this._z, this._w);
+    }
+
 }
