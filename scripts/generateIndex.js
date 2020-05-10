@@ -39,7 +39,7 @@ entries.forEach((entry) => {
     let name = entry.name,
         entryPath = entry.path;
 
-    if (entry.name === 'index') {
+    if (name === 'index') {
         entryPath = pathLib.dirname(entryPath);
         name = pathLib.basename(entryPath);
     }
@@ -55,6 +55,8 @@ entries.forEach((entry) => {
         indexContent.push(`export { mathUtils };`);
         return;
     }
+
+    if (entryPath.indexOf('./renderers/uniforms/') > -1) return;
 
     // indexContent.push(`export ${entry.name} from '${entry.path}';`);
     // indexContent.push(`export default as ${entry.name} from '${entry.path}';`);
