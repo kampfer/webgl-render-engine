@@ -56,6 +56,12 @@ entries.forEach((entry) => {
         return;
     }
 
+    if (entryPath === './renderers/renderUitls') {
+        indexContent.push(`import * as renderUtils from '${entryPath}';`);
+        indexContent.push(`export { renderUtils };`);
+        return;
+    }
+
     if (entryPath.indexOf('./renderers/uniforms/') > -1) return;
 
     // indexContent.push(`export ${entry.name} from '${entry.path}';`);
