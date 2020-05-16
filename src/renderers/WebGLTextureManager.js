@@ -9,8 +9,10 @@ import {
     LINEAR_MIPMAP_NEAREST_FILTER,
     LINEAR_MIPMAP_LINEAR_FILTER,
     DATA_TEXTURE,
+    TEXTURE,
 } from '../constants';
-import { convertConstantToGLenum } from './uitls';
+import { convertConstantToGLenum } from './renderUitls';
+import  * as mathUtils from '../math/utils';
 
 const wrappingToGL = {
     [ REPEAT_WRAPPING ]: 'REPEAT',
@@ -41,7 +43,7 @@ function filterFallback(filter) {
 
 }
 
-export default class WebGLTextrueManager {
+export default class WebGLTextureManager {
 
     constructor(gl, extensions, capabilities) {
 
@@ -91,7 +93,8 @@ export default class WebGLTextrueManager {
 
         let gl = this._gl,
             // mipmap
-            supportsMips = false,
+            // supportsMips = this.needTexturePowerOfTwo(texture) && this.isPowerOfTwo(texture.image) === false,
+            supportsMips = this.isPowerOfTwo(texture.image),
             target;
 
         switch(texture.type) {
@@ -141,6 +144,7 @@ export default class WebGLTextrueManager {
         }
 
         let image = texture.image,
+            mipmaps = texture.mipmaps,
             glFormat = convertConstantToGLenum(texture.format, gl),
             glType = convertConstantToGLenum(texture.texelType, gl),
             glInternalFormat = this.getInternalFormat(texture.internalFormat, glFormat, glType);
@@ -159,6 +163,11 @@ export default class WebGLTextrueManager {
 
             }
 
+        } else if (texture.type === TEXTURE) {
+
+            // WebGL1
+            gl.texImage2D(target, 0, glInternalFormat, glFormat, glType, image);
+
         }
 
     }
@@ -170,5 +179,24 @@ export default class WebGLTextrueManager {
     }
 
     resizeImage() {}
+
+    isPowerOfTwo(image) {
+
+        return mathUtils.isPowerOfTwo(image.width) && mathUtils.isPowerOfTwo(image.height);
+
+    }
+
+    needTexturePowerOfTwo(texture) {
+
+        if (this._capabilities.isWebGL2) return false;
+
+        // WebGL1
+        // 满足以下条件之一，就需要texture是2的幂，返回true：
+        // wrapS/wrapT中任意一个不等于CLAMP_TO_EDGE_WRAPPING
+        // minFilter既不是nearestFilter也不是linearFilter
+        return (texture.wrapS !== CLAMP_TO_EDGE_WRAPPING || texture.wrapT !== CLAMP_TO_EDGE_WRAPPING) ||
+            (texture.minFilter !== NEAREST_FILTER && texture.minFilter !== LINEAR_FILTER);
+
+    }
 
 }

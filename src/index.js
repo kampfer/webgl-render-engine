@@ -57,7 +57,7 @@ export { default as WebGLExtensionManager } from './renderers/WebGLExtensionMana
 export { default as WebGLProgram } from './renderers/WebGLProgram';
 export { default as WebGLProgramManager } from './renderers/WebGLProgramManager';
 export { default as WebGLRenderer } from './renderers/WebGLRenderer';
-export { default as WebGLTextrueManager } from './renderers/WebGLTextrueManager';
+export { default as WebGLTextureManager } from './renderers/WebGLTextureManager';
 export { default as WebGLUniforms } from './renderers/WebGLUniforms';
 export { default as shaders } from './renderers/shaders';
 export { default as ShaderCode } from './renderers/shaders/ShaderCode';

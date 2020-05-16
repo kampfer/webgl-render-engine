@@ -81,6 +81,7 @@ export default class WebGLProgramManager {
             precision,
             maxBones,
             useBoneTexture: floatVertexTextures,
+            useMap: material.map,
         };
 
     }

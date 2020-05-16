@@ -11,8 +11,8 @@ import {
 import WebGLCapabilities from './WebGLCapabilities';
 import Color from '../math/Color';
 import WebGLExtensionManager from './WebGLExtensionManager';
-import WebGLTextrueManager from './WebGLTextrueManager';
-import Stats from './Stats';
+import WebGLTextureManager from './WebGLTextureManager';
+import RenderStats from './RenderStats';
 
 export default class WebGLRenderer {
 
@@ -27,7 +27,7 @@ export default class WebGLRenderer {
 
         this.domElement = canvas;
 
-        this.stats = new Stats();
+        this.stats = new RenderStats();
 
         // 清理缓冲的设置
         this.autoClear = autoClear;
@@ -49,7 +49,7 @@ export default class WebGLRenderer {
 
         this._bufferManager = new WebGLBufferManager(gl);
 
-        this._textureManager = new WebGLTextrueManager(gl, this._extensionManager, this._capabilities);
+        this._textureManager = new WebGLTextureManager(gl, this._extensionManager, this._capabilities);
 
         // 默认使用WebGL1，需要添加一些拓展
         if (this._capabilities.isWebGL2 === false) {
@@ -205,7 +205,7 @@ export default class WebGLRenderer {
             if (object.type === OBJECT_TYPE_SKINNED_MESH) {
 
                 // 记录skeleton.update的调用次数
-                // let entry = this.stats.getEntry('skeleton.update', Stats.WEAK_MAP_ENTRY);
+                // let entry = this.stats.getEntry('skeleton.update', RenderStats.WEAK_MAP_ENTRY);
                 // let record = entry.get(object.skeleton) || 0;
                 // entry.set(object.skeleton, ++record);
 
