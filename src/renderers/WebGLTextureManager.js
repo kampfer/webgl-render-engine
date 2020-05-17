@@ -170,6 +170,11 @@ export default class WebGLTextureManager {
 
         }
 
+        // 如果不generateMipmap，fragment shader中对纹理的取样结果会始终是黑色
+        if (supportsMips) {
+            gl.generateMipmap(gl.TEXTURE_2D);
+        }
+
     }
 
     getInternalFormat(internalFormatName, glFormat, glType) {

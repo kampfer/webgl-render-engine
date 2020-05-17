@@ -26,28 +26,25 @@ void main() {
 
     #ifdef USE_MAP
 
-        vec4 texelColor = texture2D(map, vec2(0, 0));
-        texelColor = sRGBToLinear(texelColor);
+        vec4 texelColor = texture2D(map, vUv);
+        // texelColor = sRGBToLinear(texelColor);
 
-        // diffuseColor *= texelColor;
+        diffuseColor *= texelColor;
 
     #endif
 
-    // vec4 lightColor = vec4(1, 1, 1, 1);
-    // vec3 lightDirection = normalize(vec3(0.5, 3, 4));
-    // vec4 ambientColor = vec4(0.2, 0.2, 0.2, 1);
+    vec4 lightColor = vec4(1, 1, 1, 1);
+    vec3 lightDirection = normalize(vec3(0.5, 3, 4));
+    vec4 ambientColor = vec4(0.2, 0.2, 0.2, 1);
 
-    // vec3 normal = normalize(vNormal);
+    vec3 normal = normalize(vNormal);
 
-    // float fDot = max(dot(lightDirection, normal), 0.0);
-    // vec4 ambient = ambientColor * diffuseColor;
-    // gl_FragColor = vec4((lightColor * diffuseColor * fDot).xyz + ambient.xyz, diffuseColor.a);
+    float fDot = max(dot(lightDirection, normal), 0.0);
+    vec4 ambient = ambientColor * diffuseColor;
 
     #ifdef USE_MAP
-        // gl_FragColor = vec4(LinearTosRGB(texelColor).rgb, 1);
-        // gl_FragColor = vec4(texelColor.rgb, 1);
-        gl_FragColor = vec4(texelColor.x / 255.0, 0, 0, 1);
-    #elif
+        gl_FragColor = vec4((lightColor * diffuseColor * fDot).xyz + ambient.xyz, diffuseColor.a);
+    #else
         gl_FragColor = texelColor;
     #endif
 
