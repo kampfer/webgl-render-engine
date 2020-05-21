@@ -38,6 +38,8 @@ export default class WebGLCapabilities {
         // 纹理单元的最大数量
         this.maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
 
+        this.maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+
     }
 
     getMaxPrecision(precision) {

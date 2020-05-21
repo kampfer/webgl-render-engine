@@ -32,6 +32,28 @@ const filterToGL = {
 // 正在使用的纹理数量，用于分配纹理单元
 let textureUnits = -1;
 
+let _canvas;
+
+let useOffscreenCanvas = false;
+
+try {
+
+    useOffscreenCanvas = typeof OffscreenCanvas !== 'undefined'
+        && ( new OffscreenCanvas( 1, 1 ).getContext( "2d" ) ) !== null;
+
+} catch(e) {
+
+    // do nothing
+
+}
+
+function createCanvas(width, height) {
+
+    return useOffscreenCanvas ? new OffscreenCanvas( width, height ) : 
+        document.createElement('canvas');
+
+}
+
 // 如果不支持mipmap，那么filter只能是NEAREST或LINEAR
 function filterFallback(filter) {
 
@@ -183,7 +205,50 @@ export default class WebGLTextureManager {
 
     }
 
-    resizeImage() {}
+    resizeImage(image, needsPowerOfTwo, needsNewCanvas) {
+
+        let maxSize = this._capabilities.maxTextureSize,
+            scale = 1;
+
+        if (image.width > maxSize || image.height > maxSize) {
+            scale = maxSize / Math.max(image.width, image.height);
+        }
+
+        if (scale < 1 || needsPowerOfTwo) {
+
+            if (image instanceof HTMLImageElement || image instanceof HTMLCanvasElement || image instanceof ImageBitmap) {
+
+                let floor = needsPowerOfTwo ? mathUtils.floorPowerOfTwo : Math.floor,
+                    width = floor(image.width * scale),
+                    height = floor(image.height * scale);
+                
+                if (_canvas === undefined) _canvas = createCanvas(width, height);
+
+                let canvas = needsNewCanvas ? createCanvas(width, height) : _canvas;
+
+                canvas.width = width;
+                canvas.height = height;
+
+                let context = canvas.getContext('2d');
+                context.drawImage(image, 0, 0, width, height);
+
+                console.warn('Texture has been resized from (' + image.width + 'x' + image.height + ') to (' + width + 'x' + height + ').');
+
+                return canvas;
+
+            } else {
+
+                if ('data' in image) console.warn('Image in DataTexture is too big (' + image.width + 'x' + image.height + ').');
+
+                return image;
+
+            }
+
+        }
+
+        return image;
+
+    }
 
     isPowerOfTwo(image) {
 
@@ -191,14 +256,13 @@ export default class WebGLTextureManager {
 
     }
 
+    // While OpenGL 2.0 and later for the desktop offer full support for non-power-of-two (NPOT) textures, 
+    // OpenGL ES 2.0 and WebGL have only limited NPOT support. 
+    // https://www.khronos.org/webgl/wiki/WebGL_and_OpenGL_Differences#Non-Power_of_Two_Texture_Support
     needTexturePowerOfTwo(texture) {
 
         if (this._capabilities.isWebGL2) return false;
 
-        // WebGL1
-        // 满足以下条件之一，就需要texture是2的幂，返回true：
-        // wrapS/wrapT中任意一个不等于CLAMP_TO_EDGE_WRAPPING
-        // minFilter既不是nearestFilter也不是linearFilter
         return (texture.wrapS !== CLAMP_TO_EDGE_WRAPPING || texture.wrapT !== CLAMP_TO_EDGE_WRAPPING) ||
             (texture.minFilter !== NEAREST_FILTER && texture.minFilter !== LINEAR_FILTER);
 
