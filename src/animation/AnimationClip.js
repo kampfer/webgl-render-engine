@@ -8,9 +8,16 @@ export default class AnimationClip {
         this.tracks = tracks;
         this.uid = generateUid();
 
+        this._mixer = null;
+        this._activated = false;
+
         if (this.duration < 0) {
             this.setDurationFromTracks();
         }
+    }
+
+    isActivated() {
+        return this._activated;
     }
 
     setDurationFromTracks() {

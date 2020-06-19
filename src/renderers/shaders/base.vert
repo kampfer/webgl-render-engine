@@ -86,6 +86,13 @@
 
 /********************* skin head end *********************/
 
+#ifdef USE_MAP
+
+    attribute vec2 uv;
+    varying vec2 vUv;
+
+#endif
+
 attribute vec3 position;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
@@ -182,5 +189,11 @@ void main() {
     vNormal = normalize(transformedNormal);
 
     /********************* normal main end *********************/
+
+    #ifdef USE_MAP
+
+        vUv = uv;
+
+    #endif
 
 }

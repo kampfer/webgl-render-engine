@@ -9,8 +9,10 @@ import {
     LINEAR_MIPMAP_NEAREST_FILTER,
     LINEAR_MIPMAP_LINEAR_FILTER,
     DATA_TEXTURE,
+    TEXTURE,
 } from '../constants';
-import { convertConstantToGLenum } from './uitls';
+import { convertConstantToGLenum } from './renderUitls';
+import  * as mathUtils from '../math/utils';
 
 const wrappingToGL = {
     [ REPEAT_WRAPPING ]: 'REPEAT',
@@ -30,6 +32,28 @@ const filterToGL = {
 // 正在使用的纹理数量，用于分配纹理单元
 let textureUnits = -1;
 
+let _canvas;
+
+let useOffscreenCanvas = false;
+
+try {
+
+    useOffscreenCanvas = typeof OffscreenCanvas !== 'undefined'
+        && ( new OffscreenCanvas( 1, 1 ).getContext( "2d" ) ) !== null;
+
+} catch(e) {
+
+    // do nothing
+
+}
+
+function createCanvas(width, height) {
+
+    return useOffscreenCanvas ? new OffscreenCanvas( width, height ) : 
+        document.createElement('canvas');
+
+}
+
 // 如果不支持mipmap，那么filter只能是NEAREST或LINEAR
 function filterFallback(filter) {
 
@@ -41,7 +65,7 @@ function filterFallback(filter) {
 
 }
 
-export default class WebGLTextrueManager {
+export default class WebGLTextureManager {
 
     constructor(gl, extensions, capabilities) {
 
@@ -91,7 +115,8 @@ export default class WebGLTextrueManager {
 
         let gl = this._gl,
             // mipmap
-            supportsMips = false,
+            // supportsMips = this.needTexturePowerOfTwo(texture) && this.isPowerOfTwo(texture.image) === false,
+            supportsMips = this.isPowerOfTwo(texture.image),
             target;
 
         switch(texture.type) {
@@ -141,6 +166,7 @@ export default class WebGLTextrueManager {
         }
 
         let image = texture.image,
+            mipmaps = texture.mipmaps,
             glFormat = convertConstantToGLenum(texture.format, gl),
             glType = convertConstantToGLenum(texture.texelType, gl),
             glInternalFormat = this.getInternalFormat(texture.internalFormat, glFormat, glType);
@@ -159,6 +185,16 @@ export default class WebGLTextrueManager {
 
             }
 
+        } else if (texture.type === TEXTURE) {
+
+            // WebGL1
+            gl.texImage2D(target, 0, glInternalFormat, glFormat, glType, image);
+
+        }
+
+        // 如果不generateMipmap，fragment shader中对纹理的取样结果会始终是黑色
+        if (supportsMips) {
+            gl.generateMipmap(gl.TEXTURE_2D);
         }
 
     }
@@ -169,6 +205,67 @@ export default class WebGLTextrueManager {
 
     }
 
-    resizeImage() {}
+    resizeImage(image, needsPowerOfTwo, needsNewCanvas) {
+
+        let maxSize = this._capabilities.maxTextureSize,
+            scale = 1;
+
+        if (image.width > maxSize || image.height > maxSize) {
+            scale = maxSize / Math.max(image.width, image.height);
+        }
+
+        if (scale < 1 || needsPowerOfTwo) {
+
+            if (image instanceof HTMLImageElement || image instanceof HTMLCanvasElement || image instanceof ImageBitmap) {
+
+                let floor = needsPowerOfTwo ? mathUtils.floorPowerOfTwo : Math.floor,
+                    width = floor(image.width * scale),
+                    height = floor(image.height * scale);
+                
+                if (_canvas === undefined) _canvas = createCanvas(width, height);
+
+                let canvas = needsNewCanvas ? createCanvas(width, height) : _canvas;
+
+                canvas.width = width;
+                canvas.height = height;
+
+                let context = canvas.getContext('2d');
+                context.drawImage(image, 0, 0, width, height);
+
+                console.warn('Texture has been resized from (' + image.width + 'x' + image.height + ') to (' + width + 'x' + height + ').');
+
+                return canvas;
+
+            } else {
+
+                if ('data' in image) console.warn('Image in DataTexture is too big (' + image.width + 'x' + image.height + ').');
+
+                return image;
+
+            }
+
+        }
+
+        return image;
+
+    }
+
+    isPowerOfTwo(image) {
+
+        return mathUtils.isPowerOfTwo(image.width) && mathUtils.isPowerOfTwo(image.height);
+
+    }
+
+    // While OpenGL 2.0 and later for the desktop offer full support for non-power-of-two (NPOT) textures, 
+    // OpenGL ES 2.0 and WebGL have only limited NPOT support. 
+    // https://www.khronos.org/webgl/wiki/WebGL_and_OpenGL_Differences#Non-Power_of_Two_Texture_Support
+    needTexturePowerOfTwo(texture) {
+
+        if (this._capabilities.isWebGL2) return false;
+
+        return (texture.wrapS !== CLAMP_TO_EDGE_WRAPPING || texture.wrapT !== CLAMP_TO_EDGE_WRAPPING) ||
+            (texture.minFilter !== NEAREST_FILTER && texture.minFilter !== LINEAR_FILTER);
+
+    }
 
 }

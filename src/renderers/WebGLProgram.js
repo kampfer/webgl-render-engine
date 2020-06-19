@@ -66,12 +66,14 @@ export default class {
                 parameters.morphNormals ? '#define USE_MORPHNORMALS' : '',
                 parameters.skinning ? '#define USE_SKINNING' : '',
                 parameters.useBoneTexture ? '#define BONE_TEXTURE' : '',
+                parameters.useMap ? '#define USE_MAP' : '',
                 '\n'
             ].filter(filterEmptyLine).join('\n');
 
             prefixFragment = [
                 generatePrecision(parameters),
                 parameters.vertexColors ? '#define USE_COLOR' : '',
+                parameters.useMap ? '#define USE_MAP' : '',
                 '\n'
             ].filter(filterEmptyLine).join('\n');
 

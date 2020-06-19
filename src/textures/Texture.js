@@ -1,5 +1,6 @@
 import { generateUid } from '../math/utils';
 import {
+    TEXTURE,
     RGBA_FORMAT,
     UNSIGNED_BYTE_TYPE,
     LINEAR_FILTER,
@@ -18,6 +19,8 @@ export default class Texture {
         wrapS = CLAMP_TO_EDGE_WRAPPING,
         wrapT = CLAMP_TO_EDGE_WRAPPING
     }) {
+
+        this.type = TEXTURE;
 
         this.uid = generateUid();
 

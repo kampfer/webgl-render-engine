@@ -30,3 +30,17 @@ let _uid = 0;
 export function generateUid() {
     return _uid++;
 }
+
+export function isPowerOfTwo(value) {
+    // `&`的优先级低于`===`
+    // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence
+    return (value & (value - 1)) === 0 && value !== 0;
+}
+
+export function floorPowerOfTwo(value) {
+    return Math.pow(2, Math.floor(Math.log(value) / Math.LN2));
+}
+
+export function ceilPowerOfTwo(value) {
+    return Math.pow(2, Math.ceil(Math.log(value) / Math.LN2));
+}

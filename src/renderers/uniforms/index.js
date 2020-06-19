@@ -11,6 +11,7 @@ import InverseBindMatrixUniform from './InverseBindMatrixUniform';
 import BindMatrixUniform from './BindMatrixUniform';
 import BoneTextureUniform from './BoneTextureUniform';
 import BoneNumUniform from './BoneNumUniform';
+import MapUniform from './MapUniform';
 
 export default {
     modelMatrix: ModelMatrixUniform,
@@ -26,4 +27,5 @@ export default {
     bindMatrix: BindMatrixUniform,
     boneTexture: BoneTextureUniform,
     boneNum: BoneNumUniform,
+    map: MapUniform,
 };
