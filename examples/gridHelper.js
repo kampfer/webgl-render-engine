@@ -13,7 +13,7 @@ export default class GridHelperExample extends Example {
             cameraHelper = new CameraHelper(camera);
         this.scene.add(cameraHelper);
 
-        let gridHelper = new GridHelper(100, 100, 'red');
+        let gridHelper = new GridHelper(100, 100, 'red', 'blue', 'green');
         this.scene.add(gridHelper);
 
     }

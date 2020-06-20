@@ -45,7 +45,7 @@ void main() {
     #ifdef USE_MAP
         gl_FragColor = vec4((lightColor * diffuseColor * fDot).xyz + ambient.xyz, diffuseColor.a);
     #else
-        gl_FragColor = texelColor;
+        gl_FragColor = diffuseColor;
     #endif
 
 }

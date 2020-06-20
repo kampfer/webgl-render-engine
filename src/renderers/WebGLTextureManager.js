@@ -116,7 +116,7 @@ export default class WebGLTextureManager {
         let gl = this._gl,
             // mipmap
             // supportsMips = this.needTexturePowerOfTwo(texture) && this.isPowerOfTwo(texture.image) === false,
-            supportsMips = this.isPowerOfTwo(texture.image),
+            supportsMips = this.isPowerOfTwo(texture.image) && texture.generateMipmaps,
             target;
 
         switch(texture.type) {
