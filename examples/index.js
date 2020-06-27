@@ -7,6 +7,7 @@ const examples = {
     interpolation: () => import('./interpolation'),
     mat4: () => import('./mat4'),
     skinnedMesh: () => import('./skinnedMesh'),
+    canvasTexture: () => import('./canvasTexture')
 };
 
 function appendExampleList() {
