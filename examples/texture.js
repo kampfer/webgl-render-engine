@@ -1,6 +1,6 @@
 import Example from './Example';
 import PlaneGeometry from '../src/geometries/PlaneGeometry';
-import Material from '../src/materials/Material';
+import Material2D from '../src/materials/Material2D';
 import Mesh from '../src/objects/Mesh';
 import Texture from '../src/textures/Texture';
 import BufferAttribute from '../src/renderers/BufferAttribute';
@@ -36,7 +36,7 @@ export default class TextureExample extends Example {
             geometry.setAttribute('uv', uv);
 
             const texture = new Texture({ image: img, minFilter: NEAREST_FILTER });
-            const materail = new Material();
+            const materail = new Material2D();
             materail.map = texture;
 
             const mesh = new Mesh(geometry, materail);

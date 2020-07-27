@@ -21,6 +21,7 @@ export const OBJECT_TYPE_SKINNED_MESH = 12;
 
 export const MATERIAL_TYPE_BASIC = 'BasicMaterial';
 export const MATERIAL_TYPE_LINE_BASIC = 'LineBasicMaterial';
+export const MATERIAL_TYPE_2D = 'Material2D';
 
 export const LINEAR_INTERPOLATION = 2020;
 export const STEP_INTERPOLATION = 2021;

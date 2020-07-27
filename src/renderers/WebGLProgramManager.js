@@ -1,5 +1,6 @@
 import WebGLProgram from './WebGLProgram';
 import {
+    MATERIAL_TYPE_2D,
     MATERIAL_TYPE_BASIC,
     MATERIAL_TYPE_LINE_BASIC,
     OBJECT_TYPE_SKINNED_MESH,
@@ -8,6 +9,7 @@ import {
 const shaderTypes = {
     [MATERIAL_TYPE_BASIC]: 'base',
     [MATERIAL_TYPE_LINE_BASIC]: 'line',
+    [MATERIAL_TYPE_2D]: 'flat',
 };
 
 export default class WebGLProgramManager {
