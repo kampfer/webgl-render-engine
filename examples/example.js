@@ -2,6 +2,7 @@ import WebGLRenderer from '../src/renderers/WebGLRenderer';
 import Scene from '../src/objects/Scene';
 import PerspectiveCamera from '../src/cameras/PerspectiveCamera';
 import OrbitController from '../src/controllers/OrbitController';
+import Color from'../src/math/Color';
 
 export default class Example {
 
@@ -13,7 +14,7 @@ export default class Example {
 
         let renderer = new WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor([1, 1, 1, 1]);
+        renderer.setClearColor(new Color([1, 1, 1, 1]));
         document.body.appendChild(renderer.domElement);
         this.renderer = renderer;
 
