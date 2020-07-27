@@ -36,6 +36,8 @@ export default class Texture {
         this.internalFormat = null;
         this.texelType = texelType;
 
+        this.flipY = true;
+
     }
 
 }

@@ -133,7 +133,7 @@ export default class WebGLTextureManager {
 
         gl.bindTexture(target, webglTextrue);
 
-        // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, texture.flipY);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, texture.flipY);
         // gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, texture.premultiplyAlpha);
         // gl.pixelStorei(gl.UNPACK_ALIGNMENT, texture.unpackAlignment);
 
