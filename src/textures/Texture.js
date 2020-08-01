@@ -38,6 +38,8 @@ export default class Texture {
 
         this.flipY = true;
 
+        this.generateMipmaps = true;
+
     }
 
 }

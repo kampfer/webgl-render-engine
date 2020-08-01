@@ -185,7 +185,7 @@ export default class WebGLTextureManager {
 
             }
 
-        } else if (texture.type === TEXTURE) {
+        } else {
 
             // WebGL1
             gl.texImage2D(target, 0, glInternalFormat, glFormat, glType, image);
