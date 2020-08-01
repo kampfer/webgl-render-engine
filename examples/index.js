@@ -8,7 +8,7 @@ const examples = {
     mat4: () => import('./mat4'),
     skinnedMesh: () => import('./skinnedMesh'),
     texture: () => import('./texture'),
-    canvasTexture: () => import('./canvasTexture')
+    canvasTexture: () => import('./canvasTexture'),
 };
 
 function appendExampleList() {
