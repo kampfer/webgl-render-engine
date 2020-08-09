@@ -4,7 +4,6 @@ import Material2D from '../src/materials/Material2D';
 import Mesh from '../src/objects/Mesh';
 import BufferAttribute from '../src/renderers/BufferAttribute';
 import OrthographicCamera from '../src/cameras/OrthographicCamera';
-import Color from '../src/math/Color';
 import Geometry from '../src/geometries/Geometry';
 import Vec3 from '../src/math/Vec3';
 
@@ -28,20 +27,8 @@ export default class canvasTextureExample extends Example {
             useOrbit: false
         });
 
-        const rect = new Mesh(
-            this.makeGeometry(x, y, width, height),
-            new Material2D({ color: new Color('red') })
-        );
-        this.scene.add(rect);
-
         const geometry = this.makeGeometry(x, y, width, height);
         geometry.setAttribute('uv', new BufferAttribute(
-            // new Float32Array([
-            //     0, 100 / 64,
-            //     100 / 64, 100 / 64,
-            //     0, 0,
-            //     100 / 64, 0
-            // ]),
             new Float32Array([
                 0, 1,
                 1, 1,
@@ -62,6 +49,9 @@ export default class canvasTextureExample extends Example {
             const text = `${new Date().getTime()}`;
             const ctx = texture.image.getContext('2d');
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.fillStyle = 'red';
+            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = 'black';
             ctx.fillText(text, 0, 0);
         }
 
@@ -108,6 +98,9 @@ export default class canvasTextureExample extends Example {
         offscreen.height = height;
         document.body.appendChild(offscreen);
         const ctx = offscreen.getContext('2d');
+
+        ctx.fillStyle = 'red';
+        ctx.fillRect(0, 0, width, height);
 
         ctx.font = `12px monospace`;
         ctx.textAlign = "left" ;
