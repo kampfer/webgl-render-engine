@@ -6,6 +6,7 @@ import BufferAttribute from '../src/renderers/BufferAttribute';
 import OrthographicCamera from '../src/cameras/OrthographicCamera';
 import Geometry from '../src/geometries/Geometry';
 import Vec3 from '../src/math/Vec3';
+import * as constants from '../src/constants';
 
 const x = 100;
 const y = 100;
@@ -27,19 +28,23 @@ export default class canvasTextureExample extends Example {
             useOrbit: false
         });
 
-        const geometry = this.makeGeometry(x, y, width, height);
+        // https://webglfundamentals.org/webgl/webgl-3d-textures-repeat-clamp.html
+        const geometry = this.makeGeometry(x, y, width * 2, height * 2);
         geometry.setAttribute('uv', new BufferAttribute(
             new Float32Array([
                 0, 1,
-                1, 1,
-                0, 0,
-                1, 0
+                2, 1,
+                0, -1,
+                2, -1
             ]),
             2
         ));
 
-        const material = new Material2D();
         const texture = this.makeCanvasTexture();
+        texture.wrapT = constants.REPEAT_WRAPPING;
+        texture.wrapS = constants.MIRRORED_REPEAT_WRAPPING;
+
+        const material = new Material2D();
         material.map = texture;
 
         const mesh = new Mesh(geometry, material);
@@ -51,6 +56,8 @@ export default class canvasTextureExample extends Example {
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             ctx.fillStyle = 'red';
             ctx.fillRect(0, 0, width, height);
+            ctx.strokeStyle = 'green';
+            ctx.strokeRect(0, 0, width, height);
             ctx.fillStyle = 'black';
             ctx.fillText(text, 0, 0);
         }
@@ -97,18 +104,12 @@ export default class canvasTextureExample extends Example {
         offscreen.width = width;
         offscreen.height = height;
         document.body.appendChild(offscreen);
+
         const ctx = offscreen.getContext('2d');
-
-        ctx.fillStyle = 'red';
-        ctx.fillRect(0, 0, width, height);
-
         ctx.font = `12px monospace`;
         ctx.textAlign = "left" ;
         ctx.textBaseline = "top";
         ctx.fillStyle = 'black';
-
-        const text = `${new Date().getTime()}`;
-        ctx.fillText(text, 0, 0);
 
         const texture = new CanvasTexture({ image: offscreen });
 
