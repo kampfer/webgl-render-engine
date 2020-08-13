@@ -2,7 +2,7 @@ import GridHelper from '../src/helpers/GridHelper';
 import PerspectiveCamera from '../src/cameras/PerspectiveCamera';
 import { degToRad } from '../src/math/utils';
 import CameraHelper from '../src/helpers/CameraHelper';
-import Example from './Example';
+import Example from './example';
 
 export default class GridHelperExample extends Example {
 

@@ -1,4 +1,4 @@
-import Example from './Example';
+import Example from './example';
 import BoxGeometry from '../src/geometries/BoxGeometry';
 import Material from '../src/materials/Material';
 import Mesh from '../src/objects/Mesh';

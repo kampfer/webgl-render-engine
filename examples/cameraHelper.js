@@ -1,4 +1,4 @@
-import Example from './Example';
+import Example from './example';
 import CameraHelper from '../src/helpers/CameraHelper';
 import PerspectiveCamera from '../src/cameras/PerspectiveCamera';
 import OrthographicCamera from '../src/cameras/OrthographicCamera';

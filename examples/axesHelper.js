@@ -1,4 +1,4 @@
-import Example from './Example';
+import Example from './example';
 import AxesHelper from '../src/helpers/AxesHelper';
 
 export default class AxesHelperExample extends Example {

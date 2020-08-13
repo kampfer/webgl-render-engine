@@ -1,4 +1,4 @@
-import Example from './Example';
+import Example from './example';
 import CanvasTexture from '../src/textures/CanvasTexture';
 import Material2D from '../src/materials/Material2D';
 import Mesh from '../src/objects/Mesh';
@@ -29,6 +29,7 @@ export default class canvasTextureExample extends Example {
         });
 
         // https://webglfundamentals.org/webgl/webgl-3d-textures-repeat-clamp.html
+        // wrapping的理解方法：按uv坐标和wrapping配置处理纹理图片，再将纹理图片和顶点对应上
         const geometry = this.makeGeometry(x, y, width * 2, height * 2);
         geometry.setAttribute('uv', new BufferAttribute(
             new Float32Array([
@@ -64,6 +65,7 @@ export default class canvasTextureExample extends Example {
 
     }
 
+    // 像素坐标转为NDC坐标
     makeVertexFromPixel(x, y) {
         const halfWidth = window.innerWidth / 2;
         const halfHeight = window.innerHeight / 2;

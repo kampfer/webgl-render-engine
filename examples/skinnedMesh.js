@@ -1,4 +1,4 @@
-import Example from './Example';
+import Example from './example';
 import SkinnedMesh from '../src/objects/SkinnedMesh';
 import Skeleton from '../src/objects/Skeleton';
 import Bone from '../src/objects/Bone';

@@ -1,4 +1,4 @@
-import Example from './Example';
+import Example from './example';
 import Mat4 from '../src/math/Mat4';
 import Quaternion from '../src/math/Quaternion';
 import Euler from '../src/math/Euler';

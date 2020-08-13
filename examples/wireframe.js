@@ -5,7 +5,7 @@ import Mesh from '../src/objects/Mesh';
 import BoxGeometry from '../src/geometries/BoxGeometry';
 import WireframeGeometry from '../src/geometries/WireframeGeometry';
 import Material from '../src/materials/Material';
-import Example from './Example';
+import Example from './example';
 
 export default class AxesHelperExample extends Example {
 

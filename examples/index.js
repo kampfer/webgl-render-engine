@@ -9,6 +9,7 @@ const examples = {
     skinnedMesh: () => import('./skinnedMesh'),
     texture: () => import('./texture'),
     canvasTexture: () => import('./canvasTexture'),
+    morphTargets: () => import('./morphTargets'),
 };
 
 function appendExampleList() {
