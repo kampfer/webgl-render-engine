@@ -3,6 +3,7 @@ import Scene from '../src/objects/Scene';
 import PerspectiveCamera from '../src/cameras/PerspectiveCamera';
 import OrbitController from '../src/controllers/OrbitController';
 import Color from'../src/math/Color';
+import Clock from '../src/Clock';
 
 export default class Example {
 
@@ -31,6 +32,8 @@ export default class Example {
         }
 
         this.animate = this.animate.bind(this);
+
+        this.clock = new Clock();
     }
 
     render() {
