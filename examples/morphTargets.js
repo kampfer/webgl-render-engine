@@ -12,6 +12,30 @@ import {
     VectorKeyFrameTrack,
 } from '../src';
 
+// t = (s_2 - s_1) / (v_1 - v_2)
+// t_1 = (0 - 50) / (50 - 150) = 0.5;
+// t_2 = (150 - 100) / (100 - 300) = -0.25;
+const data = [
+    {
+        values: [50, 100, 200],
+    },
+    {
+        values: [0, 150, 450],
+    }
+];
+
+// https://learnui.design/tools/data-color-picker.html#palette
+const colors = [
+    '#003f5c',
+    '#2f4b7c',
+    '#665191',
+    '#a05195',
+    '#d45087',
+    '#f95d6a',
+    '#ff7c43',
+    '#ffa600',
+];
+
 export default class MorphTargetsExample extends Example {
 
     constructor() {
@@ -27,29 +51,51 @@ export default class MorphTargetsExample extends Example {
             useOrbit: false
         });
 
-        const rect1 = this.makeRectangle(100, 100, 100, 30, 'red');
-        const rect2 = this.makeRectangle(100, 150, 200, 30, 'blue');
+        const x = 100;
+        const y = 100;
+        const size = 30;
+        const padding = 20;
 
-        const start = this.pixel2NDC(100, 100).unproject(camera);
-        const end = this.pixel2NDC(100, 150).unproject(camera);
-        const diff = end.sub(start);
+        const growTacks = [];
+        const changeTracks = [];
 
-        this.scene.add(rect1);
-        this.scene.add(rect2);
+        for(let i = 0, l = data.length; i < l; i++) {
+
+            let item = data[i],
+                startValue = item.values[0],
+                latestValue = item.values[item.values.length - 1],
+                buffer1,
+                buffer2;
+
+            if (startValue !== undefined) buffer1 = this.makePositionBuffer(x, y + i * (padding + size), startValue, size);
+            if (latestValue !== undefined) buffer2 = this.makePositionBuffer(x, y + i * (padding + size), latestValue, size);
+
+            const geometry = new Geometry();
+            geometry.setAttribute('position', buffer1); 
+            geometry.setMorphAttribute('position', [buffer2]);
+            geometry.setIndex(new BufferAttribute(new Uint8Array([0, 2, 3, 0, 3, 1]), 1));
+
+            const material = new Material({ color: colors[i] });
+            material.morphTargets = true;
+
+            const rect = new Mesh(geometry, material)
+            this.scene.add(rect);
+
+            growTacks.push(new NumberKeyFrameTrack(
+                rect, 'morphTargetInfluences', item.values.map((v, i) => i * 1), item.values.map(v => v / latestValue)
+            ));
+
+            // const changeTrack = new VectorKeyFrameTrack();
+
+        }
 
         this.mixer = new AnimationMixer([
-            new AnimationClip('grow', undefined, [
-                new NumberKeyFrameTrack(rect1, 'morphTargetInfluences', [0, 1], [0, 1]),
-                new NumberKeyFrameTrack(rect2, 'morphTargetInfluences', [0, 1], [0, 1])
-            ]),
-            new AnimationClip('change', undefined, [
-                new VectorKeyFrameTrack(rect1, 'position', [0, 0.5, 0.6], [0, 0, 0, diff.x, diff.y, diff.z]),
-                new VectorKeyFrameTrack(rect2, 'position', [0, 0.5, 0.6], [0, 0, 0, -diff.x, -diff.y, -diff.z])
-            ])
+            new AnimationClip('grow', undefined, growTacks),
+            // new AnimationClip('change', undefined, changeTracks)
         ]);
 
         this.mixer.playClip('grow');
-        this.mixer.playClip('change');
+        // this.mixer.playClip('change');
 
     }
 
@@ -63,7 +109,7 @@ export default class MorphTargetsExample extends Example {
         return new Vec3((x - halfWidth) / halfWidth, (halfHeight - y) / halfHeight, z);
     }
 
-    makeRectangleBuffer(x, y, width, height) {
+    makePositionBuffer(x, y, width, height) {
         const camera = this.camera;
         const vertex1 = this.pixel2NDC(x, y).unproject(camera);
         const vertex2 = this.pixel2NDC(x + width, y).unproject(camera);
@@ -76,23 +122,6 @@ export default class MorphTargetsExample extends Example {
             vertex4.x, vertex4.y, vertex4.z,
         ];
         return new BufferAttribute(new Float32Array(vertices), 3);
-    }
-
-    makeRectangle(x, y, width, height, color) {
-        const buffer = this.makeRectangleBuffer(x, y, 0, height);
-        const buffer2 = this.makeRectangleBuffer(x, y, width, height);
-        const geometry = new Geometry();
-
-        geometry.setAttribute('position', buffer);
-        geometry.setMorphAttribute('position', [buffer2]);
-        geometry.setIndex(new BufferAttribute(new Uint8Array([0, 2, 3, 0, 3, 1]), 1));
-
-        const material = new Material({ color });
-        material.morphTargets = true;
-
-        const mesh = new Mesh(geometry, material);
-
-        return mesh;
     }
 
 }

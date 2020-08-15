@@ -1,6 +1,6 @@
 export default class AnimationMixer {
 
-    constructor(animationClips) {
+    constructor(animationClips = []) {
 
         this._time = 0;
         this.timeScale = 1;
