@@ -10,6 +10,8 @@ export default class AnimationMixer {
 
         this._originalStateOfClip = new WeakMap();
 
+        // this._clipStates = new WeakMap();
+
         for(let i = 0, l = animationClips.length; i < l; i++) {
 
             let clip = animationClips[i];
@@ -17,6 +19,7 @@ export default class AnimationMixer {
             this.addClip(clip);
 
         }
+
     }
 
     addClip(clip) {
@@ -24,6 +27,14 @@ export default class AnimationMixer {
         // clip._mixer = this;
 
         this._clips.push(clip);
+
+        // 初始化一些运行时需要的状态
+        // if (!this._clipStates.has(clip)) {
+        //     this._clipStates.set(clip, {
+        //         iterationCount: 0,
+        //         activated: false
+        //     });
+        // }
 
     }
 
@@ -65,6 +76,8 @@ export default class AnimationMixer {
 
         // clip._mixer = null;
         clip._activated = false;
+
+        // this._clipStates.delete(clip);
 
     }
 
@@ -195,15 +208,19 @@ export default class AnimationMixer {
 
         this._time += deltaTimeInSeconds;
 
-        let time = this._time,
-            clips = this._activatedClips;
+        const time = this._time;
+        const clips = this._activatedClips;
 
         for(let i = 0, l = clips.length; i < l; i++) {
 
-            let clip = clips[i],
+            const clip = clips[i],
+                iterationCount = Math.floor(time / clip.duration),
+                // clipState = this._clipStates.get(clip),
                 tracks = clip.tracks;
 
-            time %= clip.duration;
+            let clipTime = time - iterationCount * clip.duration;
+
+            if (iterationCount >= clip.iterationCount) clipTime = clip.duration;
 
             for(let j = 0, jl = tracks.length; j < jl; j++) {
 
@@ -211,7 +228,7 @@ export default class AnimationMixer {
                     node = track.node,
                     property = track.property,
                     interpolant = track.interpolant,
-                    result = interpolant.evaluate(time);
+                    result = interpolant.evaluate(clipTime);
 
                 if (result) {
 

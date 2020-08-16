@@ -133,7 +133,7 @@ export default class MorphTargetsExample extends Example {
 
                 if (order[i] !== order[i + 1]) {
 
-                    intervals.push((i + 1) * 1 - 0.5);
+                    intervals.push((i + 1) * 1 - 0.2);
                     intervals.push((i + 1) * 1);
 
                     let position1 = this.pixel2NDC(x, y + order[i] * (padding + size)).unproject(camera)
@@ -164,6 +164,9 @@ export default class MorphTargetsExample extends Example {
             new AnimationClip('grow', undefined, growTacks),
             new AnimationClip('transform', undefined, transformTracks)
         ]);
+
+        this.mixer.getClipByName('grow').iterationCount = 1;
+        this.mixer.getClipByName('transform').iterationCount = 1;
 
         this.mixer.playClip('grow');
         this.mixer.playClip('transform');
