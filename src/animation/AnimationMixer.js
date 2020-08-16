@@ -21,7 +21,7 @@ export default class AnimationMixer {
 
     addClip(clip) {
 
-        clip._mixer = this;
+        // clip._mixer = this;
 
         this._clips.push(clip);
 
@@ -63,7 +63,7 @@ export default class AnimationMixer {
         if (index >= 0) this._clips.splice(index, 1);
         if (indexAtActivated >= 0) this._activatedClips.splice(indexAtActivated, 1);
 
-        clip._mixer = null;
+        // clip._mixer = null;
         clip._activated = false;
 
     }
@@ -232,7 +232,7 @@ export default class AnimationMixer {
 
             let clip = this._clips[i];
 
-            clip._mixer = null;
+            // clip._mixer = null;
             clip._activated = false;
 
         }
